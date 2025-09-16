@@ -18,11 +18,16 @@ def indexi():
   
 @app.route('/home.html', methods=["GET", "POST"])
 def index():
-  if request.method == "POST":
-    username = request.form['username']
-    password = request.form['password']
-    user_password_hash = user_db.get(username)
-    if user_password_hash and check_password_hash(user_password_hash, password):
-      return render_template("indexi.html")
   return render_template("home.html")
+
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+      username = request.form['username']
+      password = request.form['password']
+      user_password_hash = user_db.get(username)
+      if user_password_hash and check_password_hash(user_password_hash, password):
+        return render_template("indexi.html")
+    else:
+      return render_template("home.html")
 
