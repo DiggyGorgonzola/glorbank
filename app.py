@@ -29,6 +29,7 @@ def login():
       user_password_hash = users_db.get(username)
       if user_password_hash and check_password_hash(user_password_hash, password):
         return render_template("indexi.html")
+      return render_template("home.html", incorrect_password=True)
     else:
-      return render_template("home.html")
+      return render_template("home.html", incorrect_password=False)
 
