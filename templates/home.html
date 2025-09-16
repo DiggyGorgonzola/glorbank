@@ -1,8 +1,12 @@
 <!DOCTYPE html><html><head><title>Glorbenian Bank</title><meta charset="UTF-8"></head></html>
+<code>
+
+</code>
+
 <style>
   body {
     background-color: #82ffa3;
-    font-family: "Times New Roman", Times, monospace;
+    font-family: 'Times New Roman', Times, serif;
     color: #000;
     margin: 0;
     padding: 0;
@@ -10,25 +14,51 @@
   
   .box {
     position: fixed;
-    top: calc(50% - 50px);
-    left: calc(50%);
-    width: 200px;
+    top: calc(20%);
+    left: calc(50% - 300px);
+    width: 600px;
     padding: 5px;
     margin: 5px;
     background-color: #45d16a;
     box-shadow: 3px 3px #24853e;
     border: 2px #000;
+    border-radius: 15px;
   }
 
   .box h1 {
     text-align: center;
-    font-size: 20px;
-    color: #24853e;
-    text-decoration: underline;
-    text-shadow: 2px 2px #000;
+    font-size: 60px;
+    color: #000;
+    text-decoration: 4px double underline #000;
     
+  }
+
+  .forme {
+    text-align: center;
+    font-size: 40px;
+    color: #000;
+    border: 2px solid #24853e;
+    border-radius: 15px;
+  }
+  input {
+    border-radius: 5px;
+  }
+  input:hover {
+    background-color: #c9c9c9;
+  }
+  button {
+    border-radius: 5px;
+  }
+  button:hover {
+    background-color: #c9c9c9;
   }
 </style>
 <body>
-  <div class="box"><h1>Hello</h1></div>
+  <div class="box">
+    <h1>GLORBENIAN BANK</h1>
+    <form class="forme" method="post">
+      Username: <input type="text" name="username" required><br>
+      Password: <input type="password" name="password" required><br>
+      <button type="submit">Log in :3</button>
+  </div>
 </body>
