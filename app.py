@@ -6,7 +6,9 @@ users_db = {}
 
 app = Flask(__name__)
 app.secret_key = "Glorbank"
-
-@app.route('/index.html')
+@app.route('/')
+def starting():
+  return render_remplate("home.html")
+@app.route('/home.html')
 def index():
   return render_template("home.html")
