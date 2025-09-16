@@ -7,7 +7,7 @@ users_db = {"Diggy Gorgonzola": 417}
 app = Flask(__name__)
 app.secret_key = "Glorbank"
 def check_password_hash(user_password_hash, password):
-  if users_db[username] == password return True else False
+  return user_db[username] == password
 @app.route('/', methods=["GET", "POST"])
 def starting():
   return render_template("home.html")
