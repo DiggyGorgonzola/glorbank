@@ -53,12 +53,22 @@
     background-color: #c9c9c9;
   }
 </style>
-<body>
+<body onload=incorrectPass()>
   <div class="box">
     <h1>GLORBENIAN BANK</h1>
-    <form class="forme" action="/login" method="POST">
+    <form id="login_form" class="forme" action="/login" method="POST">
       Username: <input type="text" name="username" required><br>
       Password: <input type="password" name="password" required><br>
       <button type="submit">Log in :3</button>
+      <h2 id="heading2"></h2>
   </div>
+  <script>
+    function incorrectPass() {
+      document.querySelector(".box h2").innerHTML = "incorrect password entered"
+          if ({{ incorrect_password }}) {
+        const thingy = document.getElementById("login_form");
+        thingy.backgroundColor = "#FF2900";
+      };
+    };
+  </script>
 </body>
