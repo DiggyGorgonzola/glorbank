@@ -9,8 +9,16 @@ app.secret_key = "Glorbank"
 def check_password_hash(user_password_hash, password):
   return user_db[username] == password
 @app.route('/', methods=["GET", "POST"])
+
 def starting():
-  return render_template("home.html")
+  if request.method == "POST":
+    username = request.form['username']
+    password = request.form['password']
+    user_password_hash = user_db.get(username)
+    if user_password_hash and check_password_hash(user_password_hash, password):
+      return render_template("indexi.html")
+  else:
+    return render_template("home.html")
 
 @app.route('/indexi.html')
 def indexi():
