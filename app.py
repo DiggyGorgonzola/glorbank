@@ -8,5 +8,5 @@ app = Flask(__name__)
 app.secret_key = "Glorbank"
 
 @app.route('/index.html')
-def home():
+def index():
   return render_template("home.html")
