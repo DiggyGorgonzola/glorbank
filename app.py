@@ -26,6 +26,7 @@ def login():
       username = request.form['username']
       password = request.form['password']
       user_password_hash = users_db.get(username)
+      print((user_password_hash, users_db[username] == password))
       if user_password_hash and users_db[username] == password:
         return render_template("indexi.html")
       return render_template("home.html", incorrect_password=True)
