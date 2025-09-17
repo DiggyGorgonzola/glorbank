@@ -1,0 +1,96 @@
+<!DOCTYPE html><html><head><title>Glorbenian Bank</title><meta charset="UTF-8"></head></html>
+
+
+<style>
+  body {
+    background-color: #82ffa3;
+    font-family: 'Times New Roman', Times, serif;
+    color: #000;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .box {
+    position: fixed;
+    top: calc(20%);
+    left: calc(50% - 300px);
+    width: 600px;
+    padding: 5px;
+    margin: 5px;
+    background-color: #45d16a;
+    box-shadow: 3px 3px #24853e;
+    border: 2px #000;
+    border-radius: 15px;
+  }
+
+  .box h1 {
+    text-align: center;
+    font-size: 60px;
+    color: #000;
+    text-decoration: 4px double underline #000;
+    
+  }
+
+  .box h2 {
+    text-align: center;
+    font-size: 20px;
+    color: #000;
+    font-family: 'Arial', sans-serif;
+  }
+
+  .forme {
+    text-align: center;
+    font-size: 40px;
+    color: #000;
+    border: 2px solid #24853e;
+    border-radius: 15px;
+  }
+  input {
+    border-radius: 5px;
+  }
+  input:hover {
+    background-color: #c9c9c9;
+  }
+  button {
+    border-radius: 5px;
+  }
+  button:hover {
+    background-color: #c9c9c9;
+  }
+  .registration {
+    position: fixed;
+    top: calc(20% - 50px);
+    left: calc(50% - 300px);
+    width: 75px;
+    padding: 5px;
+    margin: 5px;
+    background-color: #45d16a;
+    box-shadow: 3px 3px #24853e;
+    border: 2px #000;
+    border-radius: 15px;
+  }
+
+</style>
+<body onload=incorrectPass()>
+  <div class="registration" id="registration">
+    <form action="/register">
+      <input type="submit" value="Register"/>
+    </form>
+  </div>
+  <div class="box" id="box">
+    <h1>GLORBENIAN BANK</h1>
+    <form id="login_form" class="forme" action="/login" method="POST">
+      Username: <input type="text" name="username" required><br>
+      Password: <input type="password" name="password" required><br>
+      <button type="submit">Log in :3</button>
+      <h2 id="heading2"></h2>
+  </div>
+  <script>
+  function incorrectPass() {
+    document.querySelector(".box h2").innerHTML = "incorrect password entered";
+      if ( {{ incorrect_password }} ) {
+      input.backgroundColor = "#FF00000";
+    };
+  };
+  </script>
+</body>
