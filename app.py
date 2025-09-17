@@ -1,8 +1,9 @@
 from flask import Flask, render_template
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import request, render_template, redirect, url_for
+from flask import request, render_template, redirect, url_for, jsonify
 
 users_db = {"Diggy Gorgonzola": "417"}
+ip_db = {"Diggy Gorgonzola": 1}
 
 app = Flask(__name__)
 app.secret_key = "Glorbank"
@@ -16,9 +17,9 @@ def starting():
 def indexi():
   return render_template("indexi.html")
   
-@app.route('/home.html', methods=["GET", "POST"])
-def index():
-  return render_template("home.html")
+@app.route('/register', methods=["GET", "POST"])
+def register():
+  return render_template("indexi.html")
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
