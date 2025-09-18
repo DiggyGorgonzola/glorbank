@@ -89,12 +89,12 @@
       <input type="submit" value="Login"/>
     </form>
   </div>
-  <div class="box" id="box">
-    <h1>GLORBENIAN BANK</h1>
+  <div class="box" id="box" onload=usernameExists()>
+    <h1>GLORBENIAN NATIONAL BANK</h1>
     <p>Register</p>
-    <form id="register_form" class="forme" action="/register_check" method="POST">
-      Username: <input type="text" name="username" required><br>
-      Password: <input type="password" name="password" required><br>
+    <form id="register_form" class="forme" action="/register_check" onclick='returntonormal()' method="POST">
+      Username: <input type="text" name="username" id="usernameID" required><br>
+      Password: <input type="password" name="password" minlength="8" required><br>
       Email (optional): <input type="email" name="email"><br>
       <label class="input" style="font-size: 15px;">I agree to the ToS:<input type="checkbox" name="tos" required><br></label>
       <button type="submit">Register an account</button>
@@ -103,11 +103,19 @@
     <h3>Terms of Service: By checking "I agree to the ToS," you agree to the following terms and conditions. The Glorbenian National Bank will collect and store the provided username, password (and email). The Glorbenian National Bank may also collect data regarding your bank account (I.E. recent transactions), however this will be only under official government request. Any and all data provided goes through the host service onrender.com, only create an account if you trust them. In the event of fraud, the Glorbenian National Bank has the right to deactivate your account and repossess all money still in the account.</h3>
   </div>
   <script>
-  function incorrectPass() {
-    document.querySelector(".box h2").innerHTML = "incorrect password entered";
-      if ( {{ incorrect_password }} ) {
-      input.backgroundColor = "#FF00000";
+  function usernameExists() {
+    const username_exists = "{{ username_exists }}";
+    console.log(username_exists);
+    if (username_exists) {
+      document.querySelector(".box h2").innerHTML = "Username already in the database. Please choose a better one";
+      document.getElementById("usernameID").style.borderColor = 'red';
     };
+  };
+  
+  function returntonormal() {
+    document.getElementById('usernamething').style.borderColor = "black";
+    document.getElementById('passwordthing').style.borderColor = "black";
+    document.querySelector(".box h2").innerHTML = "";
   };
   </script>
 </body>
