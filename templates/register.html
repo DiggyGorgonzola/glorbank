@@ -92,13 +92,13 @@
   <div class="box" id="box" onload=usernameExists()>
     <h1>GLORBENIAN NATIONAL BANK</h1>
     <p>Register</p>
-    <form id="register_form" class="forme" action="/register_check" onclick='returntonormal()' method="POST">
-      Username: <input type="text" name="username" id="usernameID" required><br>
-      Password: <input type="password" name="password" minlength="8" required><br>
-      Email (optional): <input type="email" name="email"><br>
-      <label class="input" style="font-size: 15px;">I agree to the ToS:<input type="checkbox" name="tos" required><br></label>
+    <h2 id="heading2"></h2>
+    <form id="register_form" class="forme" action="/register_check" method="POST">
+      Username: <input type="text" name="username" id="usernameID" onclick='returntonormal()' required><br>
+      Password: <input type="password" name="password" minlength="8" onclick='returntonormal()' required><br>
+      Email (optional): <input type="email" name="email" onclick='returntonormal()'><br>
+      <label class="input" style="font-size: 15px;">I agree to the ToS:<input type="checkbox" name="tos" onclick='returntonormal()' required><br></label>
       <button type="submit">Register an account</button>
-      <h2 id="heading2"></h2>
     </form>
     <h3>Terms of Service: By checking "I agree to the ToS," you agree to the following terms and conditions. The Glorbenian National Bank will collect and store the provided username, password (and email). The Glorbenian National Bank may also collect data regarding your bank account (I.E. recent transactions), however this will be only under official government request. Any and all data provided goes through the host service onrender.com, only create an account if you trust them. In the event of fraud, the Glorbenian National Bank has the right to deactivate your account and repossess all money still in the account.</h3>
   </div>
@@ -111,7 +111,7 @@
       document.getElementById("usernameID").style.borderColor = 'red';
     };
   };
-  
+
   function returntonormal() {
     document.getElementById('usernamething').style.borderColor = "black";
     document.getElementById('passwordthing').style.borderColor = "black";
