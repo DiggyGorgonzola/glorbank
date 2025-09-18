@@ -28,7 +28,7 @@ def register_check():
     password = request.form['password']
     if request.form['email']:
       email = request.form['email']
-    if username in users_db:
+    if users_db.get(username):
       return render_template("register.html", username_exists="true")
     return render_template("home.html")
   return render_template("register,html", username_exists="false")
