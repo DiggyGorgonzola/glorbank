@@ -83,13 +83,13 @@
     border-radius: 15px;
   }
 </style>
-<body>
+<body onload=usernameExists()>
   <div class="homer">
     <form action="/">
       <input type="submit" value="Login"/>
     </form>
   </div>
-  <div class="box" id="box" onload=usernameExists()>
+  <div class="box" id="box">
     <h1>GLORBENIAN NATIONAL BANK</h1>
     <p>Register</p>
     <h2 id="heading2"></h2>
@@ -107,7 +107,7 @@
     const username_exists = "{{ username_exists }}";
     console.log(username_exists);
     if (username_exists) {
-      document.querySelector(".box h2").innerHTML = "Username already in the database. Please choose a better one";
+      document.querySelector(".box h2").innerHTML = "Username already in the database. Please choose a different one";
       document.getElementById("usernameID").style.borderColor = 'red';
     };
   };
