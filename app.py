@@ -19,7 +19,19 @@ def indexi():
   
 @app.route('/register', methods=["GET", "POST"])
 def register():
-  return render_template("register.html")
+  return render_template("register.html", username_exists=False)
+
+@app.route('/register_check', methods=["GET", "POST"])
+def register_check():
+  if request.method == "POST":
+    username = request.form['username']
+    password = request.form['password']
+    if request.form['email']:
+      email = request.form['email']
+    if username in users_db:
+      return render_template("register.html", username_exists="true")
+    return render_template("home.html")
+  return render_template("register,html", username_exists="false")
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
@@ -27,10 +39,9 @@ def login():
       username = request.form['username']
       password = request.form['password']
       user_password_hash = users_db.get(username)
-      print((user_password_hash, users_db[username], password))
-      if user_password_hash and users_db[username] == password:
+      if user_password_hash and users_db.get(username) == password:
         return render_template("indexi.html")
-      return render_template("home.html", incorrect_password=True)
+      return render_template("home.html", incorrect_password='false')
     else:
-      return render_template("home.html", incorrect_password=False)
+      return render_template("home.html", incorrect_password="true")
 
