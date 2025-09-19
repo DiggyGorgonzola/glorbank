@@ -93,7 +93,7 @@
     <h1>GLORBENIAN NATIONAL BANK</h1>
     <p>Register</p>
     <h2 id="heading2"></h2>
-    <form id="register_form" class="forme" action="/register_check" method="POST">
+    <form id="register_form" class="forme" action="/register" method="POST">
       Username: <input type="text" name="username" id="usernameID" onclick='returntonormal()' required><br>
       Password: <input type="password" name="password" minlength="8" onclick='returntonormal()' required><br>
       Email (optional): <input type="email" name="email" onclick='returntonormal()'><br>
@@ -113,8 +113,7 @@
   };
 
   function returntonormal() {
-    document.getElementById('usernamething').style.borderColor = "black";
-    document.getElementById('passwordthing').style.borderColor = "black";
+    document.getElementById('usernameID').style.borderColor = "black";
     document.querySelector(".box h2").innerHTML = "";
   };
   </script>
