@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, Column, Integer, String, DateTime
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from flask_bcrypt import Bcrypt
@@ -29,7 +29,7 @@ app.secret_key = "Glorbank"
 
 # db traits
 class User(Base):
-  __tablename__ = 'users.db'
+  __tablename__ = 'User'
   id = db.Column(db.Integer, primary_key=True)
   username = db.Column(db.String(80), unique=True, nullable=False)
   password = db.Column(db.String(80), nullable=False)
@@ -79,8 +79,9 @@ def register():
     print((username, user_ip, password, email))
     new_user = User(username=username, password=password, ip=user_ip, email=email)
     with engine.begin() as conn: # WIP (see if username exists in User)
-      he = conn.execute('SELECT username FROM User')
-    print(he)
+      he = conn.execute(text('SELECT username FROM User'))
+    for row in he:
+      print(row)
     if not session.query(User).filter_by(username=username):
       session.add(new_user)
       session.commit()
@@ -88,4 +89,6 @@ def register():
     return render_template("register.html", username_exists="true")
   else:
     return render_template("register.html")
+
+
 
