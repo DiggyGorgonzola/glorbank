@@ -91,7 +91,7 @@ html, body {
               font-family: Arial, Helvetica, sans-serif;
             }
 </style>
-<body onload=usernameExists()>
+<body onload=errorcheck()>
   <div class="homer">
     <form action="/">
       <input type="submit" value="Login"/>
@@ -150,12 +150,17 @@ html, body {
 
 
 
-  function usernameExists() {
+  function errorcheck() {
     const username_exists = "{{ username_exists }}";
+    const error = "{{ error }}";
     console.log(username_exists);
+    console.log(error);
     if (username_exists) {
       document.querySelector(".box h2").innerHTML = "Username already in the database. Please choose a different one";
       document.getElementById("usernameID").style.borderColor = 'red';
+    };
+    if (error) {
+      document.querySelector(".box h2").innerHTML = "An unknown error has occured. Please refresh the page and see if that works";
     };
   };
 
