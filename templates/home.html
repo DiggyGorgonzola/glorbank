@@ -80,7 +80,7 @@ html, body {
                 }
 
 </style>
-<body onload=incorrectPass()>
+<body onload=errorcheck()>
   <div class="registration" id="registration">
     <form action="/register">
       <input type="submit" value="Register"/>
@@ -97,13 +97,18 @@ html, body {
     </form>
   </div>
   <script>
-  function incorrectPass() {
+  function errorcheck() {
     const incorrect_password = "{{ incorrect_password }}";
+    const error = "{{ error }}";
     console.log(incorrect_password);
+    console.log(error);
     if (incorrect_password) {
       document.querySelector(".box h2").innerHTML = "The username or password provided is incorrect.";
       document.getElementById('usernamething').style.borderColor = "red";
       document.getElementById('passwordthing').style.borderColor = "red";
+    };
+    if (error) {
+      document.querySelector(".box h2").innerHTML = "An unknown error has occured. Please refresh the page and see if that works";
     };
   };
 
