@@ -18,12 +18,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
-
-# base db
-users_db = {"Diggy Gorgonzola": "417"}
-ip_db = {"Diggy Gorgonzola": (1)}
-users_emails = {"Diggy Gorgonzola": "bendole3141592@gmail.com"}
-
 app.secret_key = "Glorbank"
 
 
@@ -45,18 +39,25 @@ Base.metadata.create_all(engine)
 # create session
 Session = sessionmaker(bind=engine)
 session = Session()
-
+session.begin()
+session.rollback()
+try:
+  new_user = User(username="Diggy Gorgonzola", password="417", email=None, ip="127.0.0.1")
+  session.add(new_user)
+  session.commit()
+except:
+  session.rollback()
+a = session.query(User).all()
+for user in a:
+  print([user.id, user.username, user.password, user.email, user.ip])
 @app.route('/', methods=["GET", "POST"])
 def starting():
   if request.method == "POST":
     username = request.form['username']
     password = request.form['password']
-    try:
-      user = session.query(User).filter_by(username=username)
-      print(user)
-    except:
+    if not session.query(User).filter_by(username=username).all():
       return render_template("home.html", incorrect_password='true')
-    if user_password_hash and users_db.get(username) == password:
+    elif session.query(User).filter_by(username=username).all()[0].password == password:
       return render_template("indexi.html")
     return render_template("home.html", incorrect_password='true')
   else:
@@ -78,17 +79,17 @@ def register():
 
     print((username, user_ip, password, email))
     new_user = User(username=username, password=password, ip=user_ip, email=email)
-    with engine.begin() as conn: # WIP (see if username exists in User)
-      he = conn.execute(text('SELECT username FROM User'))
-    for row in he:
-      print(row)
-    if not session.query(User).filter_by(username=username):
-      session.add(new_user)
-      session.commit()
-      return render_template("home.html")
+    if not session.query(User).filter_by(username=username).all():
+      try:
+        session.add(new_user)
+      except:
+        session.rollback()
+        return render_template("register.html", error="true")
+      else:
+        session.commit()
+        return render_template("home.html")
     return render_template("register.html", username_exists="true")
-  else:
-    return render_template("register.html")
+  return render_template("register.html")
 
 
 
