@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, text
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, text, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from flask_bcrypt import Bcrypt
@@ -23,11 +23,12 @@ app.secret_key = "Glorbank"
 
 # db traits
 class User(Base):
-  __tablename__ = 'User'
+  __tablename__ = "User"
   id = db.Column(db.Integer, primary_key=True)
   username = db.Column(db.String(80), unique=True, nullable=False)
   password = db.Column(db.String(80), nullable=False)
   email = db.Column(db.String(80), unique=True)
+  admin = db.Column(db.Boolean)
   ip = db.Column(db.Text)
 
 
@@ -40,16 +41,15 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 session.begin()
-session.rollback()
 try:
-  new_user = User(username="Diggy Gorgonzola", password="417", email=None, ip="127.0.0.1")
+  new_user = User(username="Diggy Gorgonzola", password="417", email=None, ip="127.0.0.1", admin=True)
   session.add(new_user)
   session.commit()
 except:
   session.rollback()
 a = session.query(User).all()
 for user in a:
-  print([user.id, user.username, user.password, user.email, user.ip])
+  print([user.id, user.username, user.password, user.email, user.ip, user.admin])
 @app.route('/', methods=["GET", "POST"])
 def starting():
   if request.method == "POST":
@@ -78,7 +78,7 @@ def register():
       email = request.form['email']
 
     print((username, user_ip, password, email))
-    new_user = User(username=username, password=password, ip=user_ip, email=email)
+    new_user = User(username=username, password=password, ip=user_ip, email=email, admin=False)
     if not session.query(User).filter_by(username=username).all():
       try:
         session.add(new_user)
@@ -90,6 +90,3 @@ def register():
         return render_template("home.html")
     return render_template("register.html", username_exists="true")
   return render_template("register.html")
-
-
-
