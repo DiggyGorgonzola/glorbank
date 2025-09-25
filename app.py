@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from flask_bcrypt import Bcrypt
 from werkzeug.security import generate_password_hash, check_password_hash
-import os
+import os, datetime
 
 # create the db link
 app = Flask(__name__)
@@ -31,6 +31,7 @@ class User(Base):
   email = db.Column(db.String(80), unique=True)
   admin = db.Column(db.Boolean)
   ip = db.Column(db.Text)
+  accdate = db.Column(db.DateTime)
 
 
 # activate db
@@ -45,7 +46,7 @@ session.begin()
 
 #Add a base admin account for testing purposes
 try:
-  new_user = User(username="Diggy Gorgonzola", password="417", email=None, ip="127.0.0.1", admin=True)
+  new_user = User(username="Diggy Gorgonzola", password="417", email=None, ip="127.0.0.1", accdate=datetime.datetime.now(), admin=True)
   session.add(new_user)
   session.commit()
 except:
@@ -54,7 +55,7 @@ except:
 #print the entire database for testing purposes
 a = session.query(User).all()
 for user in a:
-  print([user.id, user.username, user.password, user.email, user.ip, user.admin])
+  print([user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin])
 
 
 @app.route('/', methods=["GET", "POST"])
@@ -69,6 +70,11 @@ def starting():
     if not session.query(User).filter_by(username=username).all():
       return render_template("home.html", incorrect_password='true')
     elif session.query(User).filter_by(username=username).all()[0].password == password:
+
+      #See if the user is an admin and go to admin panel
+      if session.query(User).filter_by(username=1):
+        liste = [[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin] for user in session.query(User).all()]
+        return render_template("adminpanel.html", database=liste)
       return render_template("indexi.html")
     return render_template("home.html", incorrect_password='true')
   else:
@@ -94,7 +100,7 @@ def register():
     print((username, user_ip, password, email))
 
     #Add the user to the database. Check if the username is already taken
-    new_user = User(username=username, password=password, ip=user_ip, email=email, admin=False)
+    new_user = User(username=username, password=password, ip=user_ip, email=email, accdate=datetime.datetime.now(), admin=False)
     if not session.query(User).filter_by(username=username).all():
       try:
         session.add(new_user)
@@ -106,3 +112,7 @@ def register():
         return render_template("home.html")
     return render_template("register.html", username_exists="true")
   return render_template("register.html")
+
+
+#Base.metadata.drop_all(engine)
+#DELETES THE ENTIRE DATABASE
