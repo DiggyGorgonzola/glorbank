@@ -11,30 +11,56 @@ html, body {
       overflow-y: auto;
     }
 
+    input {
+            border-radius: 5px;
+        }
+    input:hover {
+            background-color: #c9c9c9;
+        }
+    button {
+            border-radius: 5px;
+        }
+    button:hover {
+            background-color: #c9c9c9;
+        }
+
     .homer {
               position: relative;
               top: calc(20% - 70px);
               left: calc(50% - 300px);
-              width: 50px;
+              width: 100px;
               padding: 5px;
               margin: 5px;
-              background-color: #45d16a;
+              background-color: #47d16c;
               box-shadow: 3px 3px #24853e;
               border: 2px #000;
               border-radius: 15px;
             }
+    
+    .searchbar {
+        position: relative;
+        top: calc(20% - 70px);
+        left: calc(50% - 300px);
+        width: 200px;
+        padding: 5px;
+        margin: 5px;
+        background-color: #47d16c;
+        box-shadow: 3px 3px #24853e;
+        border: 2px #000;
+        border-radius: 15px;
+    }
 
     .box {
-          position: relative;
-          top: calc(20% - 50px);
-          left: calc(50% - 300px);
-          width: 600px;
-          padding: 5px;
-          margin: 5px;
-          background-color: #45d16a;
-          box-shadow: 3px 3px #24853e;
-          border: 2px #000;
-          border-radius: 15px;
+        position: relative;
+        top: calc(20% - 70px);
+        left: calc(50% - 300px);
+        width: 600px;
+        padding: 5px;
+        margin: 5px;
+        background-color: #45d16a;
+        box-shadow: 3px 3px #24853e;
+        border: 2px #000;
+        border-radius: 15px;
         }
 
     .box h1 {
@@ -59,14 +85,28 @@ html, body {
             }
 
         .microbox {
+            text-align: left;
             position: relative;
-            width: 500px;
+            font-size: 20px;
             padding: 5px;
             margin: 5px;
-            background-color: #016d1e;
-            box-shadow: 3px 3px #24853e;
-            border: 2px #000;
+            background-color: #47d16c;
+            border: 2px solid #24853e;
             border-radius: 15px;
+            }
+        
+            .microbox h1 {
+                text-align: left;
+                font-size: 30px;
+                font-family: Arial, Helvetica, sans-serif;
+                text-decoration:#000;
+            }
+
+            .microbox pre {
+                text-align: left;
+                font-size: 15px;
+                font-family: Arial, Helvetica, sans-serif;
+                text-decoration:#000;
             }
 
 
@@ -77,29 +117,44 @@ html, body {
             <input type="submit" value="Go to Login"/>
         </form>
     </div>
+    <div class="searchbar">
+        <input type="text" id="search" onkeyup="search()" placeholder="Search for an account">
+    </div>
     <div class="box" id="box">
     <h1>GLORBENIAN NATIONAL BANK</h1>
     <p>Log In</p>
-    <h2 id="heading2"></h2>
+    <ul id="List">
+
+    </ul>
   </div>
 </body>
 <script>
     function database_render() {
-        const database = {{ database | tojson}}; /*ignore error. it works */
+        const database = {{ database | tojson }}; /*ignore error. it works */
         console.log(database);
         console.log("Hello world");
         for (const element of database) {
             console.log(element);
             const newDiv = document.createElement("div");
+            newDiv.className = "microbox"; /* WIP FIGURE THIS OUT SO THAT IT PRINTS USER DATA */
             newDiv.id = element[1];
-            let admin = false
-            if (element[3] = null) {
-                admin = false
-            } else {
-                admin = true
-            }
-            newDiv.innerHTML = "<h1>" + element[1], + "</h1><br><h2>Admin: " + admin.toString() + "</h2>"; /* WIP FIGURE THIS OUT SO THAT IT PRINTS USER DATA */
-            const parentElement = document.querySelector(".box");
+            let text = element[1];
+            if (element[6]) {
+                text = `${text} |  Admin`
+            };
+            
+            let info_text = `
+                Account ID: ${element[0]}
+                Password: ${element[2]}
+                Email: ${element[3]}
+                IP: ${element[4]}
+                Date created: ${element[5]}
+                `;
+            newDiv.innerHTML = `
+                <h1>${text}</h1>
+                <pre>${info_text}</pre>
+                `;
+            const parentElement = document.getElementById("List");
             parentElement.appendChild(newDiv);
         };
     };
