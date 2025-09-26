@@ -45,17 +45,17 @@ session = Session()
 session.begin()
 
 #Add a base admin account for testing purposes
-try:
-  new_user = User(username="Diggy Gorgonzola", password="417", email=None, ip="127.0.0.1", accdate=datetime.datetime.now(), admin=True)
-  session.add(new_user)
-  session.commit()
-except:
-  session.rollback()
+#try:
+  #new_user = User(username="Diggy Gorgonzola", password="417", email=None, ip="127.0.0.1", accdate=datetime.datetime.now(), admin=True)
+  #session.add(new_user)
+  #session.commit()
+#except:
+  #session.rollback()
 
-#print the entire database for testing purposes
-a = session.query(User).all()
-for user in a:
-  print([user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin])
+#print the database for testing purposes
+#a = session.query(User).filter_by(username="Dinky Gonky")
+#for user in a:
+  #print([user.admin])
 
 
 @app.route('/', methods=["GET", "POST"])
@@ -65,15 +65,19 @@ def starting():
     #Save data entered from the form
     username = request.form['username']
     password = request.form['password']
+    a = session.query(User).filter_by(username=username)
+    for element in a:
+      user = element
 
     #See if the credentials are valid. (WIP add IP 2fa)
-    if not session.query(User).filter_by(username=username).all():
+    if user.password != password:
       return render_template("home.html", incorrect_password='true')
-    elif session.query(User).filter_by(username=username).all()[0].password == password:
+    elif user.password == password:
 
       #See if the user is an admin and go to admin panel
-      if session.query(User).filter_by(username=1):
+      if user.admin:
         liste = [[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin] for user in session.query(User).all()]
+        print(liste)
         return render_template("adminpanel.html", database=liste)
       return render_template("indexi.html")
     return render_template("home.html", incorrect_password='true')
@@ -105,7 +109,6 @@ def register():
       try:
         session.add(new_user)
       except:
-        session.rollback()
         return render_template("register.html", error="true")
       else:
         session.commit()
