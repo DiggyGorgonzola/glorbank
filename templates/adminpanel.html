@@ -1,14 +1,14 @@
 <!DOCTYPE html><html><head><title>Admin Panel</title></head>
 <style>
 html, body {
-      background: linear-gradient(#82ffa3, #24853e);
-      background-color: #82ffa3;
-      font-family: 'Times New Roman', Times, serif;
-      color: #000;
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow-y: auto;
+        background: linear-gradient(#82ffa3, #24853e);
+        background-color: #82ffa3;
+        font-family: 'Times New Roman', Times, serif;
+        color: #000;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow-y: auto;
     }
 
     input {
@@ -23,53 +23,59 @@ html, body {
     button:hover {
             background-color: #c9c9c9;
         }
+    select {
+            border-radius: 5px;
+        }
+    select:hover {
+            background-color: #c9c9c9;
+        }
 
     .homer {
-              position: relative;
-              top: calc(20% - 70px);
-              left: calc(50% - 300px);
-              width: 100px;
-              padding: 5px;
-              margin: 5px;
-              background-color: #47d16c;
-              box-shadow: 3px 3px #24853e;
-              border: 2px #000;
-              border-radius: 15px;
-            }
+            position: relative;
+            top: calc(20% - 70px);
+            left: calc(50% - 300px);
+            width: 100px;
+            padding: 5px;
+            margin: 5px;
+            background-color: #47d16c;
+            box-shadow: 3px 3px #24853e;
+            border: 2px #000;
+            border-radius: 15px;
+        }
     
     .searchbar {
-        position: relative;
-        top: calc(20% - 70px);
-        left: calc(50% - 300px);
-        width: 200px;
-        padding: 5px;
-        margin: 5px;
-        background-color: #47d16c;
-        box-shadow: 3px 3px #24853e;
-        border: 2px #000;
-        border-radius: 15px;
-    }
+            position: relative;
+            top: calc(20% - 70px);
+            left: calc(50% - 300px);
+            width: 200px;
+            padding: 5px;
+            margin: 5px;
+            background-color: #47d16c;
+            box-shadow: 3px 3px #24853e;
+            border: 2px #000;
+            border-radius: 15px;
+        }
 
     .box {
-        position: relative;
-        top: calc(20% - 70px);
-        left: calc(50% - 300px);
-        width: 600px;
-        padding: 5px;
-        margin: 5px;
-        background-color: #45d16a;
-        box-shadow: 3px 3px #24853e;
-        border: 2px #000;
-        border-radius: 15px;
+            position: relative;
+            top: calc(20% - 70px);
+            left: calc(50% - 300px);
+            width: 600px;
+            padding: 5px;
+            margin: 5px;
+            background-color: #45d16a;
+            box-shadow: 3px 3px #24853e;
+            border: 2px #000;
+            border-radius: 15px;
         }
 
     .box h1 {
-              text-align: center;
-              font-size: 60px;
-              color: #000;
-              text-decoration: 4px double underline #000;
-              
-            }
+            text-align: center;
+            font-size: 60px;
+            color: #000;
+            text-decoration: 4px double underline #000;
+            
+        }
 
         .box h2 {
               text-align: center;
@@ -86,7 +92,7 @@ html, body {
 
         .microbox {
             text-align: left;
-            position: relative;
+            position: static;
             font-size: 20px;
             padding: 5px;
             margin: 5px;
@@ -119,16 +125,30 @@ html, body {
     </div>
     <div class="searchbar">
         <input type="text" id="search" onkeyup="search()" placeholder="Search for an account">
+        <br>
+        <select name="filter" id="filter_select">
+            <option value="username">Filter: Username</option>
+            <option value="account_id">Filter: Account ID</option>
+            <option value="password">Filter: Password</option>
+            <option value="email">Filter: Email</option>
+            <option value="ip">Filter: IP</option>
+            <option value="date">Filter: Date</option>
+            <option value="admin">Filter: Admin Capabilities</option>
+        </select>
     </div>
+
+
     <div class="box" id="box">
     <h1>GLORBENIAN NATIONAL BANK</h1>
     <p>Log In</p>
-    <ul id="List">
+    <ul id="List" style="padding-inline-start: 0px;">
 
     </ul>
   </div>
 </body>
 <script>
+    var filter_ing = "username";
+
     function database_render() {
         const database = {{ database | tojson }}; /*ignore error. it works */
         console.log(database);
@@ -143,19 +163,38 @@ html, body {
                 text = `${text} |  Admin`
             };
             
-            let info_text = `
-                Account ID: ${element[0]}
-                Password: ${element[2]}
-                Email: ${element[3]}
-                IP: ${element[4]}
-                Date created: ${element[5]}
-                `;
             newDiv.innerHTML = `
                 <h1>${text}</h1>
-                <pre>${info_text}</pre>
+                <pre id="account_id">Account ID: ${element[0]}</pre>
+                <pre id="username">Username: ${element[1]}</pre>
+                <pre id="password">Password: ${element[2]}</pre>
+                <pre id="email">Email: ${element[3]}</pre>
+                <pre id="ip">IP: ${element[4]}</pre>
+                <pre id="date">Date Created: ${element[5]}</pre>
+                <pre id="admin">Admin: ${element[6]}</pre>
                 `;
             const parentElement = document.getElementById("List");
             parentElement.appendChild(newDiv);
+        };
+    };
+
+    function search() {
+        var input, filter, ul, li, a, i, txtValue, search_val, gaga;
+        filter_ing = document.getElementById("filter_select").value;
+        input = document.getElementById('search');
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("List");
+        li = ul.getElementsByTagName("div");
+        for (i = 0; i < li.length; i++) {
+            gaga = li[i];
+            console.log(gaga);
+            a = gaga.querySelector(`#${filter_ing}`);
+            txtValue = a.textContent;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            };
         };
     };
 </script>
