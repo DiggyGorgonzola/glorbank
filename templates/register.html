@@ -111,6 +111,10 @@ html, body {
         <label id="passCharCount" style="position: relative; top: 0px; right: 42.5px; font-size: 10px; font-family: Arial, Helvetica, sans-serif; color: rgb(0, 0, 0);">80 / 80</label>
         <br>
 
+        National ID: <input type="text" name="national" maxlength="80" id="nationalID" style="padding-right: 40px; top: 100%; right: 100%;" onclick='returntonormal()' required>
+        <label id="nationalCharCount" style="position: relative; top: 0px; right: 42.5px; font-size: 10px; font-family: Arial, Helvetica, sans-serif; color: rgb(0, 0, 0);">80 / 80</label>
+        <br>
+
         Email (optional): <input type="email" name="email"  minlength="8" maxlength="80" id="emailID" style="padding-right: 40px; top: 100%; right: 100%;" onclick='returntonormal()'>
         <label id="emailCharCount" style="position: relative; top: 0px; right: 42.5px; font-size: 10px; font-family: Arial, Helvetica, sans-serif; color: rgb(0, 0, 0);">80 / 80</label>
         <br>
@@ -119,7 +123,7 @@ html, body {
         <button type="submit">Register an account</button>
       </div>
     </form>
-    <h3>Terms of Service: By checking "I agree to the ToS," you agree to the following terms and conditions. The Glorbenian National Bank will collect and store the provided username, password (and email). The Glorbenian National Bank may also collect data regarding your bank account (I.E. recent transactions), however this will be only under official government request. Any and all data provided goes through the host service onrender.com, only create an account if you trust them. In the event of fraud, the Glorbenian National Bank has the right to deactivate your account and repossess all money still in the account.</h3>
+    <h3>Terms of Service: By checking "I agree to the ToS," you agree to the following terms and conditions. The Glorbenian National Bank will collect and store the provided username, password, national ID number, (and email or phone number). The Glorbenian National Bank may also collect data regarding your bank account (I.E. recent transactions), however this will be only under official government request. Any and all data provided goes through the host service onrender.com, only create an account if you trust them. In the event of fraud, the Glorbenian National Bank has the right to deactivate your account and repossess all money still in the account.</h3>
   </div>
   <script>
   const usernameInput = document.getElementById('usernameID');
@@ -129,6 +133,10 @@ html, body {
   const passwordInput = document.getElementById('passwordID');
   const passCharCount = document.getElementById('passCharCount');
   const passMaxChars = 80;
+
+  const nationalInput = document.getElementById('nationalID');
+  const nationalCharCount = document.getElementById('nationalCharCount');
+  const nationalMaxChars = 80;
 
   const emailInput = document.getElementById('emailID');
   const emailCharCount = document.getElementById('emailCharCount');
@@ -143,29 +151,44 @@ html, body {
     const remaining = passMaxChars - passwordInput.value.length; 
     passCharCount.textContent = `${remaining} / 80`;
   });
+  nationalInput.addEventListener('input', () => {
+    const remaining = nationalMaxChars - nationalInput.value.length;   
+    nationalCharCount.textContent = `${remaining} / 80`;
+  });
   emailInput.addEventListener('input', () => {
     const remaining = emailMaxChars - emailInput.value.length;   
     emailCharCount.textContent = `${remaining} / 80`;
   });
+  
 
 
 
   function errorcheck() {
     const username_exists = "{{ username_exists }}";
+    const nationalID_exists = "{{ nationalID_exists }}";
+    const info = {{ typed_info | tojson }};
     const error = "{{ error }}";
-    console.log(username_exists);
-    console.log(error);
     if (username_exists) {
       document.querySelector(".box h2").innerHTML = "Username already in the database. Please choose a different one";
       document.getElementById("usernameID").style.borderColor = 'red';
+
+      document.getElementById("usernameID").value = info[0]
+      document.getElementById("passwordID").value = info[1]
+      document.getElementById("nationalID").value = info[2]
+      document.getElementById("emailID").value = info[3]
     };
-    if (error) {
-      document.querySelector(".box h2").innerHTML = "An unknown error has occured. Please refresh the page and see if that works";
+    if (nationalID_exists) {
+      document.querySelector(".box h2").innerHTML = "The National ID you have entered is already in the database. Please choose a different one";
+      document.getElementById("nationalID").style.borderColor = 'red';
+    };
+    if (error.length > 0) {
+      document.querySelector(".box h2").innerHTML = error.toString();
     };
   };
 
   function returntonormal() {
     document.getElementById('usernameID').style.borderColor = "black";
+    document.getElementById('nationalID').style.borderColor = "black";
     document.querySelector(".box h2").innerHTML = "";
   };
   </script>
