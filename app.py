@@ -28,10 +28,11 @@ class User(Base):
   id = db.Column(db.Integer, primary_key=True)
   username = db.Column(db.String(80), unique=True, nullable=False)
   password = db.Column(db.String(80), nullable=False)
-  email = db.Column(db.String(80), unique=True)
-  admin = db.Column(db.Boolean)
+  email = db.Column(db.String(80), nullable=True)
+  admin = db.Column(db.Integer)
   ip = db.Column(db.Text)
   accdate = db.Column(db.DateTime)
+  national_id = db.Column(db.Integer, nullable=False, unique=True)
 
 
 # activate db
@@ -45,17 +46,25 @@ session = Session()
 session.begin()
 
 #Add a base admin account for testing purposes
-#try:
-  #new_user = User(username="Diggy Gorgonzola", password="417", email=None, ip="127.0.0.1", accdate=datetime.datetime.now(), admin=True)
-  #session.add(new_user)
-  #session.commit()
-#except:
-  #session.rollback()
+existing_user = session.query(User).first()
+
+if not existing_user:
+    new_user = User(
+        username="Diggy Gorgonzola",
+        password="417",
+        email=None,
+        ip="127.0.0.1",
+        accdate=datetime.datetime.now(),
+        admin=1,
+        national_id = -1
+    )
+    session.add(new_user)
+    session.commit()
 
 #print the database for testing purposes
-#a = session.query(User).filter_by(username="Dinky Gonky")
-#for user in a:
-  #print([user.admin])
+a = session.query(User).all()
+for user in a:
+  print([user.username, user.password, user.email, user.ip, user.accdate, user.admin])
 
 
 @app.route('/', methods=["GET", "POST"])
@@ -65,38 +74,33 @@ def starting():
     #Save data entered from the form
     username = request.form['username']
     password = request.form['password']
-    a = session.query(User).filter_by(username=username)
-    for element in a:
+    user = None
+    for element in session.query(User).filter_by(username=username):
       user = element
-
+    if user == None:
+      return render_template("home.html", incorrect_password='true')
     #See if the credentials are valid. (WIP add IP 2fa)
     if user.password != password:
       return render_template("home.html", incorrect_password='true')
-    elif user.password == password:
 
-      #See if the user is an admin and go to admin panel
-      if user.admin:
-        liste = [[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin] for user in session.query(User).all()]
-        print(liste)
-        return render_template("adminpanel.html", database=liste)
-      return render_template("indexi.html")
+
+    elif user.password == password:
+      return render_template("indexi.html", adming=user.admin)
     return render_template("home.html", incorrect_password='true')
   else:
     return render_template("home.html")
-
-@app.route('/indexi.html')
-def indexi():
-  return render_template("indexi.html")
   
 @app.route('/register', methods=["GET", "POST"])
 def register():
+  global username, password, nationalID, user_ip, email
   if request.method == "POST":
     
     #Save data entered from the form
     username = request.form['username']
     password = request.form['password']
+    nationalID = request.form['national']
     user_ip = request.remote_addr
-    email = None
+    email = ""
     if request.form['email']:
       email = request.form['email']
 
@@ -104,18 +108,32 @@ def register():
     print((username, user_ip, password, email))
 
     #Add the user to the database. Check if the username is already taken
-    new_user = User(username=username, password=password, ip=user_ip, email=email, accdate=datetime.datetime.now(), admin=False)
-    if not session.query(User).filter_by(username=username).all():
+    try:
+      new_user = User(username=username, password=password, ip=user_ip, email=email, accdate=datetime.datetime.now(), national_id=nationalID, admin=0)
+    except:
+      return render_template("register.html", typed_info=[], error="Uh Oh")
+    if session.query(User).filter_by(username=username).first():
+      return render_template("register.html", typed_info=[username, password, nationalID, email], username_exists="true")
+    elif session.query(User).filter_by(national_id=nationalID).first():
+      return render_template("register.html", typed_info=[username, password, nationalID, email], nationalID_exists="true")
+    else:
       try:
         session.add(new_user)
       except:
-        return render_template("register.html", error="true")
+        return render_template("register.html", typed_info=[], error="true")
       else:
         session.commit()
         return render_template("home.html")
-    return render_template("register.html", username_exists="true")
-  return render_template("register.html")
+  return render_template("register.html", typed_info=[])
 
+# WIP WIP WIP WIP WIP WIP
+@app.route('/adminlink?admin=1/', methods=["GET", "POST"])
+def adminlink():
+  if request.method == "GET":
+    if username:
+      if session.query(User).filter_by(username=username).first().admin == int(request.form['admin']):
+        return render_template("adminpanel.html", database=session.query(User).all())
+    return render_template("adminpanel.html", database=session.query(User).all())
 
 #Base.metadata.drop_all(engine)
 #DELETES THE ENTIRE DATABASE
