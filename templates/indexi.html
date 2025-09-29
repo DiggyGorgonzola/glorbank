@@ -1,1 +1,106 @@
-<!DOCTYPE html><html><head><h1>Hello World!</h1></head><body><a href="/">Home</a></body></html>
+<!DOCTYPE html><html><head><title>Glorbenian Bank</title><meta charset="UTF-8"></head></html>
+
+<style>
+html, body {
+      background: linear-gradient(#82ffa3, #24853e);
+      background-color: #82ffa3;
+      font-family: 'Times New Roman', Times, serif;
+      color: #000;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    input {
+            border-radius: 5px;
+        }
+    input:hover {
+            background-color: #c9c9c9;
+        }
+    button {
+            border-radius: 5px;
+        }
+    button:hover {
+            background-color: #c9c9c9;
+        }
+
+    .registration {
+          position: relative;
+          top: calc(20% - 70px);
+          left: calc(50% - 300px);
+          padding: 5px;
+          margin: 5px;
+          background-color: #45d16a;
+          box-shadow: 3px 3px #24853e;
+          border: 2px #000;
+          border-radius: 15px;
+        }
+    .homer {
+        position: relative;
+        top: calc(20% - 70px);
+        left: calc(50% - 300px);
+        padding: 5px;
+        margin: 5px;
+        background-color: #45d16a;
+        box-shadow: 3px 3px #24853e;
+        border: 2px #000;
+        border-radius: 15px;
+        }
+  
+    .box {
+          position: relative;
+          top: calc(20% - 50px);
+          left: calc(50% - 300px);
+          width: 600px;
+          padding: 5px;
+          margin: 5px;
+          background-color: #45d16a;
+          box-shadow: 3px 3px #24853e;
+          border: 2px #000;
+          border-radius: 15px;
+        }
+
+        .box h1 {
+              text-align: center;
+              font-size: 60px;
+              color: #000;
+              text-decoration: 4px double underline #000;
+            }
+
+        .box h2 {
+              text-align: center;
+              font-size: 20px;
+              color: #000;
+            }
+
+        .box p {
+              text-align: center;
+              font-size: 40px;
+              color: #000;
+              text-decoration: 2px underline #000;
+            }
+</style>
+<body onload="Adming()"> 
+    <div id="button_container" style="display:flex;">
+        <div class="homer">
+            <form action="/">
+                <input type="submit" value="Login"/>
+            </form>
+        </div>
+    </div>
+</body>
+<script>
+    function Adming() {
+        const adming = {{ adming }};
+        if (adming == 1) {
+            const Link = document.createElement("div");
+            Link.className = "registration";
+            Link.innerHTML = `<form action="/adminlink">
+        <input type="submit" name="admin" value=${adming}/>
+        </form>`
+            const parentElement = document.getElementById("button_container");
+            parentElement.appendChild(Link);
+        };
+    };
+</script>
