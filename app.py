@@ -127,7 +127,7 @@ def register():
         return render_template("home.html")
   return render_template("register.html", typed_info=[])
 
-
+# WIP WIP WIP WIP WIP WIP
 @app.route('/adminlink', methods=["GET", "POST"])
 def adminlink():
   if request.method == "POST":
@@ -138,8 +138,7 @@ def adminlink():
     if session.query(User).filter_by(username=username).first().admin == admin_capabilities:
       database_list = []
       for element in session.query(User).all():
-        #fix this!
-        database_list += [element.id, element.username, element.password, element.email, element.ip, element.accdate, element.admin, element.national_id]
+        database_list.append([element.id, element.username, element.password, element.email, element.ip, element.accdate, element.admin])
       return render_template("adminpanel.html", database=database_list)
     return render_template("register.html", typed_info=[], errror="Uh oh!")
   return render_template("register.html", typed_info=[], errror="Uh oh!")
