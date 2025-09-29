@@ -69,6 +69,7 @@ for user in a:
 
 @app.route('/', methods=["GET", "POST"])
 def starting():
+  global username, password, nationalID, user_ip, email
   if request.method == "POST":
 
     #Save data entered from the form
@@ -85,7 +86,7 @@ def starting():
 
 
     elif user.password == password:
-      return render_template("indexi.html", adming=user.admin)
+      return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin)
     return render_template("home.html", incorrect_password='true')
   else:
     return render_template("home.html")
@@ -126,14 +127,21 @@ def register():
         return render_template("home.html")
   return render_template("register.html", typed_info=[])
 
-# WIP WIP WIP WIP WIP WIP
-@app.route('/adminlink?admin=1/', methods=["GET", "POST"])
-def adminlink():
-  if request.method == "GET":
-    if username:
-      if session.query(User).filter_by(username=username).first().admin == int(request.form['admin']):
-        return render_template("adminpanel.html", database=session.query(User).all())
-    return render_template("adminpanel.html", database=session.query(User).all())
 
+@app.route('/adminlink', methods=["GET", "POST"])
+def adminlink():
+  if request.method == "POST":
+    username = request.form['username']
+    print(username)
+    admin_capabilities = int(request.form['admin_capabilities'])
+    print(admin_capabilities)
+    if session.query(User).filter_by(username=username).first().admin == admin_capabilities:
+      database_list = []
+      for element in session.query(User).all():
+        #fix this!
+        database_list += [element.id, element.username, element.password, element.email, element.ip, element.accdate, element.admin, element.national_id]
+      return render_template("adminpanel.html", database=database_list)
+    return render_template("register.html", typed_info=[], errror="Uh oh!")
+  return render_template("register.html", typed_info=[], errror="Uh oh!")
 #Base.metadata.drop_all(engine)
 #DELETES THE ENTIRE DATABASE
