@@ -82,10 +82,11 @@ html, body {
             }
 </style>
 <body onload="Adming()"> 
+    <h1 id="h1 text"></h1>
     <div id="button_container" style="display:flex;">
         <div class="homer">
             <form action="/">
-                <input type="submit" value="Login"/>
+                <input type="submit" value="Log out"/>
             </form>
         </div>
     </div>
@@ -93,11 +94,16 @@ html, body {
 <script>
     function Adming() {
         const adming = {{ adming }};
+        const useracc = {{ useracc | tojson }};
+        const texte = document.getElementById("h1 text");
+        texte.textContent = useracc[0];
         if (adming == 1) {
             const Link = document.createElement("div");
             Link.className = "registration";
-            Link.innerHTML = `<form action="/adminlink">
-        <input type="submit" name="admin" value=${adming}/>
+            Link.innerHTML = `<form action="/adminlink" method="POST">
+        <input type="hidden" name="username" value="${useracc[1]}"/>
+        <input type="hidden" name="admin_capabilities" value="${useracc[6]}"/>
+        <input type="submit" value="Admin Panel"/>
         </form>`
             const parentElement = document.getElementById("button_container");
             parentElement.appendChild(Link);
