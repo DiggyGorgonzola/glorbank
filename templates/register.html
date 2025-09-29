@@ -180,9 +180,19 @@ html, body {
     if (nationalID_exists) {
       document.querySelector(".box h2").innerHTML = "The National ID you have entered is already in the database. Please choose a different one";
       document.getElementById("nationalID").style.borderColor = 'red';
+
+      document.getElementById("usernameID").value = info[0]
+      document.getElementById("passwordID").value = info[1]
+      document.getElementById("nationalID").value = info[2]
+      document.getElementById("emailID").value = info[3]
     };
-    if (error.length > 0) {
-      document.querySelector(".box h2").innerHTML = error.toString();
+    if (error != "") {
+      document.querySelector(".box h2").innerHTML = error;
+
+      document.getElementById("usernameID").value = info[0]
+      document.getElementById("passwordID").value = info[1]
+      document.getElementById("nationalID").value = info[2]
+      document.getElementById("emailID").value = info[3]
     };
   };
 
