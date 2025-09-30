@@ -7,6 +7,12 @@ from flask_bcrypt import Bcrypt
 from werkzeug.security import generate_password_hash, check_password_hash
 import os, datetime
 
+
+USERDATABASE = [
+  ["Diggy Gorgonzola", "417", None, "127.0.0.1", datetime.datetime.now(), 1, -1],
+  ["Dinky Gonky", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 1],
+  ["Dinky Gonky Alt", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 2],
+]
 # create the db link
 app = Flask(__name__)
 Base = declarative_base()
@@ -34,6 +40,18 @@ class User(Base):
   accdate = db.Column(db.DateTime)
   national_id = db.Column(db.Integer, nullable=False, unique=True)
 
+class Bank(Base):
+  __tablename__ = "Bank"
+  id = db.Column(db.Integer, primary_key=True)
+  accdate = db.Column(db.DateTime)
+  bank_value = db.Column(db.Integer, nullable=False)
+  national_id = db.Column(db.Integer, nullable=False, unique=True)
+
+class OngoingTransactions(Base):
+  __tablename__ = "OngoingTransactions":
+  id = db.Column(db.Integer, primary_key=True)
+  date = db.Column(db.DateTime)
+  acc_from = db.Column(db.Integer, nullable=False, unique=True)
 
 # activate db
 engine = create_engine('sqlite:///users.db')
@@ -49,17 +67,18 @@ session.begin()
 existing_user = session.query(User).first()
 
 if not existing_user:
-    new_user = User(
-        username="Diggy Gorgonzola",
-        password="417",
-        email=None,
-        ip="127.0.0.1",
-        accdate=datetime.datetime.now(),
-        admin=1,
-        national_id = -1
-    )
-    session.add(new_user)
-    session.commit()
+  for user in USERDATABASE:
+      new_user = User(
+          username=user[0],
+          password=user[1],
+          email=user[2],
+          ip=user[3],
+          accdate=user[4],
+          admin=user[5],
+          national_id=user[6]
+      )
+      session.add(new_user)
+      session.commit()
 
 #print the database for testing purposes
 a = session.query(User).all()
