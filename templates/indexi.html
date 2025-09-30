@@ -80,29 +80,39 @@ html, body {
               color: #000;
               text-decoration: 2px underline #000;
             }
+
+        .bank-info {
+            text-align: center;
+            font-size: 10px;
+            color: #000;
+            border-radius: 15px;
+            border: 2px #24853e;
+        }
 </style>
 <body onload="Adming()"> 
-    <h1 id="h1 text"></h1>
-    <div id="button_container" style="display:flex;">
+    <div id="button_container" style="position:relative; display:flex; top:calc(20% - 70px);">
         <div class="homer">
             <form action="/">
-                <input type="submit" value="Log out"/>
+                <input type="submit" value="Go to Login"/>
             </form>
         </div>
     </div>
+    <div class="box" id="box">
+    <h1>GLORBENIAN NATIONAL BANK</h1>
+    <p id="welcome">Welcome, </p>
+  </div>
 </body>
 <script>
     function Adming() {
         const adming = {{ adming }};
         const useracc = {{ useracc | tojson }};
-        const texte = document.getElementById("h1 text");
-        texte.textContent = useracc[0];
+        document.getElementById("welcome").textContent = `Welcome, ${useracc[1]}`
         if (adming == 1) {
             const Link = document.createElement("div");
             Link.className = "registration";
             Link.innerHTML = `<form action="/adminlink" method="POST">
         <input type="hidden" name="username" value="${useracc[1]}"/>
-        <input type="hidden" name="admin_capabilities" value="${useracc[6]}"/>
+        <input type="hidden" name="admin_capabilities" value="${useracc[6]}"!/>
         <input type="submit" value="Admin Panel"/>
         </form>`
             const parentElement = document.getElementById("button_container");
