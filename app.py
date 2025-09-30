@@ -13,6 +13,12 @@ USERDATABASE = [
   ["Dinky Gonky", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 1],
   ["Dinky Gonky Alt", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 2],
 ]
+
+BANKDATABASE = [
+  [-999999, USERDATABASE[0][4], USERDATABASE[0][6]],
+  [5, USERDATABASE[1][4], USERDATABASE[1][6]],
+  [-99999, USERDATABASE[2][4], USERDATABASE[2][6]],
+]
 # create the db link
 app = Flask(__name__)
 Base = declarative_base()
@@ -43,15 +49,17 @@ class User(Base):
 class Bank(Base):
   __tablename__ = "Bank"
   id = db.Column(db.Integer, primary_key=True)
-  accdate = db.Column(db.DateTime)
   bank_value = db.Column(db.Integer, nullable=False)
+  accdate = db.Column(db.DateTime)
   national_id = db.Column(db.Integer, nullable=False, unique=True)
 
 class OngoingTransactions(Base):
-  __tablename__ = "OngoingTransactions":
+  __tablename__ = "OngoingTransactions"
   id = db.Column(db.Integer, primary_key=True)
   date = db.Column(db.DateTime)
-  acc_from = db.Column(db.Integer, nullable=False, unique=True)
+  natid_from = db.Column(db.Integer, nullable=False, unique=True)
+  natid_to = db.Column(db.Integer, nullable=False, unique=True)
+
 
 # activate db
 engine = create_engine('sqlite:///users.db')
@@ -63,8 +71,9 @@ Session = sessionmaker(bind=engine)
 session = Session()
 session.begin()
 
-#Add a base admin account for testing purposes
+#Add a basic database for testing purposes
 existing_user = session.query(User).first()
+existing_bankacc = session.query(Bank).first()
 
 if not existing_user:
   for user in USERDATABASE:
@@ -79,6 +88,16 @@ if not existing_user:
       )
       session.add(new_user)
       session.commit()
+if not existing_bankacc:
+  for bankacc in BANKDATABASE:
+    new_bankacc = Bank(
+      bank_value=bankacc[0],
+      accdate=bankacc[1],
+      national_id=bankacc[2]
+    )
+    session.add(new_bankacc)
+    session.commit()
+
 
 #print the database for testing purposes
 a = session.query(User).all()
@@ -95,6 +114,7 @@ def starting():
     username = request.form['username']
     password = request.form['password']
     user = None
+    bank = None
     for element in session.query(User).filter_by(username=username):
       user = element
     if user == None:
@@ -105,7 +125,9 @@ def starting():
 
 
     elif user.password == password:
-      return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin)
+      for element in session.query(Bank).filter_by(national_id=user.national_id):
+        bank = element
+      return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin, bankacc=[bank.id, bank.bank_value, bank.accdate, bank.national_id])
     return render_template("home.html", incorrect_password='true')
   else:
     return render_template("home.html")
