@@ -82,7 +82,8 @@ html, body {
 </style>
 <body onload=errorcheck()>
 
-      <!-- figure out how to make the buttons variable lenght! -->
+  <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
+  <!-- figure out how to make the buttons variable lenght! -->
   <div class="registration" id="registration">
     <form action="/register">
       <input type="submit" value="Register"/>
@@ -95,22 +96,45 @@ html, body {
     <form id="login_form" class="forme" action="/" method="POST">
       Username: <input type="text" name="username" id='usernamething' onclick='returntonormal()' required><br>
       Password: <input type="password" name="password" id='passwordthing' onclick='returntonormal()' required><br>
+      National ID: <input type="password" name="national" id='nationalid' onclick='returntonormal()' required><br>
       <button type="submit">Log in :3</button>
     </form>
   </div>
   <script>
+  function updateClock() {
+    const now = new Date();
+    const formattedTime = now.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: false
+    });
+    const formattedDate = now.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    document.getElementById('clock-display').innerText = `${formattedDate} ${formattedTime}`;
+  };
+
   function errorcheck() {
+    setInterval(updateClock, 1000);
     const incorrect_password = "{{ incorrect_password }}";
     const error = "{{ error }}";
+    
+    /* add typed_info to this (see register.html) */
     console.log(incorrect_password);
     console.log(error);
     if (incorrect_password) {
-      document.querySelector(".box h2").innerHTML = "The username or password provided is incorrect.";
+      document.querySelector(".box h2").innerHTML = "The username, password, or national ID provided is incorrect.";
       document.getElementById('usernamething').style.borderColor = "red";
       document.getElementById('passwordthing').style.borderColor = "red";
+      document.getElementById('nationalid').style.borderColor = "red";
     };
     if (error) {
-      document.querySelector(".box h2").innerHTML = "An unknown error has occured. Please refresh the page and see if that works";
+      document.querySelector(".box h2").innerHTML = "An unknown error has occured. Please refresh the page and try again.";
     };
   };
 
