@@ -82,12 +82,25 @@ html, body {
             }
 
         .bank-info {
-            text-align: center;
+            text-align: left;
+            padding-left: 5px;
             font-size: 10px;
             color: #000;
             border-radius: 15px;
-            border: 2px #24853e;
+            border: 2px solid #24853e;
         }
+
+            .bank-info strong {
+                font-size: 15px;
+                text-align: left;
+                text-decoration: 0px; 
+            }
+
+            .bank-info p {
+                font-size: 10px;
+                text-align: left;
+                text-decoration: 0px; 
+            }
 </style>
 <body onload="Adming()"> 
     <div id="button_container" style="position:relative; display:flex; top:calc(20% - 70px);">
@@ -100,13 +113,18 @@ html, body {
     <div class="box" id="box">
     <h1>GLORBENIAN NATIONAL BANK</h1>
     <p id="welcome">Welcome, </p>
+    <div class="bank-info">
+        <strong id="bank_balance">YOUR BALANCE: </strong>
+    </div>
   </div>
 </body>
 <script>
     function Adming() {
         const adming = {{ adming }};
         const useracc = {{ useracc | tojson }};
+        const bankacc = {{ bankacc | tojson }};
         document.getElementById("welcome").textContent = `Welcome, ${useracc[1]}`
+        document.getElementById("bank_balance").textContent = `YOUR BALANCE: ${bankacc[1]}`
         if (adming == 1) {
             const Link = document.createElement("div");
             Link.className = "registration";
