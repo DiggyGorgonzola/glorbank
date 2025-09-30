@@ -29,12 +29,20 @@ html, body {
     select:hover {
             background-color: #c9c9c9;
         }
+    
+    select:open {
+        background-color: #fff;
+        border-radius: 5px;
+        border-color: #000;
+        
+    }
 
     .homer {
             position: relative;
             top: calc(20% - 70px);
             left: calc(50% - 300px);
-            width: 100px;
+            display: flex;
+            width: 80px;
             padding: 5px;
             margin: 5px;
             background-color: #47d16c;
@@ -50,6 +58,7 @@ html, body {
             width: 200px;
             padding: 5px;
             margin: 5px;
+            margin-top: 30px;
             background-color: #47d16c;
             box-shadow: 3px 3px #24853e;
             border: 2px #000;
@@ -63,6 +72,7 @@ html, body {
             width: 600px;
             padding: 5px;
             margin: 5px;
+            margin-top: 30px;
             background-color: #45d16a;
             box-shadow: 3px 3px #24853e;
             border: 2px #000;
@@ -141,7 +151,7 @@ html, body {
 
     <div class="box" id="box">
     <h1>GLORBENIAN NATIONAL BANK</h1>
-    <p>Log In</p>
+    <p>Admin Panel</p>
     <ul id="List" style="padding-inline-start: 0px;">
 
     </ul>
@@ -161,7 +171,7 @@ html, body {
             newDiv.id = element[1];
             let text = element[1];
             if (element[6]) {
-                text = `${text} |  Admin`
+                text = `${text} |  Admin ${element[6]}`
             };
             
             newDiv.innerHTML = `
