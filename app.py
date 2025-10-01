@@ -116,22 +116,29 @@ def starting():
     nationalID = request.form['national']
     user = None
     bank = None
+    typed_info = [username, password, nationalID]
+    try:
+      nationalID = int(nationalID)
+    except:
+      return render_template("home.html", incorrect_password='true', info=typed_info)
     for element in session.query(User).filter_by(username=username):
       user = element
     if user == None:
-      return render_template("home.html", incorrect_password='true')
+      return render_template("home.html", incorrect_password='true', info=typed_info)
     #See if the credentials are valid. (WIP add IP 2fa)
+    print(user.national_id, nationalID)
+    print(type(user.national_id), type(nationalID))
     if user.password != password or user.national_id != nationalID:
-      return render_template("home.html", incorrect_password='true')
+      return render_template("home.html", incorrect_password='true', info=typed_info)
 
 
-    elif user.password == password and user.national_id == natioanlID:
+    elif user.password == password and user.national_id == nationalID:
       for element in session.query(Bank).filter_by(national_id=user.national_id):
         bank = element
       return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin, bankacc=[bank.id, bank.bank_value, bank.accdate, bank.national_id])
-    return render_template("home.html", incorrect_password='true')
+    return render_template("home.html", incorrect_password='true', info=typed_info)
   else:
-    return render_template("home.html")
+    return render_template("home.html", info=[])
   
 @app.route('/register', methods=["GET", "POST"])
 def register():
@@ -166,7 +173,7 @@ def register():
         return render_template("register.html", typed_info=[], error="true")
       else:
         session.commit()
-        return render_template("home.html")
+        return render_template("home.html", info=[])
   return render_template("register.html", typed_info=[])
 
 @app.route('/adminlink', methods=["GET", "POST"])
