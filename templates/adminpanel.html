@@ -42,7 +42,7 @@ html, body {
             top: calc(20% - 70px);
             left: calc(50% - 300px);
             display: flex;
-            width: 80px;
+            width: 85px;
             padding: 5px;
             margin: 5px;
             background-color: #47d16c;
@@ -135,7 +135,7 @@ html, body {
         </form>
     </div>
     <div class="searchbar">
-        <input type="text" id="search" onkeyup="search()" placeholder="Search for an account">
+        <input type="text" id="search" onkeyup="search()" style="margin-bottom:10px;" placeholder="Search for an account">
         <br>
         <select name="filter" id="filter_select">
             <option value="username">Filter: Username</option>
@@ -203,10 +203,17 @@ html, body {
                 <pre id="date">Date Created: ${element[5]}</pre>
                 <pre id="admin">Admin: ${element[6]}</pre>
                 <pre id="national_id">National ID: ${element[7]}</pre>
+                <div style="display:flex;">
+                    <button id="bank_button" style="margin:5px;" onclick="add_money_admin(80)">Add Money</button>
+                    <input id="bank_input" type="number"></input>
+                </div>
                 `;
             const parentElement = document.getElementById("List");
             parentElement.appendChild(newDiv);
         };
+    };
+
+    function add_money_admin(helloaa) {
     };
 
     function search() {
