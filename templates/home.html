@@ -123,6 +123,7 @@ html, body {
     setInterval(updateClock, 1000);
     const incorrect_password = "{{ incorrect_password }}";
     const error = "{{ error }}";
+    const info = {{ info | tojson }};
     
     /* add typed_info to this (see register.html) */
     console.log(incorrect_password);
@@ -132,16 +133,34 @@ html, body {
       document.getElementById('usernamething').style.borderColor = "red";
       document.getElementById('passwordthing').style.borderColor = "red";
       document.getElementById('nationalid').style.borderColor = "red";
+
+      document.getElementById("usernamething").value = info[0];
+      document.getElementById("passwordthing").value = info[1];
+      document.getElementById("nationalid").value = info[2];
+
+      
     };
     if (error) {
       document.querySelector(".box h2").innerHTML = "An unknown error has occured. Please refresh the page and try again.";
+      document.getElementById('usernamething').style.borderColor = "red";
+      document.getElementById('passwordthing').style.borderColor = "red";
+      document.getElementById('nationalid').style.borderColor = "red";
+
+      document.getElementById("usernamething").value = info[0];
+      document.getElementById("passwordthing").value = info[1];
+      document.getElementById("nationalid").value = info[2];
     };
   };
 
   function returntonormal() {
     document.getElementById('usernamething').style.borderColor = "black";
     document.getElementById('passwordthing').style.borderColor = "black";
+    document.getElementById('nationalid').style.borderColor = "black";
     document.querySelector(".box h2").innerHTML = "";
+
+    document.getElementById("usernamething").value = info[0];
+    document.getElementById("passwordthing").value = info[1];
+    document.getElementById("nationalid").value = info[2];
   };
   </script>
 </body>
