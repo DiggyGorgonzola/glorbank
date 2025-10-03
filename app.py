@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
+from decimal import Decimal as decimal
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, text, Boolean
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, text, Boolean, LargeBinary
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from flask_bcrypt import Bcrypt
@@ -9,15 +10,15 @@ import os, datetime
 
 
 USERDATABASE = [
-  ["Diggy Gorgonzola", "417", None, "127.0.0.1", datetime.datetime.now(), 1, -1],
+  ["Diggy Gorgonzola", "417", None, "127.0.0.1", datetime.datetime.now(), 10, -1],
   ["Dinky Gonky", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 1],
   ["Dinky Gonky Alt", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 2],
 ]
 
 BANKDATABASE = [
-  [-999999, USERDATABASE[0][4], USERDATABASE[0][6]],
-  [5, USERDATABASE[1][4], USERDATABASE[1][6]],
-  [-99999, USERDATABASE[2][4], USERDATABASE[2][6]],
+  ["-999999", USERDATABASE[0][4], USERDATABASE[0][6]],
+  ["5", USERDATABASE[1][4], USERDATABASE[1][6]],
+  ["-99999", USERDATABASE[2][4], USERDATABASE[2][6]],
 ]
 # create the db link
 app = Flask(__name__)
@@ -49,13 +50,23 @@ class User(Base):
 class Bank(Base):
   __tablename__ = "Bank"
   id = db.Column(db.Integer, primary_key=True)
-  bank_value = db.Column(db.Integer, nullable=False)
+  bank_value = db.Column(db.String, nullable=False)
   accdate = db.Column(db.DateTime)
   national_id = db.Column(db.Integer, nullable=False, unique=True)
 
 class OngoingTransactions(Base):
   __tablename__ = "OngoingTransactions"
   id = db.Column(db.Integer, primary_key=True)
+  information = db.Column(db.String, nullable=True)
+  date = db.Column(db.DateTime)
+  natid_from = db.Column(db.Integer, nullable=False, unique=True)
+  natid_to = db.Column(db.Integer, nullable=False, unique=True)
+
+class Reports(Base):
+  __tablename__ = "Reports"
+  id = db.Column(db.Integer, primary_key=True)
+  money = db.Column(db.String, nullable=False)
+  information = db.Column(db.String, nullable=True)
   date = db.Column(db.DateTime)
   natid_from = db.Column(db.Integer, nullable=False, unique=True)
   natid_to = db.Column(db.Integer, nullable=False, unique=True)
@@ -104,7 +115,38 @@ a = session.query(User).all()
 for user in a:
   print([user.username, user.password, user.email, user.ip, user.accdate, user.admin])
 
-
+def admin_info_collect(admin_level):
+  database_list = []
+  for element in session.query(User).all():
+    stringy = []
+    if admin_level > 0:
+      stringy.append(element.id)
+      stringy.append(element.username)
+    if admin_level > 1:
+      stringy.append(element.password)
+    else:
+      stringy.append("HIDDEN")
+    if admin_level > 0:
+      stringy.append(element.email)
+    if admin_level > 1:
+      stringy.append(element.ip)
+    else:
+      stringy.append("HIDDEN")
+    if admin_level > 0:
+      stringy.append(element.accdate)
+      stringy.append(element.admin)
+    if admin_level > 1:
+      stringy.append(element.national_id)
+    else:
+      stringy.append("HIDDEN")
+    if admin_level > 2:
+      gooner = session.query(Bank).filter_by(national_id=element.national_id).first()
+      stringy.append(gooner.bank_value)
+    else:
+      stringy.append("HIDDEN")
+    database_list.append(stringy)
+  return database_list
+  
 @app.route('/', methods=["GET", "POST"])
 def starting():
   global username, password, nationalID, user_ip, email
@@ -184,13 +226,34 @@ def adminlink():
     admin_capabilities = int(request.form['admin_capabilities'])
     print(admin_capabilities)
     if session.query(User).filter_by(username=username).first().admin == admin_capabilities:
-      database_list = []
-      for element in session.query(User).all():
-
-        # Make sure to hide the database based off of Admin capabilities~!
-        database_list.append([element.id, element.username, element.password, element.email, element.ip, element.accdate, element.admin, element.national_id])
-      return render_template("adminpanel.html", database=database_list)
+      database_list = admin_info_collect(admin_capabilities)
+      return render_template("adminpanel.html", admin_user=username, database=database_list)
     return render_template("register.html", typed_info=[], errror="Uh oh!")
   return render_template("register.html", typed_info=[], errror="Uh oh!")
+
+
+@app.route('/addmoney',methods=["GET", "POST"])
+def addmoney():
+  database_list = []
+  if request.method == "POST":
+    admin_username = request.form["admins_username"]
+    admin_user = session.query(User).filter_by(username=username).first()
+
+    bank_val = request.form['bankval']
+    bank_val = decimal(bank_val)
+    account_ID = request.form['account_ID']
+    print(bank_val, account_ID)
+    print(type(bank_val))
+    user = session.query(User).filter_by(id=account_ID).first()
+    user_bank = session.query(Bank).filter_by(national_id=user.national_id).first()
+    if user_bank:
+      user_bank.bank_value = str(decimal(user_bank.bank_value) + bank_val)
+      #ADD BANK REPORTS!
+      session.commit()
+    print(user)
+    database_list = admin_info_collect(admin_user.admin)
+    return render_template("adminpanel.html", admin_user=admin_username, database=database_list)
+  return render_template("adminpanel.html", admin_user=admin_username, database=database_list)
+
 #Base.metadata.drop_all(engine)
 #DELETES THE ENTIRE DATABASE
