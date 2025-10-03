@@ -180,6 +180,7 @@ html, body {
 
     function database_render() {
         setInterval(updateClock, 1000);
+        const admin_user = "{{ admin_user }}";
         const database = {{ database | tojson }}; /*ignore error. it works */
         console.log(database);
         console.log("Hello world");
@@ -203,17 +204,22 @@ html, body {
                 <pre id="date">Date Created: ${element[5]}</pre>
                 <pre id="admin">Admin: ${element[6]}</pre>
                 <pre id="national_id">National ID: ${element[7]}</pre>
-                <div style="display:flex;">
-                    <button id="bank_button" style="margin:5px;" onclick="add_money_admin(80)">Add Money</button>
-                    <input id="bank_input" type="number"></input>
-                </div>
+                <pre id="bank_val">Bank Value: ${element[8]}</pre>
+                <form action="/addmoney" method="POST" style="display:flex;">
+                    <button id="bank_button" style="margin:5px;" type="submit">Add Money</button>
+                    <input id="bank_input" name="bankval" onkeyup="add_money_admin(${element[1]})" type="text"></input>
+                    <input type="hidden" name="account_ID" value="${element[0]}"></input>
+                    <input type="hidden" name="admins_username" value="${admin_user}"></input>
+                </form>
                 `;
             const parentElement = document.getElementById("List");
             parentElement.appendChild(newDiv);
         };
     };
 
-    function add_money_admin(helloaa) {
+    function add_money_admin(id) {
+        const input = document.getElementById(id).querySelect("#bank_input").value
+
     };
 
     function search() {
