@@ -113,7 +113,7 @@ if not existing_bankacc:
 #print the database for testing purposes
 a = session.query(User).all()
 for user in a:
-  print([user.username, user.password, user.email, user.ip, user.accdate, user.admin])
+  print([user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id])
 
 def admin_info_collect(admin_level):
   database_list = []
@@ -140,6 +140,7 @@ def admin_info_collect(admin_level):
     else:
       stringy.append("HIDDEN")
     if admin_level > 2:
+      print(element.national_id)
       gooner = session.query(Bank).filter_by(national_id=element.national_id).first()
       stringy.append(gooner.bank_value)
     else:
@@ -190,7 +191,7 @@ def register():
     #Save data entered from the form
     username = request.form['username']
     password = request.form['password']
-    nationalID = request.form['national']
+    nationalID = int(request.form['national'])
     user_ip = request.remote_addr
     email = ""
     if request.form['email']:
@@ -214,6 +215,9 @@ def register():
       except:
         return render_template("register.html", typed_info=[], error="true")
       else:
+        session.commit()
+        new_bank = Bank(bank_value=0, accdate=session.query(User).filter_by(national_id=nationalID).first().accdate, national_id=nationalID)
+        session.add(new_bank)
         session.commit()
         return render_template("home.html", info=[])
   return render_template("register.html", typed_info=[])
@@ -250,6 +254,7 @@ def addmoney():
       user_bank.bank_value = str(decimal(user_bank.bank_value) + bank_val)
       #report code is untested. If there's an error it's probably here.
       new_report = Reports(money=str(bank_val), information=f"Done manually via Admin Panel by {admin_user.username}", date=datetime.datetime.now(), natid_from=admin_user.national_id, natid_to=user.national_id) 
+      session.add(new_report)
       session.commit()
     print(user)
     database_list = admin_info_collect(admin_user.admin)
