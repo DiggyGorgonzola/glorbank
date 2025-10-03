@@ -148,6 +148,25 @@ def admin_info_collect(admin_level):
     database_list.append(stringy)
   return database_list
   
+
+def admin_reports_collect(admin_level):
+  for element in session.query(Reports).all():
+    stringy = []
+    if admin_level > 3:
+      stringy.append(money)
+    else:
+      stringy.append("HIDDEN")
+    if admin_level > 2:
+      stringy.append(information)
+    else:
+      stringy.append("HIDDEN")
+    if admin_level > 2:
+      stringy.append(natid_from)
+    else:
+      stringy.append("HIDDEN")
+    # FINISH
+
+    
 @app.route('/', methods=["GET", "POST"])
 def starting():
   global username, password, nationalID, user_ip, email
@@ -261,5 +280,18 @@ def addmoney():
     return render_template("adminpanel.html", admin_user=admin_username, database=database_list)
   return render_template("adminpanel.html", admin_user=admin_username, database=database_list)
 
+
+@app.route('/reports', methods=["GET", "POST"])
+def reports():
+  database_list = []
+  if request.method == "POST":
+    username = request.form['username']
+    print(username)
+    admin_capabilities = int(request.form['admin_capabilities'])
+    print(admin_capabilities)
+    if session.query(User).filter_by(username=username).first().admin == admin_capabilities:
+      database_list = admin_reports_collect(admin_capabilities)
+    return render_template("reports.html")
+  return render_template("reports.html")
 #Base.metadata.drop_all(engine)
 #DELETES THE ENTIRE DATABASE
