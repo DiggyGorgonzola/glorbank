@@ -237,7 +237,7 @@ def addmoney():
   database_list = []
   if request.method == "POST":
     admin_username = request.form["admins_username"]
-    admin_user = session.query(User).filter_by(username=username).first()
+    admin_user = session.query(User).filter_by(username=admin_username).first()
 
     bank_val = request.form['bankval']
     bank_val = decimal(bank_val)
