@@ -248,7 +248,8 @@ def addmoney():
     user_bank = session.query(Bank).filter_by(national_id=user.national_id).first()
     if user_bank:
       user_bank.bank_value = str(decimal(user_bank.bank_value) + bank_val)
-      #ADD BANK REPORTS!
+      #report code is untested. If there's an error it's probably here.
+      new_report = Reports(money=str(bank_val), information=f"Done manually via Admin Panel by {admin_user.username}", date=datetime.datetime.now(), natid_from=admin_user.national_id, natid_to=user.national_id) 
       session.commit()
     print(user)
     database_list = admin_info_collect(admin_user.admin)
