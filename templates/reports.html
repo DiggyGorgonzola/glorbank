@@ -1,1 +1,30 @@
 <!DOCTYPE html><html><head><title>Glorbenian Bank</title><meta charset="UTF-8"></head></html>
+<style>
+</style>
+  <body onload="adming()">
+    <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
+  </body>
+
+<script>
+  function updateClock() {
+    const now = new Date();
+    const formattedTime = now.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: false
+    });
+    const formattedDate = now.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    document.getElementById('clock-display').innerText = `${formattedDate} ${formattedTime}`;
+  };
+
+  function Adming() {
+    setInterval(updateClock, 1000);
+  };
+</script>
