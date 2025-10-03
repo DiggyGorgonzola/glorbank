@@ -145,7 +145,7 @@ html, body {
         const bankacc = {{ bankacc | tojson }};
         document.getElementById("welcome").textContent = `Welcome, ${useracc[1]}`
         document.getElementById("bank_balance").textContent = `YOUR BALANCE: ${bankacc[1]}`
-        if (adming == 1) {
+        if (adming > 0) {
             const Link = document.createElement("div");
             Link.className = "registration";
             Link.innerHTML = `<form action="/adminlink" method="POST">
