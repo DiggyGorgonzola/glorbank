@@ -156,5 +156,16 @@ html, body {
             const parentElement = document.getElementById("button_container");
             parentElement.appendChild(Link);
         };
+        if (adming > 2) {
+            const Link = document.createElement("div");
+            Link.className = "registration";
+            Link.innerHTML = `<form action="/reports" method="POST">
+        <input type="hidden" name="username" value="${useracc[1]}"/>
+        <input type="hidden" name="admin_capabilities" value="${useracc[6]}"!/>
+        <input type="submit" value="Reports"/>
+        </form>`
+            const parentElement = document.getElementById("button_container");
+            parentElement.appendChild(Link);
+        };
     };
 </script>
