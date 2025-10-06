@@ -62,6 +62,26 @@ class OngoingTransactions(Base):
   natid_from = db.Column(db.Integer, nullable=False, unique=True)
   natid_to = db.Column(db.Integer, nullable=False, unique=True)
 
+
+class RegisteringOrganizations(Base):
+  __tablename__ = "RegisteringOrganizations"
+  id = db.Column(db.Integer, primary_key=True)
+  name = db.Column(db.String, nullable=False)
+  email = db.Column(db.String, nullable=False)
+  phone = db.Column(db.String, nullable=False)
+
+
+class Organization(Base):
+  __tablename__ = "Organization"
+  id = db.Column(db.Integer, primary_key=True)
+  username = db.Column(db.String(80), unique=True, nullable=False)
+  password = db.Column(db.String(80), nullable=False)
+  email = db.Column(db.String(80), nullable=True)
+  admin = db.Column(db.Integer)
+  ip = db.Column(db.Text)
+  accdate = db.Column(db.DateTime)
+  national_id = db.Column(db.Integer, nullable=False, unique=True)
+
 class Reports(Base):
   __tablename__ = "Reports"
   id = db.Column(db.Integer, primary_key=True)
@@ -238,7 +258,7 @@ def register():
         new_bank = Bank(bank_value=0, accdate=session.query(User).filter_by(national_id=nationalID).first().accdate, national_id=nationalID)
         session.add(new_bank)
         session.commit()
-        return render_template("home.html", info=[])
+        return render_template("register.html", typed_info=[username, password, nationalID, email], error="Your account has been registered!")
   return render_template("register.html", typed_info=[])
 
 @app.route('/adminlink', methods=["GET", "POST"])
@@ -293,5 +313,33 @@ def reports():
       database_list = admin_reports_collect(admin_capabilities)
     return render_template("reports.html")
   return render_template("reports.html")
+
+@app.route('/regorg', methods=["GET", "POST"])
+def regorg():
+  if request.method == "POST":
+    name = request.form["name"]
+    email = request.form["email"]
+    phone = request.form["phone"]
+    try:
+      new_org = RegisteringOrganizations(name=name, email=email, phone=phone)
+    except:
+      return render_template("organization_register.html", typed_info=[], error="Uh oh!")
+    try:
+      session.add(new_org)
+      session.commit()
+    except:
+      return render_template("organization_register.html", typed_info=[], error="Uh oh!")
+    return render_template("register.html", typed_info=[])
+  elif request.method == "GET":
+    return render_template("organization_register.html", typed_info=[])
+  return render_template("register.html", typed_info=[], errror="Uh oh!")
+
+
+@app.route('/logorg', methods=["GET", "POST"])
+def logorg():
+  # FINISH THIS !!!
+  if request.method == "POST":
+    pass
+  return render_template("home.html", typed_info=[], errror="Uh oh!")
 #Base.metadata.drop_all(engine)
 #DELETES THE ENTIRE DATABASE
