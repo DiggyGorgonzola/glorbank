@@ -17,7 +17,7 @@ html, body {
           position: relative;
           top: calc(20% - 70px);
           left: calc(50% - 300px);
-          width: 70px;
+          width: 50px;
           padding: 5px;
           margin: 5px;
           background-color: #45d16a;
@@ -84,14 +84,21 @@ html, body {
 
   <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
   <!-- figure out how to make the buttons variable lenght! -->
-  <div class="registration" id="registration">
-    <form action="/register">
-      <input type="submit" value="Register"/>
-    </form>
+  <div style="display:flex;position:relative;top:calc(20% - 70px);">
+    <div class="registration" style="width:70px;">
+      <form action="/register">
+        <input type="submit" value="Register"/>
+      </form>
+    </div>
+    <div class="registration" style="width:145px;">
+      <form action="/logorg">
+        <input type="submit" value="Log in (Organization)"/>
+      </form>
+    </div>
   </div>
   <div class="box" id="box">
     <h1>GLORBENIAN NATIONAL BANK</h1>
-    <p>Log In</p>
+    <p>Log In (Personal Account)</p>
     <h2 id="heading2"></h2>
     <form id="login_form" class="forme" action="/" method="POST">
       Username: <input type="text" name="username" id='usernamething' onclick='returntonormal()' required><br>
