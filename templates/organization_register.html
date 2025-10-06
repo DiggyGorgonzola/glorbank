@@ -1,0 +1,222 @@
+<!DOCTYPE html><html><head><title>Glorbenian Bank | Register an Account</title><meta charset="UTF-8"></head></html>
+
+
+<style>
+html, body {
+      background: linear-gradient(#82ffa3, #24853e);
+      font-family: 'Times New Roman', Times, serif;
+      color: #000;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow-y: auto;
+    }
+    
+    .box {
+          position: relative;
+          top: calc(20% - 50px);
+          left: calc(50% - 300px);
+          width: 600px;
+          padding: 5px;
+          margin: 5px;
+          background-color: #45d16a;
+          box-shadow: 3px 3px #24853e;
+          border: 2px #000;
+          border-radius: 15px;
+        }
+
+        .homer {
+              position: relative;
+              top: calc(20% - 70px);
+              left: calc(50% - 300px);
+              width: 50px;
+              padding: 5px;
+              margin: 5px;
+              background-color: #45d16a;
+              box-shadow: 3px 3px #24853e;
+              border: 2px #000;
+              border-radius: 15px;
+            }
+
+        .box h1 {
+              text-align: center;
+              font-size: 60px;
+              color: #000;
+              text-decoration: 4px double underline #000;
+              
+            }
+
+        .box h2 {
+              text-align: center;
+              font-size: 20px;
+              color: #000;
+            }
+
+        .box p {
+              text-align: center;
+              font-size: 40px;
+              color: #000;
+              text-decoration: 2px underline #000;
+            }
+        
+        .forme {
+              font-size: 30px;
+              color: #000;
+              border: 2px solid #24853e;
+              border-radius: 15px;
+              margin: 5px;
+              text-align: center;
+            }
+
+            input {
+                  border-radius: 5px;
+                }
+
+                input:hover {
+                      background-color: #c9c9c9;
+                    }
+
+            button {
+                  border-radius: 5px;
+                }
+
+                button:hover {
+                      background-color: #c9c9c9;
+                }
+
+        .box h3 {
+              text-align: center;
+              font-size: 10px;
+              color: #000;
+              font-family: Arial, Helvetica, sans-serif;
+            }
+</style>
+<body onload=errorcheck()>
+  <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
+  <div style="display:flex;position:relative;top:calc(20% - 70px);">
+    <div class="homer" style="width:85px;">
+      <form action="/">
+        <input type="submit" value="Go to Login"/>
+      </form>
+    </div>
+    <div class="homer" style="width:185px;">
+      <form action="/register">
+        <input type="submit" value="Register a Personal Account"/>
+      </form>
+    </div>
+  </div>
+  <div class="box" id="box">
+    <h1>GLORBENIAN NATIONAL BANK</h1>
+    <p>Register (Organization)</p>
+    <div id="clock-display" style="font-size:20px;text-align:center;text-decoration:0px;"></div>
+    <h2 id="heading2"></h2>
+    <form id="register_form" action="/register" method="POST">
+      <div class="forme">
+        Organization Name: <input type="text" name="name" minlength="8" maxlength="80" id="nameID" style="padding-right: 40px; top: 100%; right: 100%;" onclick='returntonormal()' required>
+        <label id="nameCharCount" style="position: relative; top: 0px; right: 42.5px; font-size: 10px; font-family: Arial, Helvetica, sans-serif; color: rgb(0, 0, 0);">80 / 80</label>
+        <br>
+
+        Password: <input type="password" name="password" minlength="8" maxlength="80" id="passwordID" style="padding-right: 40px; top: 100%; right: 100%;" onclick='returntonormal()' required>
+        <label id="passCharCount" style="position: relative; top: 0px; right: 42.5px; font-size: 10px; font-family: Arial, Helvetica, sans-serif; color: rgb(0, 0, 0);">80 / 80</label>
+        <br>
+
+        Email: <input type="email" name="email"  minlength="8" maxlength="80" id="emailID" style="padding-right: 40px; top: 100%; right: 100%;" onclick='returntonormal()'>
+        <label id="emailCharCount" style="position: relative; top: 0px; right: 42.5px; font-size: 10px; font-family: Arial, Helvetica, sans-serif; color: rgb(0, 0, 0);">80 / 80</label>
+        <br>
+        
+        Phone Number: <input type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" name="phone"  minlength="8" maxlength="80" id="phoneID" style="padding-right: 40px; top: 100%; right: 100%;" onclick='returntonormal()'>
+        <label id="phoneCharCount" style="position: relative; top: 0px; right: 42.5px; font-size: 10px; font-family: Arial, Helvetica, sans-serif; color: rgb(0, 0, 0);">80 / 80</label>
+        <br>
+
+        <label class="input" style="font-size: 15px;">I agree to the ToS:<input type="checkbox" name="tos" onclick='returntonormal()' required><br></label>
+        <button type="submit">Register an organization</button>
+      </div>
+    </form>
+    <h3>Terms of Service: By checking "I agree to the ToS," you agree to the following terms and conditions.The Glorbenian National Bank will collect information entered in the form regarding organization's name, main email account, main phone number, and, upon registering, the Glorbenian National Bank shall produce for the organization a unique organization ID for logging in under the organization's name. An organization's account are given special permissions and special responsibilities, such as the ability to automatically pay their employees, but also an increased flat tax rate.</h3>
+  </div>
+  <script>
+  function updateClock() {
+    const now = new Date();
+    const formattedTime = now.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: false
+    });
+    const formattedDate = now.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    document.getElementById('clock-display').innerText = `${formattedDate} ${formattedTime}`;
+  }
+  const nameInput = document.getElementById('nameID');
+  const nameCharCount = document.getElementById('nameCharCount');
+  const nameMaxChars = 80;
+
+  const passwordInput = document.getElementById('passwordID');
+  const passCharCount = document.getElementById('passCharCount');
+  const passMaxChars = 80;
+
+  const emailInput = document.getElementById('emailID');
+  const emailCharCount = document.getElementById('emailCharCount');
+  const emailMaxChars = 80;
+
+  const phoneInput = document.getElementById('phoneID');
+  const phoneCharCount = document.getElementById('phoneCharCount');
+  const phoneMaxChars = 80;
+
+    
+  usernameInput.addEventListener('input', () => {
+    const remaining = userMaxChars - usernameInput.value.length;
+    userCharCount.textContent = `${remaining} / 80`;
+  });
+  passwordInput.addEventListener('input', () => {
+    const remaining = passMaxChars - passwordInput.value.length; 
+    passCharCount.textContent = `${remaining} / 80`;
+  });
+  emailInput.addEventListener('input', () => {
+    const remaining = emailMaxChars - emailInput.value.length;   
+    emailCharCount.textContent = `${remaining} / 80`;
+  });
+  phoneInput.addEventListener('input', () => {
+    const remaining = phoneMaxChars - phoneInput.value.length;   
+    phoneCharCount.textContent = `${remaining} / 80`;
+  });
+  
+
+
+
+  function errorcheck() {
+    setInterval(updateClock, 1000);
+    const username_exists = "{{ username_exists }}";
+    const nationalID_exists = "{{ nationalID_exists }}";
+    const info = {{ typed_info | tojson }};
+    const error = "{{ error }}";
+    if (username_exists) {
+      document.querySelector(".box h2").innerHTML = "Organization name already in the database. Please choose a different one";
+      document.getElementById("nameID").style.borderColor = 'red';
+
+      document.getElementById("nameID").value = info[0]
+      document.getElementById("passwordID").value = info[1]
+      document.getElementById("emailID").value = info[2]
+      document.getElementById("phoneID").value = info[3]
+    };
+    if (error != "") {
+      document.querySelector(".box h2").innerHTML = error;
+
+      document.getElementById("nameID").value = info[0]
+      document.getElementById("passwordID").value = info[1]
+      document.getElementById("emailID").value = info[2]
+      document.getElementById("phoneID").value = info[3]
+    };
+  };
+
+  function returntonormal() {
+    document.getElementById('nameID').style.borderColor = "black";
+    document.querySelector(".box h2").innerHTML = "";
+  };
+  </script>
+</body>
