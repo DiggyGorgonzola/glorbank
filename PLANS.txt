@@ -1,1 +1,7 @@
-Hello, World!
+Allow for organizations to apply for an account
+Encrypt data
+Allow for personal accounts to be linked to organizations
+Allow for personal accounts to have certain level of access to organization accounts
+Reports
+Editing a live database
+Automatic bank interest
