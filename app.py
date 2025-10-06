@@ -68,6 +68,7 @@ class OngoingTransactions(Base):
 class RegisteringOrganizations(Base):
   __tablename__ = "RegisteringOrganizations"
   id = db.Column(db.Integer, primary_key=True)
+  accdate = db.Column(db.DateTime)
   name = db.Column(db.String, nullable=False)
   email = db.Column(db.String, nullable=False)
   phone = db.Column(db.String, nullable=False)
@@ -76,13 +77,26 @@ class RegisteringOrganizations(Base):
 class Organization(Base):
   __tablename__ = "Organization"
   id = db.Column(db.Integer, primary_key=True)
-  username = db.Column(db.String(80), unique=True, nullable=False)
-  password = db.Column(db.String(80), nullable=False)
+  name = db.Column(db.String(80), unique=True, nullable=False)
   email = db.Column(db.String(80), nullable=True)
-  admin = db.Column(db.Integer)
-  ip = db.Column(db.Text)
   accdate = db.Column(db.DateTime)
-  national_id = db.Column(db.Integer, nullable=False, unique=True)
+  orgid = db.Column(db.String, unique=True, nullable=False)
+
+# Perhaps make a separate table for each organization. Procedurally.
+class Employees(base)
+  __tablename__ = "Employees"
+  id = db.Column(db.Integer, primary_key=True)
+  organization = db.Column(db.String, nullable=False)
+  '''
+  Primary Owner := CEO or equivalent person
+  Secondary Owners := Treasurer, secretary, etc. Someone who has control over the entire company, but doesn't own it
+  Org Admins := People who need elevated control of the organization's account, but not full control
+  Org Employees := People who are employed by the company. Their accounts are tied to the organization so it is much easier for the organization to give mass payments.
+  '''
+  primary_owner = db.Column(db.String, nullable=True)
+  secondary_owners = db.Column(db.String, nullable=True)
+  org_admins = db.Column(db.String, nullable=True)
+  org_employees = db.Column(db.String, nullable=True)
 
 class Reports(Base):
   __tablename__ = "Reports"
@@ -323,7 +337,7 @@ def regorg():
     email = request.form["email"]
     phone = request.form["phone"]
     try:
-      new_org = RegisteringOrganizations(name=name, email=email, phone=phone)
+      new_org = RegisteringOrganizations(name=name, email=email, phone=phone, accdate=datetime.datetime.now())
     except:
       return render_template("organization_register.html", typed_info=[], error="Uh oh!")
     try:
