@@ -3,15 +3,175 @@
 <!-- WIP please actually make it work. We need a system like adminpanel.html has where it procedurally generates elements -->
 
 
-<!DOCTYPE html><html><head><title>Glorbenian Bank</title><meta charset="UTF-8"></head></html>
-<style>
-</style>
-  <body onload="adming()">
-    <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
-  </body>
+<!-- practically everything here is untested as of Oct 6th -->
 
+<!DOCTYPE html><html><head><title>Transaction Reports</title></head>
+<style>
+html, body {
+        background: linear-gradient(#82ffa3, #24853e);
+        background-color: #82ffa3;
+        font-family: 'Times New Roman', Times, serif;
+        color: #000;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    input {
+            border-radius: 5px;
+        }
+    input:hover {
+            background-color: #c9c9c9;
+        }
+    button {
+            border-radius: 5px;
+        }
+    button:hover {
+            background-color: #c9c9c9;
+        }
+    select {
+            border-radius: 5px;
+        }
+    select:hover {
+            background-color: #c9c9c9;
+        }
+    
+    select:open {
+        background-color: #fff;
+        border-radius: 5px;
+        border-color: #000;
+        
+    }
+
+    .homer {
+            position: relative;
+            top: calc(20% - 70px);
+            left: calc(50% - 300px);
+            display: flex;
+            width: 85px;
+            padding: 5px;
+            margin: 5px;
+            background-color: #47d16c;
+            box-shadow: 3px 3px #24853e;
+            border: 2px #000;
+            border-radius: 15px;
+        }
+    
+    .searchbar {
+            position: relative;
+            top: calc(20% - 70px);
+            left: calc(50% - 300px);
+            width: 200px;
+            padding: 5px;
+            margin: 5px;
+            margin-top: 30px;
+            background-color: #47d16c;
+            box-shadow: 3px 3px #24853e;
+            border: 2px #000;
+            border-radius: 15px;
+        }
+
+    .box {
+            position: relative;
+            top: calc(20% - 70px);
+            left: calc(50% - 300px);
+            width: 600px;
+            padding: 5px;
+            margin: 5px;
+            margin-top: 30px;
+            background-color: #45d16a;
+            box-shadow: 3px 3px #24853e;
+            border: 2px #000;
+            border-radius: 15px;
+        }
+
+    .box h1 {
+            text-align: center;
+            font-size: 60px;
+            color: #000;
+            text-decoration: 4px double underline #000;
+            
+        }
+
+        .box h2 {
+              text-align: center;
+              font-size: 20px;
+              color: #000;
+            }
+
+        .box p {
+              text-align: center;
+              font-size: 40px;
+              color: #000;
+              text-decoration: 2px underline #000;
+            }
+
+        .microbox {
+            text-align: left;
+            position: static;
+            font-size: 20px;
+            padding: 5px;
+            margin: 5px;
+            background-color: #47d16c;
+            border: 2px solid #24853e;
+            border-radius: 15px;
+            }
+        
+            .microbox h1 {
+                text-align: left;
+                font-size: 30px;
+                font-family: Arial, Helvetica, sans-serif;
+                text-decoration:#000;
+            }
+
+            .microbox pre {
+                text-align: left;
+                font-size: 15px;
+                font-family: Arial, Helvetica, sans-serif;
+                text-decoration:#000;
+            }
+
+
+</style>
+<body onload=database_render()>
+    <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
+    <div style="display:flex;position:relative;top:calc(20% - 70px);">
+    <div class="registration" style="width:100px;">
+      <form action="/adminlink">
+        <input type="submit" value="Admin Panel"/>
+      </form>
+    </div>
+    <div class="registration" style="width:100px;">
+      <form action="/">
+        <input type="submit" value="Go to Login"/>
+      </form>
+    </div>
+  </div>
+    <div class="searchbar">
+        <input type="text" id="search" onkeyup="search()" style="margin-bottom:10px;" placeholder="Search for an account">
+        <br>
+        <select name="filter" id="filter_select">
+            <option value="id">Filter: ID</option>
+            <option value="money">Filter: Money</option>
+            <option value="information">Filter: Extra Information</option>
+            <option value="date">Filter: Date</option>
+            <option value="id_from">Filter: Account From</option>
+            <option value="id_to">Filter: Account To</option>
+        </select>
+    </div>
+
+
+    <div class="box" id="box">
+    <h1>GLORBENIAN NATIONAL BANK</h1>
+    <p>Transaction Reports</p>
+    <ul id="List" style="padding-inline-start: 0px;">
+
+    </ul>
+  </div>
+</body>
 <script>
-  function updateClock() {
+    function updateClock() {
     const now = new Date();
     const formattedTime = now.toLocaleTimeString('en-US', {
       hour: 'numeric',
@@ -28,8 +188,56 @@
 
     document.getElementById('clock-display').innerText = `${formattedDate} ${formattedTime}`;
   };
+    var filter_ing = "id";
 
-  function Adming() {
-    setInterval(updateClock, 1000);
-  };
+    function database_render() {
+        setInterval(updateClock, 1000);
+        const admin_user = "{{ admin_user }}";
+        const database = {{ database | tojson }}; /*ignore error. it works */
+        console.log(database);
+        console.log("Hello world");
+        for (const element of database) {
+            console.log(element);
+            const newDiv = document.createElement("div");
+            newDiv.className = "microbox"; /* WIP FIGURE THIS OUT SO THAT IT PRINTS USER DATA */
+            newDiv.id = element[0];
+            let text = element[0];
+            text = `Transaction #${text} | from ${element[4]} to ${element[5]}`
+            
+            newDiv.innerHTML = `
+                <h1>${text}</h1>
+                <pre id="id">ID: ${element[0]}</pre>
+                <pre id="money">Money: ${element[1]}</pre>
+                <pre id="information">Information: ${element[2]}</pre>
+                <pre id="date">Date: ${element[3]}</pre>
+                <pre id="id_from">From: ${element[4]}</pre>
+                <pre id="id_to">To: ${element[5]}</pre>
+                `;
+            const parentElement = document.getElementById("List");
+            parentElement.appendChild(newDiv);
+        };
+    };
+
+    function search() {
+        var input, filter, ul, li, a, i, txtValue, search_val, gaga;
+        filter_ing = document.getElementById("filter_select").value;
+        input = document.getElementById('search');
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("List");
+        li = ul.getElementsByTagName("div");
+        for (i = 0; i < li.length; i++) {
+            gaga = li[i];
+            console.log(gaga);
+            a = gaga.querySelector(`#${filter_ing}`);
+            txtValue = a.textContent;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            };
+        };
+    };
 </script>
+  </html>
+
+
