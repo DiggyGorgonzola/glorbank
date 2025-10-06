@@ -108,7 +108,9 @@ html, body {
     <form id="login_form" class="forme" action="/" method="POST">
       Organization Name (Case Sensitive): <input type="text" name="name" id='namething' onclick='returntonormal()' required><br>
       Organization Password: <input type="text" name="password" id='passwordthing' onclick='returntonormal()' required><br>
-      Organization ID: <input type="password" name="org" id='orgid' onclick='returntonormal()' required><br>
+      Organization ID: <input type="password" name="org" id='orgid' onclick='returntonormal()' required><br><br>
+      Username: <input type="text" name="username" id='usernamething' onclick='returntonormal()' required>
+      User Password: <input type="password" name="userpass" id='userpassthing' onclick='returntonormal()' required>
       <button type="submit">Log in :3</button>
     </form>
   </div>
@@ -145,6 +147,8 @@ html, body {
       document.getElementById('namething').style.borderColor = "red";
       document.getElementById('passwordthing').style.borderColor = "red";
       document.getElementById('orgid').style.borderColor = "red";
+      document.getElementById('usernamething').style.borderColor = "red";
+      document.getElementById('userpassthing').style.borderColor = "red";
 
       document.getElementById("namething").value = info[0];
       document.getElementById("passwordthing").value = info[1];
@@ -154,25 +158,27 @@ html, body {
     };
     if (error) {
       document.querySelector(".box h2").innerHTML = error;
-      document.getElementById('usernamething').style.borderColor = "red";
+      document.getElementById('namething').style.borderColor = "red";
       document.getElementById('passwordthing').style.borderColor = "red";
-      document.getElementById('nationalid').style.borderColor = "red";
+      document.getElementById('orgid').style.borderColor = "red";
+      document.getElementById('usernamething').style.borderColor = "red";
+      document.getElementById('userpassthing').style.borderColor = "red";
 
-      document.getElementById("usernamething").value = info[0];
+      document.getElementById("namething").value = info[0];
       document.getElementById("passwordthing").value = info[1];
-      document.getElementById("nationalid").value = info[2];
+      document.getElementById("orgid").value = info[2];
     };
   };
 
   function returntonormal() {
-    document.getElementById('usernamething').style.borderColor = "black";
+    document.getElementById('namething').style.borderColor = "black";
     document.getElementById('passwordthing').style.borderColor = "black";
-    document.getElementById('nationalid').style.borderColor = "black";
+    document.getElementById('orgid').style.borderColor = "black";
     document.querySelector(".box h2").innerHTML = "";
 
-    document.getElementById("usernamething").value = info[0];
+    document.getElementById("namething").value = info[0];
     document.getElementById("passwordthing").value = info[1];
-    document.getElementById("nationalid").value = info[2];
+    document.getElementById("orgid").value = info[2];
   };
   </script>
 </body>
