@@ -64,7 +64,7 @@ class OngoingTransactions(Base):
   natid_from = db.Column(db.Integer, nullable=False, unique=True)
   natid_to = db.Column(db.Integer, nullable=False, unique=True)
 
-
+# Organizations must go through a verification process before they are added to the actual database.
 class RegisteringOrganizations(Base):
   __tablename__ = "RegisteringOrganizations"
   id = db.Column(db.Integer, primary_key=True)
@@ -117,6 +117,8 @@ session.begin()
 existing_user = session.query(User).first()
 existing_bankacc = session.query(Bank).first()
 
+
+#Add a predefined database for testing purposes
 if not existing_user:
   for user in USERDATABASE:
       new_user = User(
@@ -146,6 +148,7 @@ a = session.query(User).all()
 for user in a:
   print([user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id])
 
+#Collects info about personal accounts based on the admin's level
 def admin_info_collect(admin_level):
   database_list = []
   for element in session.query(User).all():
@@ -179,7 +182,7 @@ def admin_info_collect(admin_level):
     database_list.append(stringy)
   return database_list
   
-
+#Collects reports based on the admin's level
 def admin_reports_collect(admin_level):
   database_list = []
   for element in session.query(Reports).all():
