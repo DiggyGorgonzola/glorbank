@@ -109,10 +109,7 @@ html, body {
     <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
     <div id="button_container" style="position:relative; display:flex; top:calc(20% - 70px);">
         <div class="homer">
-            <form action="/">
-                <input type="hidden" id="username" name="username1" value=""/>
-                <input type="hidden" id="password" name="password1" value=""/>
-                <input type="hidden" id="national" name="national1" value=""/>
+            <form action="/login">
                 <input type="submit" value="Go to Login"/>
             </form>
         </div>
@@ -157,7 +154,7 @@ html, body {
         if (adming > 0) {
             const Link = document.createElement("div");
             Link.className = "registration";
-            Link.innerHTML = `<form action="/adminlink" method="POST">
+            Link.innerHTML = `<form action="/accountpage/adminpanel" method="POST">
         <input type="hidden" name="username" value="${useracc[1]}"/>
         <input type="hidden" name="admin_capabilities" value="${useracc[6]}"/>
         <input type="submit" value="Admin Panel"/>
