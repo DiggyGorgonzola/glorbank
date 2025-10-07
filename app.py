@@ -186,13 +186,17 @@ def admin_info_collect(admin_level):
 def admin_reports_collect(admin_level):
   database_list = []
   for element in session.query(Reports).all():
-    stringy = []
+    stringy = [element.id]
     if admin_level > 3:
       stringy.append(element.money)
     else:
       stringy.append("HIDDEN")
     if admin_level > 2:
       stringy.append(element.information)
+    else:
+      stringy.append("HIDDEN")
+    if admin_level > 2:
+      stringy.append(element.date)
     else:
       stringy.append("HIDDEN")
     if admin_level > 2:
@@ -208,7 +212,7 @@ def admin_reports_collect(admin_level):
     # FINISH
 
     
-@app.route('/', methods=["GET", "POST"])
+@app.route('/login', methods=["GET", "POST"])
 def starting():
   global username, password, nationalID, user_ip, email
   if request.method == "POST":
@@ -282,7 +286,7 @@ def register():
         return render_template("register.html", typed_info=[username, password, nationalID, email], error="Your account has been registered!")
   return render_template("register.html", typed_info=[])
 
-@app.route('/adminlink', methods=["GET", "POST"])
+@app.route('/accountpage/adminpanel', methods=["GET", "POST"])
 def adminlink():
   if request.method == "POST":
     username = request.form['username']
@@ -297,7 +301,7 @@ def adminlink():
   return render_template("register.html", typed_info=[], errror="Uh oh!")
 
 
-@app.route('/addmoney',methods=["GET", "POST"])
+@app.route('/accountpage/adminpanel/addmoney',methods=["GET", "POST"])
 def addmoney():
   database_list = []
   if request.method == "POST":
@@ -313,7 +317,6 @@ def addmoney():
     user_bank = session.query(Bank).filter_by(national_id=user.national_id).first()
     if user_bank:
       user_bank.bank_value = str(decimal(user_bank.bank_value) + bank_val)
-      #report code is untested. If there's an error it's probably here.
       new_report = Reports(money=str(bank_val), information=f"Done manually via Admin Panel by {admin_user.username}", date=datetime.datetime.now(), id_from=admin_user.national_id, id_to=user.national_id) 
       session.add(new_report)
       session.commit()
@@ -337,7 +340,7 @@ def reports():
     return render_template("reports.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
   return render_template("home.html", info=[], error="Uh oh!")
 
-@app.route('/regorg', methods=["GET", "POST"])
+@app.route('/register/organization', methods=["GET", "POST"])
 def regorg():
   if request.method == "POST":
     name = request.form["name"]
@@ -358,7 +361,7 @@ def regorg():
   return render_template("register.html", typed_info=[], errror="Uh oh!")
 
 
-@app.route('/logorg', methods=["GET", "POST"])
+@app.route('/login/organization', methods=["GET", "POST"])
 def logorg():
   # FINISH THIS !!!
   if request.method == "POST":
@@ -395,5 +398,10 @@ def accountpage():
       for element in session.query(Bank).filter_by(national_id=user.national_id):
         bank = element
       return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin, bankacc=[bank.id, bank.bank_value, bank.accdate, bank.national_id])
+
+@app.route('/organizations', methods=["GET", "POST"])
+def organizations():
+  return render_template("home.html", error="Hello, World!", info=[])
+
 #Base.metadata.drop_all(engine)
 #DELETES THE ENTIRE DATABASE
