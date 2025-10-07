@@ -131,10 +131,15 @@ html, body {
 </style>
 <body onload=database_render()>
     <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
-    <div class="homer">
-        <form action="/">
-            <input type="submit" value="Go to Login"/>
-        </form>
+    <div id="button_container" style="position:relative; display:flex; top:calc(20% - 70px);">
+        <div class="homer" style="width:140px;">
+            <form action="/accountpage" method="POST">
+                <input type="hidden" id="username1" name="username1" value=""/>
+                <input type="hidden" id="password1" name="password1" value=""/>
+                <input type="hidden" id="national1" name="national1" value=""/>
+                <input type="submit" value="Go to Account Page"/>
+            </form>
+        </div>
     </div>
     <div class="searchbar">
         <input type="text" id="search" onkeyup="search()" style="margin-bottom:10px;" placeholder="Search for an account">
@@ -182,10 +187,13 @@ html, body {
 
     function database_render() {
         setInterval(updateClock, 1000);
-        const admin_user = "{{ admin_user }}";
+        const admin_user = {{ admin_user | tojson }};
         const database = {{ database | tojson }}; /*ignore error. it works */
         console.log(database);
         console.log("Hello world");
+        document.getElementById("username1").value = `${admin_user[1]}`;
+        document.getElementById("password1").value = `${admin_user[2]}`;
+        document.getElementById("national1").value = `${admin_user[7]}`;
         for (const element of database) {
             console.log(element);
             const newDiv = document.createElement("div");
@@ -211,7 +219,7 @@ html, body {
                     <button id="bank_button" style="margin:5px;" type="submit">Add Money</button>
                     <input id="bank_input" name="bankval" onkeyup="add_money_admin(${element[1]})" type="text"></input>
                     <input type="hidden" name="account_ID" value="${element[0]}"></input>
-                    <input type="hidden" name="admins_username" value="${admin_user}"></input>
+                    <input type="hidden" name="admins_username" value="${admin_user[1]}"></input>
                 </form>
                 `;
             const parentElement = document.getElementById("List");
