@@ -110,6 +110,9 @@ html, body {
     <div id="button_container" style="position:relative; display:flex; top:calc(20% - 70px);">
         <div class="homer">
             <form action="/">
+                <input type="hidden" id="username" name="username1" value=""/>
+                <input type="hidden" id="password" name="password1" value=""/>
+                <input type="hidden" id="national" name="national1" value=""/>
                 <input type="submit" value="Go to Login"/>
             </form>
         </div>
@@ -148,12 +151,15 @@ html, body {
         const bankacc = {{ bankacc | tojson }};
         document.getElementById("welcome").textContent = `Welcome, ${useracc[1]}`
         document.getElementById("bank_balance").textContent = `YOUR BALANCE: ${bankacc[1]}`
+        document.getElementById("username").value = `${useracc[1]}`;
+        document.getElementById("password").value = `${useracc[2]}`;
+        document.getElementById("national").value = `${useracc[7]}`;
         if (adming > 0) {
             const Link = document.createElement("div");
             Link.className = "registration";
             Link.innerHTML = `<form action="/adminlink" method="POST">
         <input type="hidden" name="username" value="${useracc[1]}"/>
-        <input type="hidden" name="admin_capabilities" value="${useracc[6]}"!/>
+        <input type="hidden" name="admin_capabilities" value="${useracc[6]}"/>
         <input type="submit" value="Admin Panel"/>
         </form>`
             const parentElement = document.getElementById("button_container");
@@ -164,7 +170,7 @@ html, body {
             Link.className = "registration";
             Link.innerHTML = `<form action="/reports" method="POST">
         <input type="hidden" name="username" value="${useracc[1]}"/>
-        <input type="hidden" name="admin_capabilities" value="${useracc[6]}"!/>
+        <input type="hidden" name="admin_capabilities" value="${useracc[6]}"/>
         <input type="submit" value="Reports"/>
         </form>`
             const parentElement = document.getElementById("button_container");
