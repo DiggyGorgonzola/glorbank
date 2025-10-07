@@ -83,16 +83,10 @@ class Organization(Base):
   orgid = db.Column(db.String, unique=True, nullable=False)
 
 # Perhaps make a separate table for each organization. Procedurally.
-class Employees(base)
+class Employees(Base):
   __tablename__ = "Employees"
   id = db.Column(db.Integer, primary_key=True)
   organization = db.Column(db.String, nullable=False)
-  '''
-  Primary Owner := CEO or equivalent person
-  Secondary Owners := Treasurer, secretary, etc. Someone who has control over the entire company, but doesn't own it
-  Org Admins := People who need elevated control of the organization's account, but not full control
-  Org Employees := People who are employed by the company. Their accounts are tied to the organization so it is much easier for the organization to give mass payments.
-  '''
   primary_owner = db.Column(db.String, nullable=True)
   secondary_owners = db.Column(db.String, nullable=True)
   org_admins = db.Column(db.String, nullable=True)
@@ -186,20 +180,27 @@ def admin_info_collect(admin_level):
   
 
 def admin_reports_collect(admin_level):
+  database_list = []
   for element in session.query(Reports).all():
     stringy = []
     if admin_level > 3:
-      stringy.append(money)
+      stringy.append(element.money)
     else:
       stringy.append("HIDDEN")
     if admin_level > 2:
-      stringy.append(information)
+      stringy.append(element.information)
     else:
       stringy.append("HIDDEN")
     if admin_level > 2:
-      stringy.append(natid_from)
+      stringy.append(element.id_from)
     else:
       stringy.append("HIDDEN")
+    if admin_level > 2:
+      stringy.append(element.id_to)
+    else:
+      stringy.append("HIDDEN")
+    database_list.append(stringy)
+  return database_list
     # FINISH
 
     
@@ -286,7 +287,8 @@ def adminlink():
     print(admin_capabilities)
     if session.query(User).filter_by(username=username).first().admin == admin_capabilities:
       database_list = admin_info_collect(admin_capabilities)
-      return render_template("adminpanel.html", admin_user=username, database=database_list)
+      admin_user = session.query(User).filter_by(username=username).first()
+      return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
     return render_template("register.html", typed_info=[], errror="Uh oh!")
   return render_template("register.html", typed_info=[], errror="Uh oh!")
 
@@ -308,13 +310,13 @@ def addmoney():
     if user_bank:
       user_bank.bank_value = str(decimal(user_bank.bank_value) + bank_val)
       #report code is untested. If there's an error it's probably here.
-      new_report = Reports(money=str(bank_val), information=f"Done manually via Admin Panel by {admin_user.username}", date=datetime.datetime.now(), natid_from=admin_user.national_id, natid_to=user.national_id) 
+      new_report = Reports(money=str(bank_val), information=f"Done manually via Admin Panel by {admin_user.username}", date=datetime.datetime.now(), id_from=admin_user.national_id, id_to=user.national_id) 
       session.add(new_report)
       session.commit()
     print(user)
     database_list = admin_info_collect(admin_user.admin)
-    return render_template("adminpanel.html", admin_user=admin_username, database=database_list)
-  return render_template("adminpanel.html", admin_user=admin_username, database=database_list)
+    return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
+  return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
 
 
 @app.route('/reports', methods=["GET", "POST"])
@@ -322,13 +324,14 @@ def reports():
   database_list = []
   if request.method == "POST":
     username = request.form['username']
+    admin_user = session.query(User).filter_by(username=username).first()
     print(username)
     admin_capabilities = int(request.form['admin_capabilities'])
     print(admin_capabilities)
     if session.query(User).filter_by(username=username).first().admin == admin_capabilities:
       database_list = admin_reports_collect(admin_capabilities)
-    return render_template("reports.html")
-  return render_template("reports.html")
+    return render_template("reports.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
+  return render_template("home.html", info=[], error="Uh oh!")
 
 @app.route('/regorg', methods=["GET", "POST"])
 def regorg():
@@ -356,6 +359,37 @@ def logorg():
   # FINISH THIS !!!
   if request.method == "POST":
     pass
-  return render_template("home.html", typed_info=[], errror="Uh oh!")
+  elif request.method == "GET":
+    return render_template("organization_login.html", info=[])
+  return render_template("home.html", info=[], errror="Uh oh!")
+
+@app.route('/accountpage', methods=["GET", "POST"])
+def accountpage():
+  if request.method == "POST":
+    username = request.form['username1']
+    password = request.form['password1']
+    nationalID = request.form['national1']
+    user = None
+    bank = None
+    typed_info = [username, password, nationalID]
+    try:
+      nationalID = int(nationalID)
+    except:
+      return render_template("home.html", incorrect_password='true', info=typed_info)
+    for element in session.query(User).filter_by(username=username):
+      user = element
+    if user == None:
+      return render_template("home.html", incorrect_password='true', info=typed_info)
+    #See if the credentials are valid. (WIP add IP 2fa)
+    print(user.national_id, nationalID)
+    print(type(user.national_id), type(nationalID))
+    if user.password != password or user.national_id != nationalID:
+      return render_template("home.html", incorrect_password='true', info=typed_info)
+
+
+    elif user.password == password and user.national_id == nationalID:
+      for element in session.query(Bank).filter_by(national_id=user.national_id):
+        bank = element
+      return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin, bankacc=[bank.id, bank.bank_value, bank.accdate, bank.national_id])
 #Base.metadata.drop_all(engine)
 #DELETES THE ENTIRE DATABASE
