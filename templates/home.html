@@ -148,8 +148,8 @@ html, body {
 
       
     };
-    if (error) {
-      document.querySelector(".box h2").innerHTML = "An unknown error has occured. Please refresh the page and try again.";
+    if (length(error) > 0) {
+      document.querySelector(".box h2").innerHTML = error;
       document.getElementById('usernamething').style.borderColor = "red";
       document.getElementById('passwordthing').style.borderColor = "red";
       document.getElementById('nationalid').style.borderColor = "red";
