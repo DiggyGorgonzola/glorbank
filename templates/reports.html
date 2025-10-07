@@ -1,6 +1,6 @@
 <!-- reports.html -->
 
-<!-- WIP please actually make it work. We need a system like adminpanel.html has where it procedurally generates elements -->
+<!-- WIP? -->
 
 <!DOCTYPE html><html><head><title>Transaction Reports</title></head>
 <style>
@@ -134,13 +134,6 @@ html, body {
 <body onload=database_render()>
     <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
     <div style="display:flex;position:relative;top:calc(20% - 70px);">
-    <div class="homer" style="width:90px;">
-      <form action="/adminlink" method="POST">
-        <input type="hidden" id="username" name="username" value=""/>
-        <input type="hidden" id="admin_capabilities" name="admin_capabilities" value=""/>
-        <input type="submit" value="Admin Panel"/>
-      </form>
-    </div>
     <div class="homer" style="width:140px;">
       <form action="/accountpage" method="POST">
         <input type="hidden" id="username1" name="username1" value=""/>
@@ -149,9 +142,16 @@ html, body {
         <input type="submit" value="Go to Account Page"/>
       </form>
     </div>
+    <div class="homer" style="width:90px;">
+      <form action="/accountpage/adminpanel" method="POST">
+        <input type="hidden" id="username" name="username" value=""/>
+        <input type="hidden" id="admin_capabilities" name="admin_capabilities" value=""/>
+        <input type="submit" value="Admin Panel"/>
+      </form>
+    </div>
   </div>
     <div class="searchbar">
-        <input type="text" id="search" onkeyup="search()" style="margin-bottom:10px;" placeholder="Search for an account">
+        <input type="text" id="search" onkeyup="search()" style="margin-bottom:10px;" placeholder="Search for a report">
         <br>
         <select name="filter" id="filter_select">
             <option value="id">Filter: ID</option>
