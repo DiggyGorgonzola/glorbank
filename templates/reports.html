@@ -2,9 +2,6 @@
 
 <!-- WIP please actually make it work. We need a system like adminpanel.html has where it procedurally generates elements -->
 
-
-<!-- practically everything here is untested as of Oct 6th 11:14 AM -->
-
 <!DOCTYPE html><html><head><title>Transaction Reports</title></head>
 <style>
 html, body {
@@ -137,14 +134,19 @@ html, body {
 <body onload=database_render()>
     <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
     <div style="display:flex;position:relative;top:calc(20% - 70px);">
-    <div class="registration" style="width:100px;">
-      <form action="/adminlink">
+    <div class="homer" style="width:90px;">
+      <form action="/adminlink" method="POST">
+        <input type="hidden" id="username" name="username" value=""/>
+        <input type="hidden" id="admin_capabilities" name="admin_capabilities" value=""/>
         <input type="submit" value="Admin Panel"/>
       </form>
     </div>
-    <div class="registration" style="width:100px;">
-      <form action="/">
-        <input type="submit" value="Go to Login"/>
+    <div class="homer" style="width:140px;">
+      <form action="/accountpage" method="POST">
+        <input type="hidden" id="username1" name="username1" value=""/>
+        <input type="hidden" id="password1" name="password1" value=""/>
+        <input type="hidden" id="national1" name="national1" value=""/>
+        <input type="submit" value="Go to Account Page"/>
       </form>
     </div>
   </div>
@@ -192,10 +194,15 @@ html, body {
 
     function database_render() {
         setInterval(updateClock, 1000);
-        const admin_user = "{{ admin_user }}";
+        const admin_user = {{ admin_user | tojson }};
         const database = {{ database | tojson }}; /*ignore error. it works */
         console.log(database);
         console.log("Hello world");
+        document.getElementById("username").value = `${admin_user[1]}`;
+        document.getElementById("admin_capabilities").value = `${admin_user[6]}`;
+        document.getElementById("username1").value = `${admin_user[1]}`;
+        document.getElementById("password1").value = `${admin_user[2]}`;
+        document.getElementById("national1").value = `${admin_user[7]}`;
         for (const element of database) {
             console.log(element);
             const newDiv = document.createElement("div");
