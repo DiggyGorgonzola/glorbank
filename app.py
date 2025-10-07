@@ -98,8 +98,9 @@ class Reports(Base):
   money = db.Column(db.String, nullable=False)
   information = db.Column(db.String, nullable=True)
   date = db.Column(db.DateTime)
-  id_from = db.Column(db.String, nullable=False, unique=True)
-  id_to = db.Column(db.String, nullable=False, unique=True)
+  id_from = db.Column(db.String, nullable=False)
+  id_to = db.Column(db.String, nullable=False)
+  # fix whatever's wrong with this!
 
 
 # activate db
