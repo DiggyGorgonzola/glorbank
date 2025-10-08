@@ -148,6 +148,9 @@ a = session.query(User).all()
 for user in a:
   print([user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id])
 
+
+def error(error_msg, user_info=[], redirect="home.html"):
+  return render_template(redirect, error=error_msg, info=user_info)
 #Collects info about personal accounts based on the admin's level
 def admin_info_collect(admin_level):
   database_list = []
@@ -211,9 +214,11 @@ def admin_reports_collect(admin_level):
   return database_list
     # FINISH
 
-    
+
+@app.route('/', methods=["GET", "POST"])
 @app.route('/login', methods=["GET", "POST"])
-def starting():
+# function 1
+def login():
   global username, password, nationalID, user_ip, email
   if request.method == "POST":
 
@@ -223,31 +228,32 @@ def starting():
     nationalID = request.form['national']
     user = None
     bank = None
-    typed_info = [username, password, nationalID]
+    user_info = [username, password, nationalID]
     try:
       nationalID = int(nationalID)
     except:
-      return render_template("home.html", incorrect_password='true', info=typed_info)
+      return error("The username, password, or national ID provided is incorrect.", user_info=user_info)
     for element in session.query(User).filter_by(username=username):
       user = element
     if user == None:
-      return render_template("home.html", incorrect_password='true', info=typed_info)
+      return error("The username, password, or national ID provided is incorrect.", user_info=user_info)
+    
     #See if the credentials are valid. (WIP add IP 2fa)
     print(user.national_id, nationalID)
     print(type(user.national_id), type(nationalID))
     if user.password != password or user.national_id != nationalID:
-      return render_template("home.html", incorrect_password='true', info=typed_info)
+      return error("The username, password, or national ID provided is incorrect.", user_info=user_info)
 
 
     elif user.password == password and user.national_id == nationalID:
       for element in session.query(Bank).filter_by(national_id=user.national_id):
         bank = element
       return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin, bankacc=[bank.id, bank.bank_value, bank.accdate, bank.national_id])
-    return render_template("home.html", incorrect_password='true', info=typed_info)
+    return error("Something went wrong. ~ 1.2", user_info=user_info)  # <-- error code 1.2
   else:
-    return render_template("home.html", info=[])
+    return error("Something went wrong. ~ 1.1") # <-- error code 1.1
   
-@app.route('/register', methods=["GET", "POST"])
+@app.route('/register', methods=["GET", "POST"]) # In the middle of adding error checks for this function. Please make sure this works properly. All html files should store inputted data as "info", not "user_info" or "typed_data", otherwise the error function will not work!!!!!
 def register():
   global username, password, nationalID, user_ip, email
   if request.method == "POST":
@@ -268,23 +274,23 @@ def register():
     try:
       new_user = User(username=username, password=password, ip=user_ip, email=email, accdate=datetime.datetime.now(), national_id=nationalID, admin=0)
     except:
-      return render_template("register.html", typed_info=[], error="Uh Oh")
+      return error("Invalid data entered. ~ 2.1", user_info=user_info)  # <-- error code 2.1
     if session.query(User).filter_by(username=username).first():
-      return render_template("register.html", typed_info=[username, password, nationalID, email], username_exists="true")
+      return render_template("register.html", info=[username, password, nationalID, email], username_exists="true")
     elif session.query(User).filter_by(national_id=nationalID).first():
-      return render_template("register.html", typed_info=[username, password, nationalID, email], nationalID_exists="true")
+      return render_template("register.html", info=[username, password, nationalID, email], nationalID_exists="true")
     else:
       try:
         session.add(new_user)
       except:
-        return render_template("register.html", typed_info=[], error="true")
+        return render_template("register.html", info=[], error="true")
       else:
         session.commit()
         new_bank = Bank(bank_value=0, accdate=session.query(User).filter_by(national_id=nationalID).first().accdate, national_id=nationalID)
         session.add(new_bank)
         session.commit()
-        return render_template("register.html", typed_info=[username, password, nationalID, email], error="Your account has been registered!")
-  return render_template("register.html", typed_info=[])
+        return render_template("register.html", info=[username, password, nationalID, email], error="Your account has been registered!")
+  return render_template("register.html", info=[])
 
 @app.route('/accountpage/adminpanel', methods=["GET", "POST"])
 def adminlink():
@@ -326,7 +332,7 @@ def addmoney():
   return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
 
 
-@app.route('/reports', methods=["GET", "POST"])
+@app.route('/accountpage/reports', methods=["GET", "POST"])
 def reports():
   database_list = []
   if request.method == "POST":
@@ -399,9 +405,9 @@ def accountpage():
         bank = element
       return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin, bankacc=[bank.id, bank.bank_value, bank.accdate, bank.national_id])
 
-@app.route('/organizations', methods=["GET", "POST"])
+@app.route('/accountpage/pending_organizations', methods=["GET", "POST"])
 def organizations():
-  return render_template("home.html", error="Hello, World!", info=[])
+  return render_template("home.html", error="SOMETHING WENT WRONG!", info=["", "", ""])
 
 #Base.metadata.drop_all(engine)
 #DELETES THE ENTIRE DATABASE
