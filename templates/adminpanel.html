@@ -132,12 +132,19 @@ html, body {
 <body onload=database_render()>
     <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
     <div id="button_container" style="position:relative; display:flex; top:calc(20% - 70px);">
-        <div class="homer" style="width:140px;">
+        <div class="homer" style="width:135px;">
             <form action="/accountpage" method="POST">
                 <input type="hidden" id="username1" name="username1" value=""/>
                 <input type="hidden" id="password1" name="password1" value=""/>
                 <input type="hidden" id="national1" name="national1" value=""/>
                 <input type="submit" value="Go to Account Page"/>
+            </form>
+        </div>
+        <div class="homer" style="width:65px;">
+            <form action="/accountpage/reports" method="POST">
+                <input type="hidden" id="username" name="username" value=""/>
+                <input type="hidden" id="admin_capabilities" name="admin_capabilities" value=""/>
+                <input type="submit" value="Reports"/>
             </form>
         </div>
     </div>
@@ -191,6 +198,8 @@ html, body {
         const database = {{ database | tojson }}; /*ignore error. it works */
         console.log(database);
         console.log("Hello world");
+        document.getElementById("username").value = `${admin_user[1]}`;
+        document.getElementById("admin_capabilities").value = `${admin_user[6]}`;
         document.getElementById("username1").value = `${admin_user[1]}`;
         document.getElementById("password1").value = `${admin_user[2]}`;
         document.getElementById("national1").value = `${admin_user[7]}`;
@@ -215,7 +224,7 @@ html, body {
                 <pre id="admin">Admin: ${element[6]}</pre>
                 <pre id="national_id">National ID: ${element[7]}</pre>
                 <pre id="bank_val">Bank Value: ${element[8]}</pre>
-                <form action="/addmoney" method="POST" style="display:flex;">
+                <form action="/accountpage/adminpanel/addmoney" method="POST" style="display:flex;">
                     <button id="bank_button" style="margin:5px;" type="submit">Add Money</button>
                     <input id="bank_input" name="bankval" onkeyup="add_money_admin(${element[1]})" type="text"></input>
                     <input type="hidden" name="account_ID" value="${element[0]}"></input>
