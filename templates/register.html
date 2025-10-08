@@ -196,7 +196,7 @@ html, body {
     setInterval(updateClock, 1000);
     const username_exists = "{{ username_exists }}";
     const nationalID_exists = "{{ nationalID_exists }}";
-    const info = {{ typed_info | tojson }};
+    const info = {{ info | tojson }};
     const error = "{{ error }}";
     if (username_exists) {
       document.querySelector(".box h2").innerHTML = "Username already in the database. Please choose a different one";
