@@ -136,20 +136,8 @@ html, body {
     
     console.log(incorrect_password);
     console.log(error);
-    if (incorrect_password) {
-      document.querySelector(".box h2").innerHTML = "The username, password, or national ID provided is incorrect.";
-      document.getElementById('usernamething').style.borderColor = "red";
-      document.getElementById('passwordthing').style.borderColor = "red";
-      document.getElementById('nationalid').style.borderColor = "red";
-
-      document.getElementById("usernamething").value = info[0];
-      document.getElementById("passwordthing").value = info[1];
-      document.getElementById("nationalid").value = info[2];
-
-      
-    };
-    if (length(error) > 0) {
-      document.querySelector(".box h2").innerHTML = error;
+    if (error.length > 0) {
+      document.getElementById("heading2").textContent = error.toString();
       document.getElementById('usernamething').style.borderColor = "red";
       document.getElementById('passwordthing').style.borderColor = "red";
       document.getElementById('nationalid').style.borderColor = "red";
@@ -164,7 +152,7 @@ html, body {
     document.getElementById('usernamething').style.borderColor = "black";
     document.getElementById('passwordthing').style.borderColor = "black";
     document.getElementById('nationalid').style.borderColor = "black";
-    document.querySelector(".box h2").innerHTML = "";
+    document.getElementById("heading2").innerHTML = "";
 
     document.getElementById("usernamething").value = info[0];
     document.getElementById("passwordthing").value = info[1];
