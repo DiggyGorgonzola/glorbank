@@ -11,7 +11,8 @@ Make moving between pages a lot easier
 Add graphs for the accountpage
 Allow admins with a level of greater than 10 to edit the information of another account
 Add a "Frozen" tag for personal and organization accounts. If a transaction attempts to happen with a "frozen" account, it will go into OngoingTransactions!
-
+Add the ability for tellers to give/take money without having access to an account's info.
+Add bank notes for conversion between Glorbenian Nation Bank money and other currencies
 
                                                       
                                                                                 
@@ -44,3 +45,4 @@ Add a "Frozen" tag for personal and organization accounts. If a transaction atte
                               ██▓▓████                                          
                                                                                 
                                                 
+A
