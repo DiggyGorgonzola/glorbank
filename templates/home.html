@@ -142,7 +142,7 @@ html, body {
     setInterval(updateClock, 1000);
     const incorrect_password = "{{ incorrect_password }}";
     const error = "{{ error }}";
-    const info = {{ info | tojson }};
+    const info = {{ info | tojson }}; /*I wish Jsonify didn't cause this error it bugs me so much! */
     
     console.log(incorrect_password);
     console.log(error);
