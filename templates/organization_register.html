@@ -113,7 +113,7 @@ html, body {
     <p>Register (Organization)</p>
     <div id="clock-display" style="font-size:20px;text-align:center;text-decoration:0px;"></div>
     <h2 id="heading2"></h2>
-    <form id="register_form" action="/register" method="POST">
+    <form id="register_form" action="/register/organization" method="POST">
       <div class="forme">
         Organization Name: <input type="text" name="name" minlength="8" maxlength="80" id="nameID" style="padding-right: 40px; top: 100%; right: 100%;" onclick='returntonormal()' required>
         <label id="nameCharCount" style="position: relative; top: 0px; right: 42.5px; font-size: 10px; font-family: Arial, Helvetica, sans-serif; color: rgb(0, 0, 0);">80 / 80</label>
@@ -154,7 +154,7 @@ html, body {
     });
 
     document.getElementById('clock-display').innerText = `${formattedDate} ${formattedTime}`;
-  }
+  };
   const nameInput = document.getElementById('nameID');
   const nameCharCount = document.getElementById('nameCharCount');
   const nameMaxChars = 80;
@@ -172,9 +172,9 @@ html, body {
   const phoneMaxChars = 80;
 
     
-  usernameInput.addEventListener('input', () => {
-    const remaining = userMaxChars - usernameInput.value.length;
-    userCharCount.textContent = `${remaining} / 80`;
+  nameInput.addEventListener('input', () => {
+    const remaining = nameMaxChars - nameInput.value.length;
+    nameCharCount.textContent = `${remaining} / 80`;
   });
   passwordInput.addEventListener('input', () => {
     const remaining = passMaxChars - passwordInput.value.length; 
@@ -194,13 +194,11 @@ html, body {
 
   function errorcheck() {
     setInterval(updateClock, 1000);
-    const username_exists = "{{ username_exists }}";
-    const nationalID_exists = "{{ nationalID_exists }}";
-    const info = {{ typed_info | tojson }};
+    const skinky = "{{ skinky }}";
+    const info = {{ info | tojson }};
     const error = "{{ error }}";
-    if (username_exists) {
-      document.querySelector(".box h2").innerHTML = "Organization name already in the database. Please choose a different one";
-      document.getElementById("nameID").style.borderColor = 'red';
+    if (skinky != "") {
+      document.querySelector(".box h2").innerHTML = skinky;
 
       document.getElementById("nameID").value = info[0]
       document.getElementById("passwordID").value = info[1]
