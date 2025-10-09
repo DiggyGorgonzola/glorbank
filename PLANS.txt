@@ -1,11 +1,46 @@
-Allow for organizations to apply for an account
+DONE: Allow for organizations to apply for an account
 Encrypt data
 Allow for personal accounts to be linked to organizations
 Allow for personal accounts to have certain level of access to organization accounts
 Reports <- almost done !!!
-  -Reports for personal account transactions
+  DONE: Reports for personal account transactions
   -Reports for organization transactions
 Editing a live database
 Automatic bank interest
-
 Make moving between pages a lot easier
+Add graphs for the accountpage
+Allow admins with a level of greater than 10 to edit the information of another account
+Add a "Frozen" tag for personal and organization accounts. If a transaction attempts to happen with a "frozen" account, it will go into OngoingTransactions!
+
+
+                                                      
+                                                                                
+                                                                ██              
+                                              ██      ██      ██░░██            
+                                            ██▓▓██  ██░░██  ██░░██              
+                                        ▓▓▓▓▓▓████▓▓▓▓▒▒██▓▓░░██░░              
+                                      ██▒▒▓▓████▓▓▒▒▓▓████░░▒▒██                
+                                  ████▒▒▒▒████▓▓▒▒██████░░▒▒██                  
+                                ██▒▒▒▒▒▒████▒▒▒▒██████▒▒▒▒████                  
+                            ████▒▒░░▒▒██░░▒▒▒▒██████▒▒▒▒████░░██                
+                        ████▒▒▒▒░░▒▒▒▒▒▒▒▒▒▒██████▒▒▒▒████  ██                  
+                      ██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░▒▒████▒▒▒▒▒▒████░░██                  
+                    ██▒▒▒▒░░░░▒▒░░▒▒░░░░▒▒▒▒▒▒░░░░▒▒████▒▒██                    
+                  ██░░▒▒░░░░▒▒░░▒▒░░░░▒▒▒▒▒▒▒▒░░▒▒████▒▒▒▒██                    
+                ▓▓▒▒▒▒░░░░░░░░░░░░▒▒▒▒░░▒▒▒▒▒▒▒▒▒▒██▒▒░░██                      
+                ██░░░░░░  ░░  ░░  ░░░░░░░░▒▒▒▒░░▒▒██░░▒▒██                      
+                ██░░  ░░░░      ░░░░░░░░░░▒▒░░▒▒▒▒▒▒░░████                      
+              ██░░  ░░              ░░░░░░░░░░▒▒▒▒░░▒▒██░░██                    
+              ██░░░░░░                ░░░░░░▒▒▒▒▒▒▒▒████░░██                    
+              ██░░░░                    ░░▒▒▒▒▒▒▒▒▒▒██▒▒██                      
+              ██░░░░                  ░░░░░░░░▒▒▒▒▒▒░░▒▒██                      
+                ██░░                    ░░░░░░▒▒▒▒░░▒▒██                        
+                ██░░░░              ░░░░  ░░▒▒▒▒▒▒▒▒██                          
+                ██░░░░              ░░  ░░░░▒▒▒▒▒▒██                            
+                  ██░░░░░░      ░░░░░░░░░░░░▒▒▒▒██                              
+                    ██░░░░░░░░░░░░░░░░▒▒▒▒▒▒▒▒██                                
+                      ▓▓▒▒▒▒▒▒░░░░░░▒▒▒▒▒▒▒▒██                                  
+                        ██████▒▒▒▒▒▒▒▒██████                                    
+                              ██▓▓████                                          
+                                                                                
+                                                
