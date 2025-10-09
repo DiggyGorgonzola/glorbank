@@ -194,22 +194,11 @@ html, body {
 
   function errorcheck() {
     setInterval(updateClock, 1000);
-    const username_exists = "{{ username_exists }}";
-    const nationalID_exists = "{{ nationalID_exists }}";
     const info = {{ info | tojson }};
     const error = "{{ error }}";
-    if (username_exists) {
-      document.querySelector(".box h2").innerHTML = "Username already in the database. Please choose a different one";
-      document.getElementById("usernameID").style.borderColor = 'red';
-
-      document.getElementById("usernameID").value = info[0]
-      document.getElementById("passwordID").value = info[1]
-      document.getElementById("nationalID").value = info[2]
-      document.getElementById("emailID").value = info[3]
-    };
-    if (nationalID_exists) {
-      document.querySelector(".box h2").innerHTML = "The National ID you have entered is already in the database. Please choose a different one";
-      document.getElementById("nationalID").style.borderColor = 'red';
+    const skinky = "{{ skinky }}";
+    if (skinky != "") {
+      document.querySelector(".box h2").innerHTML = skinky;
 
       document.getElementById("usernameID").value = info[0]
       document.getElementById("passwordID").value = info[1]
@@ -218,6 +207,8 @@ html, body {
     };
     if (error != "") {
       document.querySelector(".box h2").innerHTML = error;
+      document.getElementById("usernameID").style.borderColor = 'red';
+      document.getElementById("nationalID").style.borderColor = 'red';
 
       document.getElementById("usernameID").value = info[0]
       document.getElementById("passwordID").value = info[1]
