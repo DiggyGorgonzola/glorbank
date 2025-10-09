@@ -212,10 +212,21 @@ def admin_reports_collect(admin_level):
       stringy.append("HIDDEN")
     database_list.append(stringy)
   return database_list
-    # FINISH
+    # FINISH???
 
+def admin_pending_orgs_collect(admin_level):
+  database_list = []
+  for element in session.query(RegisteringOrganizations).all():
+    stringy = [element.id, element.accdate, element.name, element.email, element.phone]
+    database_list.append(stringy)
+  return database_list
 
+#function 0 uhhh change this when we get a real home page
 @app.route('/', methods=["GET", "POST"])
+def home():
+  return render_template("home.html", info=["", "", ""])
+
+
 @app.route('/login', methods=["GET", "POST"])
 # function 1
 def login():
@@ -250,10 +261,10 @@ def login():
         bank = element
       return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin, bankacc=[bank.id, bank.bank_value, bank.accdate, bank.national_id])
     return error("Something went wrong. ~ 1.2", user_info=user_info)  # <-- error code 1.2
-  else:
-    return error("Something went wrong. ~ 1.1") # <-- error code 1.1
+  return render_template("home.html", info=["", "", ""])
   
 @app.route('/register', methods=["GET", "POST"]) # In the middle of adding error checks for this function. Please make sure this works properly. All html files should store inputted data as "info", not "user_info" or "typed_data", otherwise the error function will not work!!!!!
+#function 2
 def register():
   global username, password, nationalID, user_ip, email
   if request.method == "POST":
@@ -269,30 +280,55 @@ def register():
 
     #print data for testing purposes
     print((username, user_ip, password, email))
+    user_info = [username, password, nationalID, email]
 
     #Add the user to the database. Check if the username is already taken
     try:
       new_user = User(username=username, password=password, ip=user_ip, email=email, accdate=datetime.datetime.now(), national_id=nationalID, admin=0)
     except:
-      return error("Invalid data entered. ~ 2.1", user_info=user_info)  # <-- error code 2.1
+      return error("Invalid data entered. ~ 2.1", user_info=user_info, redirect="register.html")  # <-- error code 2.1
     if session.query(User).filter_by(username=username).first():
-      return render_template("register.html", info=[username, password, nationalID, email], username_exists="true")
+      return error("Username or national ID entered is already registered. Please choose different values for these. ~ 2.1.1", user_info=user_info, redirect="register.html")
     elif session.query(User).filter_by(national_id=nationalID).first():
-      return render_template("register.html", info=[username, password, nationalID, email], nationalID_exists="true")
+      return error("Username or national ID entered is already registered. Please choose different values for these. ~ 2.1.2", user_info=user_info, redirect="register.html")
     else:
       try:
         session.add(new_user)
       except:
-        return render_template("register.html", info=[], error="true")
+        return error("Database error. ~ 2.2", user_info=user_info, redirect="register.html")
       else:
         session.commit()
         new_bank = Bank(bank_value=0, accdate=session.query(User).filter_by(national_id=nationalID).first().accdate, national_id=nationalID)
         session.add(new_bank)
         session.commit()
-        return render_template("register.html", info=[username, password, nationalID, email], error="Your account has been registered!")
+        return render_template("register.html", info=[username, password, nationalID, email], skinky="Your account has been registered!")
   return render_template("register.html", info=[])
 
+@app.route('/register/organization', methods=["GET", "POST"])
+# function 6
+def regorg():
+  if request.method == "POST":
+    name = request.form["name"]
+    email = request.form["email"]
+    phone = request.form["phone"]
+    try:
+      new_org = RegisteringOrganizations(name=name, email=email, phone=phone, accdate=datetime.datetime.now())
+    except:
+      return error("Invalid data entered. ~ 6.1", user_info=[name, email, phone], redirect="organization_register.html")
+    try:
+      session.add(new_org)
+      session.commit()
+    except:
+      return error("Something wrong happened. ~ 6.2", user_info=[name, email, phone], redirect="organization_register.html")
+    return render_template("organization_register.html", info=[name, email, phone], skinky="Your organization has been added to the registration list! Please wait until an official from the Glorbenian National Bank contacts you.")
+  elif request.method == "GET":
+    return render_template("organization_register.html", info=[])
+  return error("Something wrong happened. ~ 6.3", user_info=[], redirect="organization_register.html")
+
+
+
 @app.route('/accountpage/adminpanel', methods=["GET", "POST"])
+# function 3
 def adminlink():
   if request.method == "POST":
     username = request.form['username']
@@ -303,11 +339,12 @@ def adminlink():
       database_list = admin_info_collect(admin_capabilities)
       admin_user = session.query(User).filter_by(username=username).first()
       return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
-    return render_template("register.html", typed_info=[], errror="Uh oh!")
-  return render_template("register.html", typed_info=[], errror="Uh oh!")
+    return error("HACKER. ~ 3.1", user_info=[], redirect="register.html")
+  return error("Something wrong happened. ~ 3.2", user_info=[], redirect="register.html")
 
 
 @app.route('/accountpage/adminpanel/addmoney',methods=["GET", "POST"])
+# function 4
 def addmoney():
   database_list = []
   if request.method == "POST":
@@ -333,6 +370,7 @@ def addmoney():
 
 
 @app.route('/accountpage/reports', methods=["GET", "POST"])
+# function 5
 def reports():
   database_list = []
   if request.method == "POST":
@@ -344,39 +382,21 @@ def reports():
     if session.query(User).filter_by(username=username).first().admin == admin_capabilities:
       database_list = admin_reports_collect(admin_capabilities)
     return render_template("reports.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
-  return render_template("home.html", info=[], error="Uh oh!")
-
-@app.route('/register/organization', methods=["GET", "POST"])
-def regorg():
-  if request.method == "POST":
-    name = request.form["name"]
-    email = request.form["email"]
-    phone = request.form["phone"]
-    try:
-      new_org = RegisteringOrganizations(name=name, email=email, phone=phone, accdate=datetime.datetime.now())
-    except:
-      return render_template("organization_register.html", typed_info=[], error="Uh oh!")
-    try:
-      session.add(new_org)
-      session.commit()
-    except:
-      return render_template("organization_register.html", typed_info=[], error="Uh oh!")
-    return render_template("register.html", typed_info=[])
-  elif request.method == "GET":
-    return render_template("organization_register.html", typed_info=[])
-  return render_template("register.html", typed_info=[], errror="Uh oh!")
+  return error("Something wrong happened. ~ 5.1", user_info=[], redirect="register.html")
 
 
 @app.route('/login/organization', methods=["GET", "POST"])
+# function 7
 def logorg():
   # FINISH THIS !!!
   if request.method == "POST":
     pass
   elif request.method == "GET":
     return render_template("organization_login.html", info=[])
-  return render_template("home.html", info=[], errror="Uh oh!")
+  return error("Something evil happened. ~ 7.1", user_info=[], redirect="home.html")
 
 @app.route('/accountpage', methods=["GET", "POST"])
+# function 8
 def accountpage():
   if request.method == "POST":
     username = request.form['username1']
@@ -384,20 +404,20 @@ def accountpage():
     nationalID = request.form['national1']
     user = None
     bank = None
-    typed_info = [username, password, nationalID]
+    user_info = [username, password, nationalID]
     try:
       nationalID = int(nationalID)
     except:
-      return render_template("home.html", incorrect_password='true', info=typed_info)
+      return error("National ID must be an integer. ~ 8.1", user_info=user_info, redirect="home.html")
     for element in session.query(User).filter_by(username=username):
       user = element
     if user == None:
-      return render_template("home.html", incorrect_password='true', info=typed_info)
+      return error("Account doesn't exist. ~ 8.2", user_info=user_info, redirect="home.html")
     #See if the credentials are valid. (WIP add IP 2fa)
     print(user.national_id, nationalID)
     print(type(user.national_id), type(nationalID))
     if user.password != password or user.national_id != nationalID:
-      return render_template("home.html", incorrect_password='true', info=typed_info)
+      return error("Invalid credentials. ~ 8.3", user_info=user_info, redirect="home.html")
 
 
     elif user.password == password and user.national_id == nationalID:
@@ -407,7 +427,18 @@ def accountpage():
 
 @app.route('/accountpage/pending_organizations', methods=["GET", "POST"])
 def organizations():
-  return render_template("home.html", error="SOMETHING WENT WRONG!", info=["", "", ""])
+  if request.method == "POST":
+    admin_username = request.form["username"]
+    admin_capababilities = request.form["admin_capabilities"]
+    try:
+      admin_capabilities = int(admin_capababilities)
+    except:
+      pass
+    admin_user = session.query(User).filter_by(username=admin_username).first()
+    if admin_user.admin == admin_capabilities:
+      database_list = []
+      database_list = admin_pending_orgs_collect(admin_user.admin)
+      return render_template("pending_orgs.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
 
 #Base.metadata.drop_all(engine)
 #DELETES THE ENTIRE DATABASE
