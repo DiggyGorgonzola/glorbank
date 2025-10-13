@@ -15,7 +15,7 @@ Add the ability for tellers to give/take money without having access to an accou
 Add bank notes for conversion between Glorbenian Nation Bank money and other currencies
 Add a limit to how many organizations you can have registered or pending. (5)
 Add a timeout for typing an incorrect password 3x.
-
+Add a "Bank Account ULTIMATE" for full control over the bank website (admin level A THOUSAND!)
                                                       
                                                                                 
                                                                 ██              
