@@ -3,4 +3,3 @@ gunicorn
 flask_sqlalchemy
 flask_bcrypt
 sql
-decimal
