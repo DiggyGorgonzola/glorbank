@@ -1,10 +1,9 @@
-# info_get.py
 
 # This is a completely new system. Might not work!
 class InfoGet():
-  def admin_info_collect(self, admin_level):
+  def accCollect(admin_level, accs):
     database_list = []
-    for element in session.query(User).all():
+    for element in accs:
       stringy = []
       if admin_level > 0:
         stringy.append(element.id)
@@ -26,19 +25,22 @@ class InfoGet():
         stringy.append(element.national_id)
       else:
         stringy.append("HIDDEN")
+
+      # We don't want this!
       if admin_level > 2:
         print(element.national_id)
-        gooner = session.query(Bank).filter_by(national_id=element.national_id).first()
-        stringy.append(gooner.bank_value)
+        #gooner = session.query(Bank).filter_by(national_id=element.national_id).first()
+        stringy.append("FIX PLEASE!")
+
       else:
         stringy.append("HIDDEN")
       database_list.append(stringy)
     return database_list
     
   #Collects reports based on the admin's level
-  def admin_reports_collect(self, admin_level):
+  def reportCollect(admin_level, reports):
     database_list = []
-    for element in session.query(Reports).all():
+    for element in reports:
       stringy = [element.id]
       if admin_level > 3:
         stringy.append(element.money)
@@ -64,9 +66,9 @@ class InfoGet():
     return database_list
       # FINISH???
   
-  def admin_pending_orgs_collect(self, admin_level):
+  def pendOrgCollect(admin_level, orgs):
     database_list = []
-    for element in session.query(RegisteringOrganizations).all():
+    for element in orgs:
       stringy = [element.id, element.accdate, element.name, element.email, element.phone]
       database_list.append(stringy)
-  return database_list
+    return database_list
