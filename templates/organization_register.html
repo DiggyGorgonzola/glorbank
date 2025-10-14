@@ -129,6 +129,12 @@ html, body {
         
         Phone Number: <input type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" name="phone"  minlength="8" maxlength="80" id="phoneID" style="padding-right: 40px; top: 100%; right: 100%;" onclick='returntonormal()'>
         <label id="phoneCharCount" style="position: relative; top: 0px; right: 42.5px; font-size: 10px; font-family: Arial, Helvetica, sans-serif; color: rgb(0, 0, 0);">80 / 80</label>
+        <br><br>
+
+        Founder's National ID: <input type="password" name="foundernat" id="nationalID" style="padding-right: 40px; top: 100%; right: 100%;" onclick='returntonormal()'>
+        <br>
+
+        Founder's Password: <input type="password" name="founderpass"  minlength="8" maxlength="80" id="foundpasswordID" style="padding-right: 40px; top: 100%; right: 100%;" onclick='returntonormal()'>
         <br>
 
         <label class="input" style="font-size: 15px;">I agree to the ToS:<input type="checkbox" name="tos" onclick='returntonormal()' required><br></label>
@@ -170,7 +176,6 @@ html, body {
   const phoneInput = document.getElementById('phoneID');
   const phoneCharCount = document.getElementById('phoneCharCount');
   const phoneMaxChars = 80;
-
     
   nameInput.addEventListener('input', () => {
     const remaining = nameMaxChars - nameInput.value.length;
@@ -204,6 +209,8 @@ html, body {
       document.getElementById("passwordID").value = info[1]
       document.getElementById("emailID").value = info[2]
       document.getElementById("phoneID").value = info[3]
+      document.getElementById("nationalID").value = info[4]
+      document.getElementById("foundpasswordID").value = info[5]
     };
     if (error != "") {
       document.querySelector(".box h2").innerHTML = error;
@@ -212,6 +219,8 @@ html, body {
       document.getElementById("passwordID").value = info[1]
       document.getElementById("emailID").value = info[2]
       document.getElementById("phoneID").value = info[3]
+      document.getElementById("nationalID").value = info[4]
+      document.getElementById("foundpasswordID").value = info[5]
     };
   };
 
