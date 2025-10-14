@@ -2,6 +2,7 @@
 
 # THIS DOESN"T WORK
 
+# ADD INIT
 import datetime
 
 class BaseDatabase():
