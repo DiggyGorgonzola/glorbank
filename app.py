@@ -1,6 +1,6 @@
 # app.py
 
-
+from info_get import InfoGet
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from decimal import Decimal as decimal
 from flask_sqlalchemy import SQLAlchemy
@@ -340,7 +340,7 @@ def adminlink():
     admin_capabilities = int(request.form['admin_capabilities'])
     print(admin_capabilities)
     if session.query(User).filter_by(username=username).first().admin == admin_capabilities:
-      database_list = admin_info_collect(admin_capabilities)
+      database_list = InfoGet.accCollect(admin_capabilities, session.query(User).all())
       admin_user = session.query(User).filter_by(username=username).first()
       return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
     return error("HACKER. ~ 3.1", user_info=[], redirect="register.html")
@@ -368,7 +368,7 @@ def addmoney():
       session.add(new_report)
       session.commit()
     print(user)
-    database_list = admin_info_collect(admin_user.admin)
+    database_list = InfoGet.accCollect(admin_user.admin)
     return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
   return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
 
@@ -384,7 +384,7 @@ def reports():
     admin_capabilities = int(request.form['admin_capabilities'])
     print(admin_capabilities)
     if session.query(User).filter_by(username=username).first().admin == admin_capabilities:
-      database_list = admin_reports_collect(admin_capabilities)
+      database_list = InfoGet.reportCollect(admin_capabilities, session.query(Reports).all())
     return render_template("reports.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
   return error("Something wrong happened. ~ 5.1", user_info=[], redirect="register.html")
 
@@ -413,7 +413,6 @@ def accountpage():
       nationalID = int(nationalID)
     except:
       return error("National ID must be an integer. ~ 8.1", user_info=user_info, redirect="home.html")
-    for element in session.query(User).filter_by(username=username):
     ''' FOUR HUNDRED AND SEVENTEEN!!!!
     %%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%&&&@@&&&&@@&%%#((//******,,,,,,,*,*/#%&@%%%%&&@@&%%%%%%%%%%%%%%%%%%%%%%
@@ -448,6 +447,7 @@ def accountpage():
     ((##%%(((((##&&%%%%%%%%&%#//**,,,,,,,*///(#%%#####%%#((((//((#(//(((/////(((//((
     (######(((###%&%%#%%%%&&&%(///*******/((/(####(##%%%(/((////(((((/////(((##(//(#
     '''
+    for element in session.query(User).filter_by(username=username):
       user = element
     if user == None:
       return error("Account doesn't exist. ~ 8.2", user_info=user_info, redirect="home.html")
@@ -475,7 +475,7 @@ def organizations():
     admin_user = session.query(User).filter_by(username=admin_username).first()
     if admin_user.admin == admin_capabilities:
       database_list = []
-      database_list = admin_pending_orgs_collect(admin_user.admin)
+      database_list = InfoGet.pendOrgCollect(admin_user.admin, session.query(RegisteringOrganizations).all())
       return render_template("pending_orgs.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
 
 
