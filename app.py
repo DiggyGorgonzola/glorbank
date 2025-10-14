@@ -11,7 +11,6 @@ from flask_bcrypt import Bcrypt
 from werkzeug.security import generate_password_hash, check_password_hash
 import os, datetime
 
-
 USERDATABASE = [
   ["Diggy Gorgonzola", "417", None, "127.0.0.1", datetime.datetime.now(), 10, -1],
   ["Dinky Gonky", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 1],
@@ -73,6 +72,7 @@ class RegisteringOrganizations(Base):
   name = db.Column(db.String, nullable=False)
   email = db.Column(db.String, nullable=False)
   phone = db.Column(db.String, nullable=False)
+  orgpass = db.Column(db.String, nullable=False)
 
 
 class Organization(Base):
@@ -310,18 +310,21 @@ def register():
 def regorg():
   if request.method == "POST":
     name = request.form["name"]
+    password = request.form["password"]
     email = request.form["email"]
     phone = request.form["phone"]
+    foundernat = request.form["foundernat"]
+    founderpass = request.form["founderpass"]
     try:
-      new_org = RegisteringOrganizations(name=name, email=email, phone=phone, accdate=datetime.datetime.now())
+      new_org = RegisteringOrganizations(name=name, email=email, phone=phone, accdate=datetime.datetime.now(), orgpass=password)
     except:
-      return error("Invalid data entered. ~ 6.1", user_info=[name, email, phone], redirect="organization_register.html")
-    try:
-      session.add(new_org)
-      session.commit()
-    except:
-      return error("Something wrong happened. ~ 6.2", user_info=[name, email, phone], redirect="organization_register.html")
-    return render_template("organization_register.html", info=[name, email, phone], skinky="Your organization has been added to the registration list! Please wait until an official from the Glorbenian National Bank contacts you.")
+      return error("Invalid data entered. ~ 6.1", user_info=[name, password, email, phone, foundernat, founderpass], redirect="organization_register.html")
+    #try:
+    session.add(new_org)
+    session.commit()
+    #except:
+      #return error("Something wrong happened. ~ 6.2", user_info=[name, password, email, phone, foundernat, founderpass], redirect="organization_register.html")
+    return render_template("organization_register.html", info=[name, password, email, phone, foundernat, founderpass], skinky="Your organization has been added to the registration list! Please wait until an official from the Glorbenian National Bank contacts you.")
   elif request.method == "GET":
     return render_template("organization_register.html", info=[])
   return error("Something wrong happened. ~ 6.3", user_info=[], redirect="organization_register.html")
@@ -411,10 +414,6 @@ def accountpage():
     except:
       return error("National ID must be an integer. ~ 8.1", user_info=user_info, redirect="home.html")
     for element in session.query(User).filter_by(username=username):
-      user = element
-    if user == None:
-      return error("Account doesn't exist. ~ 8.2", user_info=user_info, redirect="home.html")
-    #See if the credentials are valid. (WIP add IP 2fa)
     ''' FOUR HUNDRED AND SEVENTEEN!!!!
     %%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%&&&@@&&&&@@&%%#((//******,,,,,,,*,*/#%&@%%%%&&@@&%%%%%%%%%%%%%%%%%%%%%%
@@ -449,6 +448,10 @@ def accountpage():
     ((##%%(((((##&&%%%%%%%%&%#//**,,,,,,,*///(#%%#####%%#((((//((#(//(((/////(((//((
     (######(((###%&%%#%%%%&&&%(///*******/((/(####(##%%%(/((////(((((/////(((##(//(#
     '''
+      user = element
+    if user == None:
+      return error("Account doesn't exist. ~ 8.2", user_info=user_info, redirect="home.html")
+    #See if the credentials are valid. (WIP add IP 2fa)
     print(user.national_id, nationalID)
     print(type(user.national_id), type(nationalID))
     if user.password != password or user.national_id != nationalID:
@@ -475,5 +478,8 @@ def organizations():
       database_list = admin_pending_orgs_collect(admin_user.admin)
       return render_template("pending_orgs.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
 
-#Base.metadata.drop_all(engine)
+
+def Delete():
+  Base.metadata.drop_all(engine)
+  print("Deleting Database...")
 #DELETES THE ENTIRE DATABASE
