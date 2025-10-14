@@ -109,7 +109,7 @@ engine = create_engine('sqlite:///users.db')
 Base.metadata.create_all(engine)
 
 
-# create session
+# create session <- move to wsgi.py please
 Session = sessionmaker(bind=engine)
 session = Session()
 session.begin()
