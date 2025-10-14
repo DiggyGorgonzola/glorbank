@@ -215,15 +215,42 @@ html, body {
             
             newDiv.innerHTML = `
                 <h1>${text}</h1>
-                <pre id="account_id">Account ID: ${element[0]}</pre>
-                <pre id="username">Username: ${element[1]}</pre>
-                <pre id="password">Password: ${element[2]}</pre>
-                <pre id="email">Email: ${element[3]}</pre>
-                <pre id="ip">IP: ${element[4]}</pre>
-                <pre id="date">Date Created: ${element[5]}</pre>
-                <pre id="admin">Admin: ${element[6]}</pre>
-                <pre id="national_id">National ID: ${element[7]}</pre>
-                <pre id="bank_val">Bank Value: ${element[8]}</pre>
+                <div style="display:flex; align-items:center;">
+                    <label for="account_id" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">ID:</label>
+                    <pre id="account_id">${element[0]}</pre>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <label for="username" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">Username:</label>
+                    <pre id="username">${element[1]}</pre>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <label for="password" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">Password:</label>
+                    <pre id="password">${element[2]}</pre>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <label for="email" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">Email:</label>
+                    <pre id="email">${element[3]}</pre>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <label for="ip" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">IP:</label>
+                    <pre id="ip">${element[4]}</pre>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <label for="date" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">Date Created:</label>
+                    <pre id="date">${element[5]}</pre>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <label for="admin" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">Admin Level:</label>
+                    <pre id="admin">${element[6]}</pre>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <label for="national_id" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">National ID:</label>
+                    <pre id="national_id">${element[7]}</pre>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <label for="bank_val" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">Bank Value:</label>
+                    <pre id="bank_val">${element[8]}</pre>
+                </div>
                 <form action="/accountpage/adminpanel/addmoney" method="POST" style="display:flex;">
                     <button id="bank_button" style="margin:5px;" type="submit">Add Money</button>
                     <input id="bank_input" name="bankval" onkeyup="add_money_admin(${element[1]})" type="text"></input>
@@ -247,7 +274,7 @@ html, body {
         input = document.getElementById('search');
         filter = input.value.toUpperCase();
         ul = document.getElementById("List");
-        li = ul.getElementsByTagName("div");
+        li = ul.getElementsByTagName("microbox");
         for (i = 0; i < li.length; i++) {
             gaga = li[i];
             console.log(gaga);
