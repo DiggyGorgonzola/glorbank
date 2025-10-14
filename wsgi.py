@@ -1,6 +1,8 @@
-from app import app
+from app import app, Delete
 
 if __name__ == "__main__":
+  #Delete()
+  #DELETES ENTIRE DATABASE
   app.run(debug=True)
 
 #I'm so skibidi I'm so skibidi skibidi skibidi skibidi biden. I'm so skibidi I'm so skibidi skibidi skibidi skibidi biden
