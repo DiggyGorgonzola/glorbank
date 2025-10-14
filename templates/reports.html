@@ -213,12 +213,30 @@ html, body {
             
             newDiv.innerHTML = `
                 <h1>${text}</h1>
-                <pre id="id">ID: ${element[0]}</pre>
-                <pre id="money">Money: ${element[1]}</pre>
-                <pre id="information">Information: ${element[2]}</pre>
-                <pre id="date">Date: ${element[3]}</pre>
-                <pre id="id_from">From: ${element[4]}</pre>
-                <pre id="id_to">To: ${element[5]}</pre>
+                <div style="display:flex; align-items:center;">
+                    <label for="id" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">ID:</label>
+                    <pre id="id">ID: ${element[0]}</pre>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <label for="money" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">Money:</label>
+                    <pre id="money">Money: ${element[1]}</pre>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <label for="information" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">Information:</label>
+                    <pre id="information">Information: ${element[2]}</pre>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <label for="date" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">Date:</label>
+                    <pre id="date">Date: ${element[3]}</pre>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <label for="id_from" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">ID From:</label>
+                    <pre id="id_from">From: ${element[4]}</pre>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <label for="id_to" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">ID To:</label>
+                    <pre id="id_to">To: ${element[5]}</pre>
+                </div>
                 `;
             const parentElement = document.getElementById("List");
             parentElement.appendChild(newDiv);
@@ -231,7 +249,7 @@ html, body {
         input = document.getElementById('search');
         filter = input.value.toUpperCase();
         ul = document.getElementById("List");
-        li = ul.getElementsByTagName("div");
+        li = ul.getElementsByClassName("microbox");
         for (i = 0; i < li.length; i++) {
             gaga = li[i];
             console.log(gaga);
