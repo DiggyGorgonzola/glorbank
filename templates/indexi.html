@@ -86,7 +86,7 @@ html, body {
 
         .bank-info {
             text-align: left;
-            padding-left: 5px;
+            padding: 5px;
             font-size: 10px;
             color: #000;
             border-radius: 15px;
@@ -117,8 +117,20 @@ html, body {
     <div class="box" id="box">
     <h1>GLORBENIAN NATIONAL BANK</h1>
     <p id="welcome">Welcome, </p>
+    <p>REMEMBER TO ADD STUFF FOR PARTS AND CREDIT!!!!</p>
     <div class="bank-info">
-        <strong id="bank_balance">YOUR BALANCE: </strong>
+        <label for="balance_box" style="font-size:30px;font-family:Arial, Helvetica, sans-serif;text-decoration: underline;">Balance</label><br>
+        <div class="bank-info"id="balance_box" style="display:inline-block;">
+            <div style="display:flex;justify-content: center;align-items:center;">
+                <label for="bank_balance_woolong" style="font-size:30px;font-family:Arial, Helvetica, sans-serif;">Woolong:</label>
+                <div id="bank_balance_woolong" style="font-size:30px;font-family:Arial, Helvetica, sans-serif;margin:5px;"></div>
+            </div>
+            <br>
+            <div style="display:flex;align-items:center;">
+                <label for="bank_balance_parts" style="font-size:30px;font-family:Arial, Helvetica, sans-serif;">Parts:</label>
+                <div id="bank_balance_parts" style="font-size:30px;font-family:Arial, Helvetica, sans-serif;margin:5px;">Hi</div>
+            </div>
+        </div>
     </div>
   </div>
 </body>
@@ -147,7 +159,8 @@ html, body {
         const useracc = {{ useracc | tojson }};
         const bankacc = {{ bankacc | tojson }};
         document.getElementById("welcome").textContent = `Welcome, ${useracc[1]}`;
-        document.getElementById("bank_balance").textContent = `YOUR BALANCE: ${bankacc[1]}`;
+        /* add support for parts and credit */
+        document.getElementById("bank_balance_woolong").textContent = `${bankacc[1]}`;
         if (adming > 0) {
             const Link = document.createElement("div");
             Link.className = "registration";
