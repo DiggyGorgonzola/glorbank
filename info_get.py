@@ -25,13 +25,13 @@ class InfoGet():
         stringy.append(element.national_id)
       else:
         stringy.append("HIDDEN")
-
+      
       # We don't want this!
       if admin_level > 2:
         print(element.national_id)
         #gooner = session.query(Bank).filter_by(national_id=element.national_id).first()
         stringy.append("FIX PLEASE!")
-
+      
       else:
         stringy.append("HIDDEN")
       database_list.append(stringy)
