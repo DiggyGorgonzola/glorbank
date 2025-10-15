@@ -12,7 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os, datetime
 
 USERDATABASE = [
-  ["Diggy Gorgonzola", "417", None, "127.0.0.1", datetime.datetime.now(), 10, -1],
+  ["Diggy Gorgonzola", "417", None, "127.0.0.1", datetime.datetime.now(), 1000, -1],
   ["Dinky Gonky", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 1],
   ["Dinky Gonky Alt", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 2],
 ]
@@ -93,6 +93,13 @@ class Employees(Base):
   org_admins = db.Column(db.String, nullable=True)
   org_employees = db.Column(db.String, nullable=True)
 
+
+# For frozen users
+class Frozen(Base):
+  __tablename__ = "Frozen"
+  id = db.Column(db.Integer, primary_key=True)
+  national_id = db.Column(db.Integer, nullable=False, unique=True)
+
 class Reports(Base):
   __tablename__ = "Reports"
   id = db.Column(db.Integer, primary_key=True)
@@ -149,78 +156,11 @@ a = session.query(User).all()
 for user in a:
   print([user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id])
 
-
-def error(error_msg, user_info=[], redirect="home.html"):
+@app.route('/error', methods=["GET", "POST"])
+def error(error_msg="", user_info=[], redirect="error.html"):
   return render_template(redirect, error=error_msg, info=user_info)
-#Collects info about personal accounts based on the admin's level
-def admin_info_collect(admin_level):
-  database_list = []
-  for element in session.query(User).all():
-    stringy = []
-    if admin_level > 0:
-      stringy.append(element.id)
-      stringy.append(element.username)
-    if admin_level > 1:
-      stringy.append(element.password)
-    else:
-      stringy.append("HIDDEN")
-    if admin_level > 0:
-      stringy.append(element.email)
-    if admin_level > 1:
-      stringy.append(element.ip)
-    else:
-      stringy.append("HIDDEN")
-    if admin_level > 0:
-      stringy.append(element.accdate)
-      stringy.append(element.admin)
-    if admin_level > 1:
-      stringy.append(element.national_id)
-    else:
-      stringy.append("HIDDEN")
-    if admin_level > 2:
-      print(element.national_id)
-      gooner = session.query(Bank).filter_by(national_id=element.national_id).first()
-      stringy.append(gooner.bank_value)
-    else:
-      stringy.append("HIDDEN")
-    database_list.append(stringy)
-  return database_list
-  
-#Collects reports based on the admin's level
-def admin_reports_collect(admin_level):
-  database_list = []
-  for element in session.query(Reports).all():
-    stringy = [element.id]
-    if admin_level > 3:
-      stringy.append(element.money)
-    else:
-      stringy.append("HIDDEN")
-    if admin_level > 2:
-      stringy.append(element.information)
-    else:
-      stringy.append("HIDDEN")
-    if admin_level > 2:
-      stringy.append(element.date)
-    else:
-      stringy.append("HIDDEN")
-    if admin_level > 2:
-      stringy.append(element.id_from)
-    else:
-      stringy.append("HIDDEN")
-    if admin_level > 2:
-      stringy.append(element.id_to)
-    else:
-      stringy.append("HIDDEN")
-    database_list.append(stringy)
-  return database_list
-    # FINISH???
 
-def admin_pending_orgs_collect(admin_level):
-  database_list = []
-  for element in session.query(RegisteringOrganizations).all():
-    stringy = [element.id, element.accdate, element.name, element.email, element.phone]
-    database_list.append(stringy)
-  return database_list
+
 
 #function 0 uhhh change this when we get a real home page
 @app.route('/', methods=["GET", "POST"])
@@ -244,24 +184,24 @@ def login():
     try:
       nationalID = int(nationalID)
     except:
-      return error("The username, password, or national ID provided is incorrect.", user_info=user_info)
+      return error("The username, password, or national ID provided is incorrect.", redirect="home.html", user_info=user_info)
     for element in session.query(User).filter_by(username=username):
       user = element
     if user == None:
-      return error("The username, password, or national ID provided is incorrect.", user_info=user_info)
+      return error("The username, password, or national ID provided is incorrect.", redirect="home.html", user_info=user_info)
     
     #See if the credentials are valid. (WIP add IP 2fa)
     print(user.national_id, nationalID)
     print(type(user.national_id), type(nationalID))
     if user.password != password or user.national_id != nationalID:
-      return error("The username, password, or national ID provided is incorrect.", user_info=user_info)
+      return error("The username, password, or national ID provided is incorrect.", redirect="home.html", user_info=user_info)
 
 
     elif user.password == password and user.national_id == nationalID:
       for element in session.query(Bank).filter_by(national_id=user.national_id):
         bank = element
       return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin, bankacc=[bank.id, bank.bank_value, bank.accdate, bank.national_id])
-    return error("Something went wrong. ~ 1.2", user_info=user_info)  # <-- error code 1.2
+    return error("Something went wrong. ~ 1.2", redirect="home.html", user_info=user_info)  # <-- error code 1.2
   return render_template("home.html", info=["", "", ""])
   
 @app.route('/register', methods=["GET", "POST"]) # In the middle of adding error checks for this function. Please make sure this works properly. All html files should store inputted data as "info", not "user_info" or "typed_data", otherwise the error function will not work!!!!!
@@ -368,7 +308,7 @@ def addmoney():
       session.add(new_report)
       session.commit()
     print(user)
-    database_list = InfoGet.accCollect(admin_user.admin)
+    database_list = InfoGet.accCollect(admin_user.admin, session.query(User).all())
     return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
   return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
 
@@ -413,6 +353,67 @@ def accountpage():
       nationalID = int(nationalID)
     except:
       return error("National ID must be an integer. ~ 8.1", user_info=user_info, redirect="home.html")
+    for element in session.query(User).filter_by(username=username):
+      user = element
+    if user == None:
+      return error("Account doesn't exist. ~ 8.2", user_info=user_info, redirect="home.html")
+    #See if the credentials are valid. (WIP add IP 2fa)
+    print(user.national_id, nationalID)
+    print(type(user.national_id), type(nationalID))
+    if user.password != password or user.national_id != nationalID:
+      return error("Invalid credentials. ~ 8.3", user_info=user_info, redirect="home.html")
+
+
+    elif user.password == password and user.national_id == nationalID:
+      for element in session.query(Bank).filter_by(national_id=user.national_id):
+        bank = element
+      return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin, bankacc=[bank.id, bank.bank_value, bank.accdate, bank.national_id])
+
+# function 9
+@app.route('/accountpage/pending_organizations', methods=["GET", "POST"])
+def organizations():
+  if request.method == "POST":
+    admin_username = request.form["username"]
+    admin_capababilities = request.form["admin_capabilities"]
+    try:
+      admin_capabilities = int(admin_capababilities)
+    except:
+      pass
+    admin_user = session.query(User).filter_by(username=admin_username).first()
+    if admin_user.admin == admin_capabilities:
+      database_list = []
+      database_list = InfoGet.pendOrgCollect(admin_user.admin, session.query(RegisteringOrganizations).all())
+      return render_template("pending_orgs.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
+
+# function 10
+@app.route('/accountpage/withdraw', methods=["GET", "POST"])
+def withdraw():
+  if request.method == "POST":
+    return error("We haven't done this yet! ~ 10.1")
+  else:
+    return error("We haven't done this yet! ~ 10.2")
+def Delete():
+  Base.metadata.drop_all(engine)
+  print("Deleting Database...")
+#DELETES THE ENTIRE DATABASE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     ''' FOUR HUNDRED AND SEVENTEEN!!!!
     %%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%&&&@@&&&&@@&%%#((//******,,,,,,,*,*/#%&@%%%%&&@@&%%%%%%%%%%%%%%%%%%%%%%
@@ -447,39 +448,3 @@ def accountpage():
     ((##%%(((((##&&%%%%%%%%&%#//**,,,,,,,*///(#%%#####%%#((((//((#(//(((/////(((//((
     (######(((###%&%%#%%%%&&&%(///*******/((/(####(##%%%(/((////(((((/////(((##(//(#
     '''
-    for element in session.query(User).filter_by(username=username):
-      user = element
-    if user == None:
-      return error("Account doesn't exist. ~ 8.2", user_info=user_info, redirect="home.html")
-    #See if the credentials are valid. (WIP add IP 2fa)
-    print(user.national_id, nationalID)
-    print(type(user.national_id), type(nationalID))
-    if user.password != password or user.national_id != nationalID:
-      return error("Invalid credentials. ~ 8.3", user_info=user_info, redirect="home.html")
-
-
-    elif user.password == password and user.national_id == nationalID:
-      for element in session.query(Bank).filter_by(national_id=user.national_id):
-        bank = element
-      return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin, bankacc=[bank.id, bank.bank_value, bank.accdate, bank.national_id])
-
-@app.route('/accountpage/pending_organizations', methods=["GET", "POST"])
-def organizations():
-  if request.method == "POST":
-    admin_username = request.form["username"]
-    admin_capababilities = request.form["admin_capabilities"]
-    try:
-      admin_capabilities = int(admin_capababilities)
-    except:
-      pass
-    admin_user = session.query(User).filter_by(username=admin_username).first()
-    if admin_user.admin == admin_capabilities:
-      database_list = []
-      database_list = InfoGet.pendOrgCollect(admin_user.admin, session.query(RegisteringOrganizations).all())
-      return render_template("pending_orgs.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
-
-
-def Delete():
-  Base.metadata.drop_all(engine)
-  print("Deleting Database...")
-#DELETES THE ENTIRE DATABASE
