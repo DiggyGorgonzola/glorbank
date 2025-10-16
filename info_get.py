@@ -1,5 +1,4 @@
 
-# This is a completely new system. Might not work!
 class InfoGet():
   def accCollect(admin_level, accs):
     database_list = []
@@ -25,14 +24,9 @@ class InfoGet():
         stringy.append(element.national_id)
       else:
         stringy.append("HIDDEN")
-      
-      # We don't want this!
-      if admin_level > 2:
-        print(element.national_id)
-        #gooner = session.query(Bank).filter_by(national_id=element.national_id).first()
-        stringy.append("FIX PLEASE!")
-      
       else:
+        stringy.append("HIDDEN")
+        stringy.append("HIDDEN")
         stringy.append("HIDDEN")
       database_list.append(stringy)
     return database_list
@@ -64,7 +58,6 @@ class InfoGet():
         stringy.append("HIDDEN")
       database_list.append(stringy)
     return database_list
-      # FINISH???
   
   def pendOrgCollect(admin_level, orgs):
     database_list = []
@@ -72,3 +65,15 @@ class InfoGet():
       stringy = [element.id, element.accdate, element.name, element.email, element.phone]
       database_list.append(stringy)
     return database_list
+  
+  def bankCollect(admin_level, accs):
+    stringy = []
+    for element in accs:
+      print(element.national_id)
+      stringy.append(element.woolong)
+      stringy.append(element.parts)
+      stringy.append(element.credit)
+      database_list.append(stringy)
+    return database_list
+      
+    
