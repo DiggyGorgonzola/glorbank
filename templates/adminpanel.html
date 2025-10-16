@@ -196,13 +196,15 @@ html, body {
         setInterval(updateClock, 1000);
         const admin_user = {{ admin_user | tojson }};
         const database = {{ database | tojson }}; /*ignore error. it works */
+        const bank_database = {{ bank_database | tojson }};
         console.log(database);
         console.log("Hello world");
-        document.getElementById("username").value = `${admin_user[1]}`;
+        document.getElementsById("username").value = `${admin_user[1]}`;
         document.getElementById("admin_capabilities").value = `${admin_user[6]}`;
         document.getElementById("username1").value = `${admin_user[1]}`;
         document.getElementById("password1").value = `${admin_user[2]}`;
         document.getElementById("national1").value = `${admin_user[7]}`;
+        /* find a way to incorporate bank_database */
         for (const element of database) {
             console.log(element);
             const newDiv = document.createElement("div");
@@ -250,12 +252,18 @@ html, body {
                     <label for="national_id" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">National ID:</label>
                     <pre id="national_id">${element[7]}</pre>
                 </div>
-                <form action="/accountpage/adminpanel/addmoney" method="POST" style="display:flex;">
-                    <button id="bank_button" style="margin:5px;" type="submit">Add Money</button>
-                    <input id="bank_input" name="bankval" onkeyup="add_money_admin(${element[1]})" type="text"></input>
-                    <input type="hidden" name="account_ID" value="${element[0]}"></input>
-                    <input type="hidden" name="admins_username" value="${admin_user[1]}"></input>
-                </form>
+                <div style="display:flex; align-items:center;">
+                    <label for="woolong" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">Woolong:</label>
+                    <pre id="woolong">${element[8]}</pre>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <label for="parts" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">Parts:</label>
+                    <pre id="parts">${element[9]}</pre>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <label for="credit" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">Credit Score:</label>
+                    <pre id="credit">${element[10]}</pre>
+                </div>
                 `;
             const parentElement = document.getElementById("List");
             parentElement.appendChild(newDiv);
