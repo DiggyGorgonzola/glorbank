@@ -20,6 +20,7 @@ Split app.py into smaller modules for simplicity. It's way too complicated vro.
   DONE: info_get.py for parsing SQL tables
   -appdata.py for starting SQL tables
 Add support for Parts and credit score
+Change admin info display to a spreadsheet system
 
 
                                                       
