@@ -18,9 +18,9 @@ USERDATABASE = [
 ]
 
 BANKDATABASE = [
-  ["-999999", USERDATABASE[0][4], USERDATABASE[0][6]],
-  ["5", USERDATABASE[1][4], USERDATABASE[1][6]],
-  ["-99999", USERDATABASE[2][4], USERDATABASE[2][6]],
+  [USERDATABASE[0][4], USERDATABASE[0][6], "-999999", "-999999", "-999999"],
+  [USERDATABASE[1][4], USERDATABASE[1][6], "0", "0", "0"],
+  [USERDATABASE[2][4], USERDATABASE[2][6], "0", "0", "0"],
 ]
 # create the db link
 app = Flask(__name__)
@@ -52,7 +52,9 @@ class User(Base):
 class Bank(Base):
   __tablename__ = "Bank"
   id = db.Column(db.Integer, primary_key=True)
-  bank_value = db.Column(db.String, nullable=False)
+  woolong = db.Column(db.String, nullable=False)
+  parts = db.Column(db.String, nullable=False)
+  credit = db.Column(db.String, nullable=False)
   accdate = db.Column(db.DateTime)
   national_id = db.Column(db.Integer, nullable=False, unique=True)
 
@@ -143,9 +145,11 @@ if not existing_user:
 if not existing_bankacc:
   for bankacc in BANKDATABASE:
     new_bankacc = Bank(
-      bank_value=bankacc[0],
-      accdate=bankacc[1],
-      national_id=bankacc[2]
+      accdate=bankacc[0],
+      national_id=bankacc[1],
+      woolong=bankacc[2],
+      parts=bankacc[3],
+      credit=bankacc[4]
     )
     session.add(new_bankacc)
     session.commit()
@@ -200,7 +204,7 @@ def login():
     elif user.password == password and user.national_id == nationalID:
       for element in session.query(Bank).filter_by(national_id=user.national_id):
         bank = element
-      return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin, bankacc=[bank.id, bank.bank_value, bank.accdate, bank.national_id])
+      return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin, bankacc=[bank.id, bank.woolong, bank.accdate, bank.national_id])
     return error("Something went wrong. ~ 1.2", redirect="home.html", user_info=user_info)  # <-- error code 1.2
   return render_template("home.html", info=["", "", ""])
   
@@ -239,7 +243,7 @@ def register():
         return error("Database error. ~ 2.2", user_info=user_info, redirect="register.html")
       else:
         session.commit()
-        new_bank = Bank(bank_value=0, accdate=session.query(User).filter_by(national_id=nationalID).first().accdate, national_id=nationalID)
+        new_bank = Bank(woolong=0, accdate=session.query(User).filter_by(national_id=nationalID).first().accdate, national_id=nationalID)
         session.add(new_bank)
         session.commit()
         return render_template("register.html", info=[username, password, nationalID, email], skinky="Your account has been registered!")
@@ -281,8 +285,10 @@ def adminlink():
     print(admin_capabilities)
     if session.query(User).filter_by(username=username).first().admin == admin_capabilities:
       database_list = InfoGet.accCollect(admin_capabilities, session.query(User).all())
+      database_list2 = InfoGet.bankCollect(admin_capabilities, session.query(Bank).all())
+      # Find a way to incorporate database_list2 (add the databases???)
       admin_user = session.query(User).filter_by(username=username).first()
-      return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
+      return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list, bank_database=database_list2)
     return error("HACKER. ~ 3.1", user_info=[], redirect="register.html")
   return error("Something wrong happened. ~ 3.2", user_info=[], redirect="register.html")
 
@@ -303,7 +309,7 @@ def addmoney():
     user = session.query(User).filter_by(id=account_ID).first()
     user_bank = session.query(Bank).filter_by(national_id=user.national_id).first()
     if user_bank:
-      user_bank.bank_value = str(decimal(user_bank.bank_value) + bank_val)
+      user_bank.woolong = str(decimal(user_bank.woolong) + bank_val)
       new_report = Reports(money=str(bank_val), information=f"Done manually via Admin Panel by {admin_user.username}", date=datetime.datetime.now(), id_from=admin_user.national_id, id_to=user.national_id) 
       session.add(new_report)
       session.commit()
@@ -367,16 +373,16 @@ def accountpage():
     elif user.password == password and user.national_id == nationalID:
       for element in session.query(Bank).filter_by(national_id=user.national_id):
         bank = element
-      return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin, bankacc=[bank.id, bank.bank_value, bank.accdate, bank.national_id])
+      return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin, bankacc=[bank.id, bank.woolong, bank.accdate, bank.national_id])
 
 # function 9
 @app.route('/accountpage/pending_organizations', methods=["GET", "POST"])
 def organizations():
   if request.method == "POST":
     admin_username = request.form["username"]
-    admin_capababilities = request.form["admin_capabilities"]
+    admin_capabilities = request.form["admin_capabilities"]
     try:
-      admin_capabilities = int(admin_capababilities)
+      admin_capabilities = int(admin_capabilities)
     except:
       pass
     admin_user = session.query(User).filter_by(username=admin_username).first()
@@ -384,6 +390,10 @@ def organizations():
       database_list = []
       database_list = InfoGet.pendOrgCollect(admin_user.admin, session.query(RegisteringOrganizations).all())
       return render_template("pending_orgs.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
+def Delete():
+  Base.metadata.drop_all(engine)
+  print("Deleting Database...")
+#DELETES THE ENTIRE DATABASE
 
 # function 10
 @app.route('/accountpage/withdraw', methods=["GET", "POST"])
@@ -404,47 +414,37 @@ def Delete():
 
 
 
-
-
-
-
-
-
-
-
-
-
-    ''' FOUR HUNDRED AND SEVENTEEN!!!!
-    %%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%&&&@@&&&&@@&%%#((//******,,,,,,,*,*/#%&@%%%%&&@@&%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%@@@&@@&%%%%###((///******************//(#%&&&&&@&%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%&@@@&%%%#%%%###((/////****,,,,,,,,,,,***/((((%&&&@&%%%%%%%&&&&&%&&&&&&%
-    %%%%%%%%%@@@&%###((///*****,,,,***********,,,,,****/((##%&&@&%%&&&&&&&%%%%%%%&&&
-    %%%%%%%%&@@@&&&&&&&&&&%#(/**,,,,,**********,,*****///((((#&@@&%%%%&&&&&&&&&&&&&&
-    %%%%%%%%&@&&&&%%###(((((((((/*,,,,,********//(##%%%&&&%%%%&@@&%&%%%&&&&&&&&&&&&&
-    %%%%%%%%@@&&%%####((((##(((((/***********//(((///////((#%&&@@&&&&&&&&&&&&&&&&&&&
-    %%%%%%%&@&%%########(#########(((///////((##((((//////(((#%&@&&&&&&&&&&&&&&&@@@@
-    %%%%%%%&&%%%####(#%%#(**/%######(/////((###(((//****/(((((#%&&&&&&&&&&&&&@@@@@@@
-    %%%%%%%%%%###%&&#*.,., ./###(((/**,,,,**//(##/,.,.,*(&&%(((#%&&&&&&&&&&&@@@@@@@@
-    %%%%%%%%%#####%%/,(@&&&(,,((//***,,,,,,,,*//,.(&%%%*.(&#((((%&&&&&&&&&@@@@@@@@@@
-    %%%%%%%%%##(//(#%#((#(((/*********,,,,**,,,***/#%#/**((/**/(%&&&&&&&&@@@@@@@@@@@
-    &&&&&&&%%#(//***//((((/*****////**,,,,****,,,*/(####(*,,,*/(%&&&&&&&&@@@@@@@@@@@
-    &&&&&&&%%#((/*************/////***,,,,,***,,,,,,,,,,,,,,,*/#&&&&&&&&&@@@@@@@@@@@
-    &&&&&&&%%%#((/****,,,*****/////**,,,,,,****,,,,,,,,,,,,,*/(#%&&&&&&&@@@@@@@@@@@@
-    &&&&&&&%%%%##(//*********///****,,,....,,,*,,,,,,,,,,,*//((#%&&&&&&&&&&@@@@@@@@@
-    &&&&&&&&%%%%##((///*****/(#(((//***,,,,,*///*,,,,,,,**//(###%&&&&&&&&&&&&&@@@@@@
-    &&&&&&&&&&%%%%##((//**/*(##%&&&%##(((/(%&@%#/,,*,,**//(###%%&&&&&&&&&&&&&&&&&@@@
-    &&&&&&&&&&&&&&%%#(((///**/(/*/(#%%%##(((*,***,,,,**//(##%%%&&&&&&&&&&&&&&&&&&@@@
-    %%%%%%%%%%&&&&&%%##((///*****,,***,,,,,,,,,,,,,***/(##%%%%%#(//(((((#####%&&&&@@
-    /(#####((##%&&&&%%%##((////****,,,,,,,,,,,,,,**//(##%%%%(/(#/*/(/*/(//*/(/*/%&@@
-    (((##((#(###%%&&&&&%%%#((((((/**,,,,,,********/(##%%%%#(((#(/((////////((/*,,,*#
-    ##(###(###(##%&&&&&%%%%%%%##/**,,,,,,,,,**((((##%%%%#((((##(#(/((///////********
-    (##(##((######&&&&&&&%&&&%#((//**,,,,,,***/(#%%%%%#####((#((#//((/*///(/*//*****
-    (#%###########&&&&&&&&&&&&&&&&&&&%%%%&&&&&&%%%%%%%##(#%%#(/((//((////((**//,****
-    (#%%#########%%&&&&&&&&&&&&&&&&&&&&&&&@@&&&&&%%%###((#%%#/*(((((/*//((///(/****/
-    #(#%#((#######%%&&&&&&&&&&&&&&%%%%%&&&&&&&&&%%%%###(#%%#(////(((/**/((///((/*//(
-    ###%##((#######%%&&%%&&&%#(#%&%%###%&&%####%%%%##(((#%%(////((((//(#(////((///(#
-    ###%%##(((##%%#%%%%%&%&&%#////(#(###(//(((#%%%##(((#%#(//////(#(//(#(////(((///(
-    ((##%%(((((##&&%%%%%%%%&%#//**,,,,,,,*///(#%%#####%%#((((//((#(//(((/////(((//((
-    (######(((###%&%%#%%%%&&&%(///*******/((/(####(##%%%(/((////(((((/////(((##(//(#
-    '''
+''' FOUR HUNDRED AND SEVENTEEN!!!!
+%%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%&&&@@&&&&@@&%%#((//******,,,,,,,*,*/#%&@%%%%&&@@&%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%@@@&@@&%%%%###((///******************//(#%&&&&&@&%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%&@@@&%%%#%%%###((/////****,,,,,,,,,,,***/((((%&&&@&%%%%%%%&&&&&%&&&&&&%
+%%%%%%%%%@@@&%###((///*****,,,,***********,,,,,****/((##%&&@&%%&&&&&&&%%%%%%%&&&
+%%%%%%%%&@@@&&&&&&&&&&%#(/**,,,,,**********,,*****///((((#&@@&%%%%&&&&&&&&&&&&&&
+%%%%%%%%&@&&&&%%###(((((((((/*,,,,,********//(##%%%&&&%%%%&@@&%&%%%&&&&&&&&&&&&&
+%%%%%%%%@@&&%%####((((##(((((/***********//(((///////((#%&&@@&&&&&&&&&&&&&&&&&&&
+%%%%%%%&@&%%########(#########(((///////((##((((//////(((#%&@&&&&&&&&&&&&&&&@@@@
+%%%%%%%&&%%%####(#%%#(**/%######(/////((###(((//****/(((((#%&&&&&&&&&&&&&@@@@@@@
+%%%%%%%%%%###%&&#*.,., ./###(((/**,,,,**//(##/,.,.,*(&&%(((#%&&&&&&&&&&&@@@@@@@@
+%%%%%%%%%#####%%/,(@&&&(,,((//***,,,,,,,,*//,.(&%%%*.(&#((((%&&&&&&&&&@@@@@@@@@@
+%%%%%%%%%##(//(#%#((#(((/*********,,,,**,,,***/#%#/**((/**/(%&&&&&&&&@@@@@@@@@@@
+&&&&&&&%%#(//***//((((/*****////**,,,,****,,,*/(####(*,,,*/(%&&&&&&&&@@@@@@@@@@@
+&&&&&&&%%#((/*************/////***,,,,,***,,,,,,,,,,,,,,,*/#&&&&&&&&&@@@@@@@@@@@
+&&&&&&&%%%#((/****,,,*****/////**,,,,,,****,,,,,,,,,,,,,*/(#%&&&&&&&@@@@@@@@@@@@
+&&&&&&&%%%%##(//*********///****,,,....,,,*,,,,,,,,,,,*//((#%&&&&&&&&&&@@@@@@@@@
+&&&&&&&&%%%%##((///*****/(#(((//***,,,,,*///*,,,,,,,**//(###%&&&&&&&&&&&&&@@@@@@
+&&&&&&&&&&%%%%##((//**/*(##%&&&%##(((/(%&@%#/,,*,,**//(###%%&&&&&&&&&&&&&&&&&@@@
+&&&&&&&&&&&&&&%%#(((///**/(/*/(#%%%##(((*,***,,,,**//(##%%%&&&&&&&&&&&&&&&&&&@@@
+%%%%%%%%%%&&&&&%%##((///*****,,***,,,,,,,,,,,,,***/(##%%%%%#(//(((((#####%&&&&@@
+/(#####((##%&&&&%%%##((////****,,,,,,,,,,,,,,**//(##%%%%(/(#/*/(/*/(//*/(/*/%&@@
+(((##((#(###%%&&&&&%%%#((((((/**,,,,,,********/(##%%%%#(((#(/((////////((/*,,,*#
+##(###(###(##%&&&&&%%%%%%%##/**,,,,,,,,,**((((##%%%%#((((##(#(/((///////********
+(##(##((######&&&&&&&%&&&%#((//**,,,,,,***/(#%%%%%#####((#((#//((/*///(/*//*****
+(#%###########&&&&&&&&&&&&&&&&&&&%%%%&&&&&&%%%%%%%##(#%%#(/((//((////((**//,****
+(#%%#########%%&&&&&&&&&&&&&&&&&&&&&&&@@&&&&&%%%###((#%%#/*(((((/*//((///(/****/
+#(#%#((#######%%&&&&&&&&&&&&&&%%%%%&&&&&&&&&%%%%###(#%%#(////(((/**/((///((/*//(
+###%##((#######%%&&%%&&&%#(#%&%%###%&&%####%%%%##(((#%%(////((((//(#(////((///(#
+###%%##(((##%%#%%%%%&%&&%#////(#(###(//(((#%%%##(((#%#(//////(#(//(#(////(((///(
+((##%%(((((##&&%%%%%%%%&%#//**,,,,,,,*///(#%%#####%%#((((//((#(//(((/////(((//((
+(######(((###%&%%#%%%%&&&%(///*******/((/(####(##%%%(/((////(((((/////(((##(//(#
+'''
