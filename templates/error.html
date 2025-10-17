@@ -78,7 +78,8 @@ html, body {
     <h1>GLORBENIAN NATIONAL BANK</h1>
     <p>There has been an error!</p>
     <h2 id="heading2"></h2>
-    <form style="display:flex;justify-content:center;align-items:center;" action="/">
+    <!-- Figure out how to make error.html go to the HOMEREDIRECT as specified in app.py-->
+    <form id="buton" style="display:flex;justify-content:center;align-items:center;" action="/">
         <button type="submit" style="font-size:40px;font-family:'Courier New', Courier, monospace;">To home</button>
     </form>
   </div>
@@ -103,9 +104,11 @@ html, body {
 
   function errorcheck() {
     const error = "{{ error }}";
+    const redirect = "{{ redirect }}"
     if (error != "") {
         document.getElementById("heading2").innerHTML = error
     }
+    document.getElementById("buton").innerHTML.action = redirect
     setInterval(updateClock, 1000); };
   </script>
 </body>
