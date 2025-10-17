@@ -1,6 +1,5 @@
 # app.py
 
-from info_get import InfoGet
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from decimal import Decimal as decimal
 from flask_sqlalchemy import SQLAlchemy
@@ -10,6 +9,9 @@ from sqlalchemy.orm import sessionmaker
 from flask_bcrypt import Bcrypt
 from werkzeug.security import generate_password_hash, check_password_hash
 import os, datetime
+
+NONEARRAY = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
+HOMEREDIRECT = "register.html"
 
 USERDATABASE = [
   ["Diggy Gorgonzola", "417", None, "127.0.0.1", datetime.datetime.now(), 1000, -1],
@@ -154,6 +156,94 @@ if not existing_bankacc:
     session.add(new_bankacc)
     session.commit()
 
+    # I don't know if adding this stuff will work?
+class InfoGet():
+  def accCollect(admin_level, accs):
+    database_list = []
+    for element in accs:
+      stringy = []
+      if admin_level > 0:
+        stringy.append(element.id)
+        stringy.append(element.username)
+      if admin_level > 1:
+        stringy.append(element.password)
+      else:
+        stringy.append("HIDDEN")
+      if admin_level > 0:
+        stringy.append(element.email)
+      if admin_level > 1:
+        stringy.append(element.ip)
+      else:
+        stringy.append("HIDDEN")
+      if admin_level > 0:
+        stringy.append(element.accdate)
+        stringy.append(element.admin)
+      else:
+        stringy.append("HIDDEN")
+        stringy.append("HIDDEN")
+        stringy.append("HIDDEN")
+      if admin_level > 1:
+        stringy.append(element.national_id)
+      else:
+        stringy.append("HIDDEN")
+      if admin_level > 2:
+        gooner = session.query(Bank).filter_by(national_id=element.national_id).first()
+        stringy.append(gooner.woolong)
+        stringy.append(gooner.parts)
+        stringy.append(gooner.credit)
+      else:
+        stringy.append("HIDDEN")
+        stringy.append("HIDDEN")
+        stringy.append("HIDDEN")
+      database_list.append(stringy)
+    return database_list
+    
+  #Collects reports based on the admin's level
+  def reportCollect(admin_level, reports):
+    database_list = []
+    for element in reports:
+      stringy = [element.id]
+      if admin_level > 3:
+        stringy.append(element.money)
+      else:
+        stringy.append("HIDDEN")
+      if admin_level > 2:
+        stringy.append(element.information)
+      else:
+        stringy.append("HIDDEN")
+      if admin_level > 2:
+        stringy.append(element.date)
+      else:
+        stringy.append("HIDDEN")
+      if admin_level > 2:
+        stringy.append(element.id_from)
+      else:
+        stringy.append("HIDDEN")
+      if admin_level > 2:
+        stringy.append(element.id_to)
+      else:
+        stringy.append("HIDDEN")
+      database_list.append(stringy)
+    return database_list
+  
+  def pendOrgCollect(admin_level, orgs):
+    database_list = []
+    for element in orgs:
+      stringy = [element.id, element.accdate, element.name, element.email, element.phone]
+      database_list.append(stringy)
+    return database_list
+  
+  def bankCollect(admin_level, accs):
+    database_list = []
+    for element in accs:
+      stringy = []
+      print(element.national_id)
+      stringy.append(element.woolong)
+      stringy.append(element.parts)
+      stringy.append(element.credit)
+      database_list.append(stringy)
+    return database_list
+
 
 #print the database for testing purposes
 a = session.query(User).all()
@@ -161,8 +251,8 @@ for user in a:
   print([user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id])
 
 @app.route('/error', methods=["GET", "POST"])
-def error(error_msg="", user_info=[], redirect="error.html"):
-  return render_template(redirect, error=error_msg, info=user_info)
+def error(error_msg="", user_info=NONEARRAY, redirect=HOMEREDIRECT):
+  return render_template("error.html", error=error_msg, info=user_info, redirect=redirect)
 
 
 
@@ -271,7 +361,7 @@ def regorg():
     return render_template("organization_register.html", info=[name, password, email, phone, foundernat, founderpass], skinky="Your organization has been added to the registration list! Please wait until an official from the Glorbenian National Bank contacts you.")
   elif request.method == "GET":
     return render_template("organization_register.html", info=[])
-  return error("Something wrong happened. ~ 6.3", user_info=[], redirect="organization_register.html")
+  return error("Something wrong happened. ~ 6.3", redirect="organization_register.html")
 
 
 
@@ -283,14 +373,20 @@ def adminlink():
     print(username)
     admin_capabilities = int(request.form['admin_capabilities'])
     print(admin_capabilities)
+    if request.form['addwoolong']:
+      try:
+        acc = session.query(Bank).filter_by(id=request.form['account']).first()
+        acc.woolong = str(decimal(acc.woolong) + decimal(request.form['addwoolong']))
+        session.commit()
+      except:
+        return error("You entered an invalid number", redirect="adminpanel.html")
     if session.query(User).filter_by(username=username).first().admin == admin_capabilities:
       database_list = InfoGet.accCollect(admin_capabilities, session.query(User).all())
-      database_list2 = InfoGet.bankCollect(admin_capabilities, session.query(Bank).all())
-      # Find a way to incorporate database_list2 (add the databases???)
       admin_user = session.query(User).filter_by(username=username).first()
-      return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list, bank_database=database_list2)
-    return error("HACKER. ~ 3.1", user_info=[], redirect="register.html")
-  return error("Something wrong happened. ~ 3.2", user_info=[], redirect="register.html")
+      print([admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id])
+      return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
+    return error("HACKER. ~ 3.1", redirect="register.html")
+  return error("Something wrong happened. ~ 3.2", redirect="register.html")
 
 
 @app.route('/accountpage/adminpanel/addmoney',methods=["GET", "POST"])
@@ -317,102 +413,6 @@ def addmoney():
     database_list = InfoGet.accCollect(admin_user.admin, session.query(User).all())
     return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
   return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
-
-
-@app.route('/accountpage/reports', methods=["GET", "POST"])
-# function 5
-def reports():
-  database_list = []
-  if request.method == "POST":
-    username = request.form['username']
-    admin_user = session.query(User).filter_by(username=username).first()
-    print(username)
-    admin_capabilities = int(request.form['admin_capabilities'])
-    print(admin_capabilities)
-    if session.query(User).filter_by(username=username).first().admin == admin_capabilities:
-      database_list = InfoGet.reportCollect(admin_capabilities, session.query(Reports).all())
-    return render_template("reports.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
-  return error("Something wrong happened. ~ 5.1", user_info=[], redirect="register.html")
-
-
-@app.route('/login/organization', methods=["GET", "POST"])
-# function 7
-def logorg():
-  # FINISH THIS !!!
-  if request.method == "POST":
-    pass
-  elif request.method == "GET":
-    return render_template("organization_login.html", info=[])
-  return error("Something evil happened. ~ 7.1", user_info=[], redirect="home.html")
-
-@app.route('/accountpage', methods=["GET", "POST"])
-# function 8
-def accountpage():
-  if request.method == "POST":
-    username = request.form['username1']
-    password = request.form['password1']
-    nationalID = request.form['national1']
-    user = None
-    bank = None
-    user_info = [username, password, nationalID]
-    try:
-      nationalID = int(nationalID)
-    except:
-      return error("National ID must be an integer. ~ 8.1", user_info=user_info, redirect="home.html")
-    for element in session.query(User).filter_by(username=username):
-      user = element
-    if user == None:
-      return error("Account doesn't exist. ~ 8.2", user_info=user_info, redirect="home.html")
-    #See if the credentials are valid. (WIP add IP 2fa)
-    print(user.national_id, nationalID)
-    print(type(user.national_id), type(nationalID))
-    if user.password != password or user.national_id != nationalID:
-      return error("Invalid credentials. ~ 8.3", user_info=user_info, redirect="home.html")
-
-
-    elif user.password == password and user.national_id == nationalID:
-      for element in session.query(Bank).filter_by(national_id=user.national_id):
-        bank = element
-      return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin, bankacc=[bank.id, bank.woolong, bank.accdate, bank.national_id])
-
-# function 9
-@app.route('/accountpage/pending_organizations', methods=["GET", "POST"])
-def organizations():
-  if request.method == "POST":
-    admin_username = request.form["username"]
-    admin_capabilities = request.form["admin_capabilities"]
-    try:
-      admin_capabilities = int(admin_capabilities)
-    except:
-      pass
-    admin_user = session.query(User).filter_by(username=admin_username).first()
-    if admin_user.admin == admin_capabilities:
-      database_list = []
-      database_list = InfoGet.pendOrgCollect(admin_user.admin, session.query(RegisteringOrganizations).all())
-      return render_template("pending_orgs.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
-def Delete():
-  Base.metadata.drop_all(engine)
-  print("Deleting Database...")
-#DELETES THE ENTIRE DATABASE
-
-# function 10
-@app.route('/accountpage/withdraw', methods=["GET", "POST"])
-def withdraw():
-  if request.method == "POST":
-    return error("We haven't done this yet! ~ 10.1")
-  else:
-    return error("We haven't done this yet! ~ 10.2")
-def Delete():
-  Base.metadata.drop_all(engine)
-  print("Deleting Database...")
-#DELETES THE ENTIRE DATABASE
-
-
-
-
-
-
-
 
 ''' FOUR HUNDRED AND SEVENTEEN!!!!
 %%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
@@ -448,3 +448,88 @@ def Delete():
 ((##%%(((((##&&%%%%%%%%&%#//**,,,,,,,*///(#%%#####%%#((((//((#(//(((/////(((//((
 (######(((###%&%%#%%%%&&&%(///*******/((/(####(##%%%(/((////(((((/////(((##(//(#
 '''
+
+@app.route('/accountpage/reports', methods=["GET", "POST"])
+# function 5
+def reports():
+  database_list = []
+  if request.method == "POST":
+    username = request.form['username']
+    admin_user = session.query(User).filter_by(username=username).first()
+    print(username)
+    admin_capabilities = int(request.form['admin_capabilities'])
+    print(admin_capabilities)
+    if session.query(User).filter_by(username=username).first().admin == admin_capabilities:
+      database_list = InfoGet.reportCollect(admin_capabilities, session.query(Reports).all())
+    return render_template("reports.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
+  return error("Page not found. ~ -1", redirect="register.html")
+
+
+@app.route('/login/organization', methods=["GET", "POST"])
+# function 7
+def logorg():
+  # FINISH THIS !!!
+  if request.method == "POST":
+    pass
+  elif request.method == "GET":
+    return render_template("organization_login.html", info=[])
+  return error("Page not found. ~ -1", redirect="register.html")
+
+@app.route('/accountpage', methods=["GET", "POST"])
+# function 8
+def accountpage():
+  if request.method == "POST":
+    username = request.form['username1']
+    password = request.form['password1']
+    nationalID = request.form['national1']
+    user = None
+    bank = None
+    user_info = [username, password, nationalID]
+    try:
+      nationalID = int(nationalID)
+    except:
+      return error("National ID must be an integer. ~ 8.1", user_info=user_info, redirect="home.html")
+    for element in session.query(User).filter_by(username=username):
+      user = element
+    if user == None:
+      return error("Account doesn't exist. ~ 8.2", user_info=user_info, redirect="home.html")
+    #See if the credentials are valid. (WIP add IP 2fa)
+    print(user.national_id, nationalID)
+    print(type(user.national_id), type(nationalID))
+    if user.password != password or user.national_id != nationalID:
+      return error("Invalid credentials. ~ 8.3", user_info=user_info, redirect="home.html")
+
+
+    elif user.password == password and user.national_id == nationalID:
+      for element in session.query(Bank).filter_by(national_id=user.national_id):
+        bank = element
+      return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin, bankacc=[bank.id, bank.woolong, bank.accdate, bank.national_id])
+  return error("Page not found", redirect="register.html")
+
+# function 9
+@app.route('/accountpage/pending_organizations', methods=["GET", "POST"])
+def organizations():
+  if request.method == "POST":
+    admin_username = request.form["username"]
+    admin_capabilities = request.form["admin_capabilities"]
+    try:
+      admin_capabilities = int(admin_capabilities)
+    except:
+      pass
+    admin_user = session.query(User).filter_by(username=admin_username).first()
+    if admin_user.admin == admin_capabilities:
+      database_list = []
+      database_list = InfoGet.pendOrgCollect(admin_user.admin, session.query(RegisteringOrganizations).all())
+      return render_template("pending_orgs.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
+  return error("Page not found", redirect="register.html")
+def Delete():
+  Base.metadata.drop_all(engine)
+  print("Deleting Database...")
+#DELETES THE ENTIRE DATABASE
+
+# function 10
+@app.route('/accountpage/withdraw', methods=["GET", "POST"])
+def withdraw():
+  if request.method == "POST":
+    return error("We haven't done this yet! ~ 10.1")
+  return error("Page not found", redirect="register.html")
