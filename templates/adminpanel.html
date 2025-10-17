@@ -149,7 +149,7 @@ html, body {
         </div>
     </div>
     <div class="searchbar">
-        <input type="text" id="search" onkeyup="search()" style="margin-bottom:10px;" placeholder="Search for an account">
+        <input type="text" id="search" onkeyup="search()" style="margin-bottom:10px;" placeholder="Search for an account"/>
         <br>
         <select name="filter" id="filter_select">
             <option value="username">Filter: Username</option>
@@ -196,10 +196,9 @@ html, body {
         setInterval(updateClock, 1000);
         const admin_user = {{ admin_user | tojson }};
         const database = {{ database | tojson }}; /*ignore error. it works */
-        const bank_database = {{ bank_database | tojson }};
         console.log(database);
         console.log("Hello world");
-        document.getElementsById("username").value = `${admin_user[1]}`;
+        document.getElementById("username").value = `${admin_user[1]}`;
         document.getElementById("admin_capabilities").value = `${admin_user[6]}`;
         document.getElementById("username1").value = `${admin_user[1]}`;
         document.getElementById("password1").value = `${admin_user[2]}`;
@@ -255,6 +254,13 @@ html, body {
                 <div style="display:flex; align-items:center;">
                     <label for="woolong" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">Woolong:</label>
                     <pre id="woolong">${element[8]}</pre>
+                    <form action="/accountpage/adminpanel" method="POST" style="margin:5px;">
+                        <input type="hidden" id="username" name="username" value="${admin_user[1]}"/>
+                        <input type="hidden" id="admin_capabilities" name="admin_capabilities" value="${admin_user[6]}"/>
+                        <input type="hidden" id="account" name="account" value="${element[0]}"/>
+                        <input type="text" id="addwoolong" name="addwoolong" value=""/>
+                        <button type="submit" value="Add Woolong">Add Woolong</button>
+                    </form>
                 </div>
                 <div style="display:flex; align-items:center;">
                     <label for="parts" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">Parts:</label>
