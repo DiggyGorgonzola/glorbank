@@ -261,6 +261,14 @@ def error(error_msg="", user_info=NONEARRAY, redirect=HOMEREDIRECT):
 def home():
   return render_template("home.html", info=["", "", ""])
 
+# Figure this stuff out?
+@app.route('/goto', methods=["GET", "POST"])
+def goto():
+  if request.method == "POST":
+    redirect = request.form['redirect']
+    info=[request.form['username'],request.form['password'],request.form['national']]
+    return render_template(redirect, info=info)
+  return error("HELP", user_info=['', '', ''])
 
 @app.route('/login', methods=["GET", "POST"])
 # function 1
@@ -404,17 +412,9 @@ def addmoney():
     print(type(bank_val))
     user = session.query(User).filter_by(id=account_ID).first()
     user_bank = session.query(Bank).filter_by(national_id=user.national_id).first()
-    if user_bank:
-      user_bank.woolong = str(decimal(user_bank.woolong) + bank_val)
-      new_report = Reports(money=str(bank_val), information=f"Done manually via Admin Panel by {admin_user.username}", date=datetime.datetime.now(), id_from=admin_user.national_id, id_to=user.national_id) 
-      session.add(new_report)
-      session.commit()
-    print(user)
-    database_list = InfoGet.accCollect(admin_user.admin, session.query(User).all())
-    return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
-  return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
 
-''' FOUR HUNDRED AND SEVENTEEN!!!!
+
+    ''' FOUR HUNDRED AND SEVENTEEN!!!!
 %%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%&&&@@&&&&@@&%%#((//******,,,,,,,*,*/#%&@%%%%&&@@&%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%@@@&@@&%%%%###((///******************//(#%&&&&&@&%%%%%%%%%%%%%%%%%%%%%
@@ -448,6 +448,15 @@ def addmoney():
 ((##%%(((((##&&%%%%%%%%&%#//**,,,,,,,*///(#%%#####%%#((((//((#(//(((/////(((//((
 (######(((###%&%%#%%%%&&&%(///*******/((/(####(##%%%(/((////(((((/////(((##(//(#
 '''
+    if user_bank:
+      user_bank.woolong = str(decimal(user_bank.woolong) + bank_val)
+      new_report = Reports(money=str(bank_val), information=f"Done manually via Admin Panel by {admin_user.username}", date=datetime.datetime.now(), id_from=admin_user.national_id, id_to=user.national_id) 
+      session.add(new_report)
+      session.commit()
+    print(user)
+    database_list = InfoGet.accCollect(admin_user.admin, session.query(User).all())
+    return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
+  return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
 
 @app.route('/accountpage/reports', methods=["GET", "POST"])
 # function 5
