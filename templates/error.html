@@ -78,9 +78,14 @@ html, body {
     <h1>GLORBENIAN NATIONAL BANK</h1>
     <p>There has been an error!</p>
     <h2 id="heading2"></h2>
+    <h3 id="heading3"></h3>
     <!-- Figure out how to make error.html go to the HOMEREDIRECT as specified in app.py-->
-    <form id="buton" style="display:flex;justify-content:center;align-items:center;" action="/">
-        <button type="submit" style="font-size:40px;font-family:'Courier New', Courier, monospace;">To home</button>
+    <form id="buton" style="display:flex;justify-content:center;align-items:center;" action="/goto"  method="POST">
+      <input type="hidden" id="redirect" name="redirect" value=""/>
+      <input type="hidden" id="username" name="username" value=""/>
+      <input type="hidden" id="password" name="password" value=""/>
+      <input type="hidden" id="national" name="national" value=""/>
+      <button type="submit" style="font-size:40px;font-family:'Courier New', Courier, monospace;">To home</button>
     </form>
   </div>
   <script>
@@ -105,10 +110,17 @@ html, body {
   function errorcheck() {
     const error = "{{ error }}";
     const redirect = "{{ redirect }}"
+    const info = {{ info | tojson }}
     if (error != "") {
         document.getElementById("heading2").innerHTML = error
     }
-    document.getElementById("buton").innerHTML.action = redirect
+    document.getElementById("redirect") = redirect;
+    if (info.length >= 3) {
+      document.getElementById("username").value = info[0];
+      document.getElementById("password").value = info[1];
+      document.getElementById("national").value = info[2];
+      document.getElementById("heading3").innerHTML = info;
+    };
     setInterval(updateClock, 1000); };
   </script>
 </body>
