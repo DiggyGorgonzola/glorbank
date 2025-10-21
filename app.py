@@ -251,7 +251,8 @@ for user in a:
   print([user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id])
 
 @app.route('/error', methods=["GET", "POST"])
-def error(error_msg="", user_info=NONEARRAY, redirect=HOMEREDIRECT):
+def error(error_msg="", /, user_info=NONEARRAY, redirect=HOMEREDIRECT):
+  print(redirect)
   return render_template("error.html", error=error_msg, info=user_info, redirect=redirect)
 
 
@@ -267,13 +268,13 @@ def goto():
   if request.method == "POST":
     redirect = request.form['redirect']
     info=[request.form['username'],request.form['password'],request.form['national']]
+    print(info)
     return render_template(redirect, info=info)
   return error("HELP", user_info=['', '', ''])
 
 @app.route('/login', methods=["GET", "POST"])
 # function 1
 def login():
-  global username, password, nationalID, user_ip, email
   if request.method == "POST":
 
     #Save data entered from the form
@@ -286,17 +287,17 @@ def login():
     try:
       nationalID = int(nationalID)
     except:
-      return error("The username, password, or national ID provided is incorrect.", redirect="home.html", user_info=user_info)
+      return error("The username, password, or national ID provided is incorrect. ~ 1.1.0", redirect="home.html", user_info=user_info)
     for element in session.query(User).filter_by(username=username):
       user = element
     if user == None:
-      return error("The username, password, or national ID provided is incorrect.", redirect="home.html", user_info=user_info)
+      return error("The username, password, or national ID provided is incorrect. ~ 1.1.1", redirect="home.html", user_info=user_info)
     
     #See if the credentials are valid. (WIP add IP 2fa)
     print(user.national_id, nationalID)
     print(type(user.national_id), type(nationalID))
     if user.password != password or user.national_id != nationalID:
-      return error("The username, password, or national ID provided is incorrect.", redirect="home.html", user_info=user_info)
+      return error("The username, password, or national ID provided is incorrect. ~ 1.1.2", redirect="home.html", user_info=user_info)
 
 
     elif user.password == password and user.national_id == nationalID:
@@ -381,7 +382,7 @@ def adminlink():
     print(username)
     admin_capabilities = int(request.form['admin_capabilities'])
     print(admin_capabilities)
-    if request.form['addwoolong']:
+    if 'addwoolong' in request.form.keys():
       try:
         acc = session.query(Bank).filter_by(id=request.form['account']).first()
         acc.woolong = str(decimal(acc.woolong) + decimal(request.form['addwoolong']))
@@ -396,6 +397,22 @@ def adminlink():
     return error("HACKER. ~ 3.1", redirect="register.html")
   return error("Something wrong happened. ~ 3.2", redirect="register.html")
 
+
+@app.route('/accountpage/datasheets', methods=["GET", "POST"])
+def datasheets():
+  if request.method == "POST":
+    if 'datasheet' in request.form.keys():
+      datasheet = request.form['datasheet']
+      username = request.form['username']
+      admin_capabilities = request.form['admin_capabilities']
+      user = session.query(User).filter_by(username=username).first()
+      if user.admin == admin_capabilities:
+        database_list = session.query(globals()[datasheet]).all()
+        print(database_list)
+      print("HIII")
+      return error("Something happened!", user_info=[user.username, user.password, user.national_id], redirect="/register")
+    return error(redirect="/")
+  return render_template("home.html")
 
 @app.route('/accountpage/adminpanel/addmoney',methods=["GET", "POST"])
 # function 4
