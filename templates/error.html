@@ -5,49 +5,6 @@
 
 
 <style>
-html, body {
-      background: linear-gradient(#3a3a3a, #000000);
-      background-color: #ffffff;
-      font-family: 'Times New Roman', Times, serif;
-      color: #000;
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow-y: auto;
-    }
-  
-    .box {
-          position: relative;
-          top: calc(20% - 50px);
-          left: calc(50% - 300px);
-          width: 600px;
-          padding: 5px;
-          margin: 5px;
-          background-color: #b8b8b8;
-          box-shadow: 3px 3px #4b4b4b;
-          border: 2px #000;
-          border-radius: 15px;
-        }
-
-        .box h1 {
-              text-align: center;
-              font-size: 60px;
-              color: #000;
-              text-decoration: 4px double underline #000;
-            }
-
-        .box h2 {
-              text-align: center;
-              font-size: 20px;
-              color: #000;
-            }
-
-        .box p {
-              text-align: center;
-              font-size: 40px;
-              color: #000;
-              text-decoration: 2px underline #000;
-            }
 
         .forme {
               text-align: center;
@@ -56,18 +13,6 @@ html, body {
               border: 2px solid #24853e;
               border-radius: 15px;
             }
-            input {
-                  border-radius: 5px;
-                }
-            input:hover {
-                  background-color: #c9c9c9;
-                }
-            button {
-                  border-radius: 5px;
-                }
-            button:hover {
-                  background-color: #c9c9c9;
-                }
 
 </style>
 <body onload=errorcheck()>
@@ -81,47 +26,31 @@ html, body {
     <h2 id="heading2"></h2>
     <h3 id="heading3"></h3>
     <!-- Figure out how to make error.html go to the HOMEREDIRECT as specified in app.py-->
-    <form id="buton" style="display:flex;justify-content:center;align-items:center;" action="/goto"  method="POST">
-      <input type="hidden" id="redirect" name="redirect" value=""/>
+    <form id="buton" style="display:flex;justify-content:center;align-items:center;" action="/"  method="POST">
       <input type="hidden" id="username" name="username" value=""/>
       <input type="hidden" id="password" name="password" value=""/>
       <input type="hidden" id="national" name="national" value=""/>
+      <input type="hidden" id="email" name="email" value=""/>
       <button type="submit" style="font-size:40px;font-family:'Courier New', Courier, monospace;">To home</button>
     </form>
   </div>
   <script>
-  function updateClock() {
-    const now = new Date();
-    const formattedTime = now.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      hour12: false
-    });
-    const formattedDate = now.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-
-    document.getElementById('clock-display').innerText = `${formattedDate} ${formattedTime}`;
-  };
 
   function errorcheck() {
     const error = "{{ error }}";
-    const redirect = "{{ redirect }}"
-    const info = {{ info | tojson }}
+    const redirect = "{{ redirect }}";
+    const info = {{ info | tojson }};
     if (error != "") {
         document.getElementById("heading2").innerHTML = error
-    }
-    document.getElementById("redirect") = redirect;
+    };
+    document.getElementById("buton").action = redirect;
     if (info.length >= 3) {
       document.getElementById("username").value = info[0];
       document.getElementById("password").value = info[1];
       document.getElementById("national").value = info[2];
       document.getElementById("heading3").innerHTML = info;
     };
-    setInterval(updateClock, 1000); };
+    setInterval(updateClock, 1000);
+  };
   </script>
 </body>
