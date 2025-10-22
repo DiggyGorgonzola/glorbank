@@ -161,13 +161,15 @@ if not existing_bankacc:
     # I don't know if adding this stuff will work?
 class InfoGet():
   def SQLattrs(obj):
+    # make sure this DOESn'T SORT THEM ALPHABETICALLY
     return [attr for attr in dir(obj) if not attr.startswith('_') and not callable(getattr(obj, attr)) and attr not in ['metadata', 'registry']]
   
   # MAKE SURE THE ORDER OF THIS REMAINS THE SAME!!!!!!
   def dictify(obj):
-    x = {} 
-    for i in [j for j in obj.__dict__.keys() if j in InfoGet.SQLattrs(obj)]:
-      x[i] = obj.__dict__[i]
+    x = dict(obj.__dict__)
+    for i in [j for j in obj.__dict__.keys() if j not in InfoGet.SQLattrs(obj)]:
+      del x[i]
+    print(InfoGet.SQLattrs(obj))
     return x
   def accCollect(admin_level, accs):
     database_list = []
