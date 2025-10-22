@@ -31,6 +31,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'  # SQLite file
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
+
+
 # create the db and encryption
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
@@ -158,6 +160,15 @@ if not existing_bankacc:
 
     # I don't know if adding this stuff will work?
 class InfoGet():
+  def SQLattrs(obj):
+    return [attr for attr in dir(obj) if not attr.startswith('_') and not callable(getattr(obj, attr)) and attr not in ['metadata', 'registry']]
+  
+  # MAKE SURE THE ORDER OF THIS REMAINS THE SAME!!!!!!
+  def dictify(obj):
+    x = {} 
+    for i in [j for j in obj.__dict__.keys() if j in InfoGet.SQLattrs(obj)]:
+      x[i] = obj.__dict__[i]
+    return x
   def accCollect(admin_level, accs):
     database_list = []
     for element in accs:
@@ -248,14 +259,13 @@ class InfoGet():
 #print the database for testing purposes
 a = session.query(User).all()
 for user in a:
-  print([user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id])
+  print([i for i in InfoGet.dictify(user).values()])
+  
 
 @app.route('/error', methods=["GET", "POST"])
 def error(error_msg="", /, user_info=NONEARRAY, redirect=HOMEREDIRECT):
   print(redirect)
   return render_template("error.html", error=error_msg, info=user_info, redirect=redirect)
-
-
 
 #function 0 uhhh change this when we get a real home page
 @app.route('/', methods=["GET", "POST"])
@@ -303,7 +313,8 @@ def login():
     elif user.password == password and user.national_id == nationalID:
       for element in session.query(Bank).filter_by(national_id=user.national_id):
         bank = element
-      return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin, bankacc=[bank.id, bank.woolong, bank.accdate, bank.national_id])
+      print([i for i in InfoGet.dictify(bank).values()])
+      return render_template("indexi.html", useracc=[i for i in InfoGet.dictify(user).values()], adming=user.admin, bankacc=[i for i in InfoGet.dictify(bank).values()])
     return error("Something went wrong. ~ 1.2", redirect="home.html", user_info=user_info)  # <-- error code 1.2
   return render_template("home.html", info=["", "", ""])
   
@@ -392,8 +403,8 @@ def adminlink():
     if session.query(User).filter_by(username=username).first().admin == admin_capabilities:
       database_list = InfoGet.accCollect(admin_capabilities, session.query(User).all())
       admin_user = session.query(User).filter_by(username=username).first()
-      print([admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id])
-      return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
+      print([i for i in InfoGet.dictify(admin_user).values()])
+      return render_template("adminpanel.html", admin_user=[i for i in InfoGet.dictify(admin_user).values()], database=database_list)
     return error("HACKER. ~ 3.1", redirect="register.html")
   return error("Something wrong happened. ~ 3.2", redirect="register.html")
 
@@ -406,10 +417,13 @@ def datasheets():
       username = request.form['username']
       admin_capabilities = request.form['admin_capabilities']
       user = session.query(User).filter_by(username=username).first()
+      database_list = []
       if user.admin == admin_capabilities:
         database_list = session.query(globals()[datasheet]).all()
-        print(database_list)
-      print("HIII")
+      print("\nHelloWorld!")
+      print([i for i in InfoGet.dictify(session.query(User).first())])
+      #print([session.query(User).first().__dict__[attr] for attr in dir(User) if not attr.startswith('_') and not callable(getattr(User, attr)) and attr not in ['metadata', 'registry']])
+      return render_template("datasheets.html", database=database_list, admin_user=[attr for attr in dir(user) if not attr.startswith('__') and not callable(getattr(user, attr))])
       return error("Something happened!", user_info=[user.username, user.password, user.national_id], redirect="/register")
     return error(redirect="/")
   return render_template("home.html")
@@ -472,8 +486,8 @@ def addmoney():
       session.commit()
     print(user)
     database_list = InfoGet.accCollect(admin_user.admin, session.query(User).all())
-    return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
-  return render_template("adminpanel.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
+    return render_template("adminpanel.html", admin_user=[i for i in InfoGet.dictify(admin_user).values()], database=database_list)
+  return render_template("adminpanel.html", admin_user=[i for i in InfoGet.dictify(admin_user).values()], database=database_list)
 
 @app.route('/accountpage/reports', methods=["GET", "POST"])
 # function 5
@@ -487,7 +501,7 @@ def reports():
     print(admin_capabilities)
     if session.query(User).filter_by(username=username).first().admin == admin_capabilities:
       database_list = InfoGet.reportCollect(admin_capabilities, session.query(Reports).all())
-    return render_template("reports.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
+    return render_template("reports.html", admin_user=[i for i in InfoGet.dictify(admin_user).values()], database=database_list)
   return error("Page not found. ~ -1", redirect="register.html")
 
 
@@ -529,7 +543,7 @@ def accountpage():
     elif user.password == password and user.national_id == nationalID:
       for element in session.query(Bank).filter_by(national_id=user.national_id):
         bank = element
-      return render_template("indexi.html", useracc=[user.id, user.username, user.password, user.email, user.ip, user.accdate, user.admin, user.national_id], adming=user.admin, bankacc=[bank.id, bank.woolong, bank.accdate, bank.national_id])
+      return render_template("indexi.html", useracc=[i for i in InfoGet.dictify(user).values()], adming=user.admin, bankacc=[i for i in InfoGet.dictify(bank).values()])
   return error("Page not found", redirect="register.html")
 
 # function 9
@@ -546,7 +560,7 @@ def organizations():
     if admin_user.admin == admin_capabilities:
       database_list = []
       database_list = InfoGet.pendOrgCollect(admin_user.admin, session.query(RegisteringOrganizations).all())
-      return render_template("pending_orgs.html", admin_user=[admin_user.id, admin_user.username, admin_user.password, admin_user.email, admin_user.ip, admin_user.accdate, admin_user.admin, admin_user.national_id], database=database_list)
+      return render_template("pending_orgs.html", admin_user=[i for i in InfoGet.dictify(admin_user).values()], database=database_list)
   return error("Page not found", redirect="register.html")
 def Delete():
   Base.metadata.drop_all(engine)
