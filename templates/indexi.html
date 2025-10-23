@@ -104,9 +104,12 @@
     function Adming() {
         setInterval(updateClock, 1000);
         const adming = {{ adming }};
-        const useracc = {{ useracc | tojson }};
-        const bankacc = {{ bankacc | tojson }};
-        document.getElementById("welcome").textContent = `Welcome, ${useracc[1]}`;
+        const user = [];
+        {% for i in useracc %}
+            user.push({ i });
+        {% endfor %}
+        const bankacc = {{bankacc|tojson}};
+        document.getElementById("welcome").textContent = `Welcome, e${user}`;
         /* add support for parts and credit */
         document.getElementById("bank_balance_woolong").textContent = `${bankacc[1]}`;
         if (adming > 0) {
