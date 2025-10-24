@@ -102,7 +102,7 @@
 
     <div class="box" id="box">
     <h1>GLORBENIAN NATIONAL BANK</h1>
-    <p>Admin Panel</p>
+    <p id="labeler">Admin Panel</p>
     <ul id="List" style="padding-inline-start: 0px;">
 
     </ul>
@@ -132,37 +132,36 @@
         setInterval(updateClock, 1000);
         const admin_user = {{ admin_user | tojson }};
         const database = {{ database | tojson }}; /*ignore error. it works */
+        const keys = {{ keys | tojson }};
+        const type = "{{ type }}";
         console.log(database);
         console.log("Hello world");
         document.getElementById("username").value = `${admin_user[1]}`;
-        document.getElementById("admin_capabilities").value = `${admin_user[6]}`;
+        document.getElementById("admin_capabilities").value = `${admin_user[4]}`;
         document.getElementById("username1").value = `${admin_user[1]}`;
         document.getElementById("password1").value = `${admin_user[2]}`;
         document.getElementById("national1").value = `${admin_user[7]}`;
+        document.getElementById("labeler").textContent = `${type} Datasheet`;
         /* find a way to incorporate bank_database */
         for (const element of database) {
-            console.log(element);
+            let key = keys[database.indexOf(element)];
             const newDiv = document.createElement("div");
             newDiv.className = "microbox"; /* WIP FIGURE THIS OUT SO THAT IT PRINTS USER DATA */
-            newDiv.id = element[1];
-            let text = element[1];
-            if (1 < element[6]) {
-                text = `${text} |  Admin ${element[6]}`
-            };
-            if (element[6] >= 1000) {
-                text = `${element[1]} | GOD`
-            };
+            newDiv.id = element[0];
+            let text = element[0];
             newDiv.innerHTML = `<h1>${text}</h1>`
-            for (const thing of element) {newDiv.innerHTML = newDiv.innerHTML + `
+            for (const thing of element) {
+                let label = key[element.indexOf(thing)];
+                newDiv.innerHTML = newDiv.innerHTML + `
                 <div style="display:flex; align-items:center;">
-                    <label for="${thing}" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">${element.indexOf(thing)}</label>
+                    <label for="${thing}" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">${label}:</label>
                     <pre id="${thing}">${thing}</pre>
                 </div>
-                `};
+                `;
             const parentElement = document.getElementById("List");
             parentElement.appendChild(newDiv);
         };
-    };
+    };};
 
     function add_money_admin(id) {
         const input = document.getElementById(id).querySelect("#bank_input").value
