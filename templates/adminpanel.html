@@ -102,7 +102,7 @@
 
     <div class="box" id="box">
     <h1>GLORBENIAN NATIONAL BANK</h1>
-    <p>Admin Panel</p>
+    <p id="labeler">Admin Panel</p>
     <ul id="List" style="padding-inline-start: 0px;">
 
     </ul>
@@ -140,6 +140,7 @@
         document.getElementById("password1").value = `${admin_user[2]}`;
         document.getElementById("national1").value = `${admin_user[7]}`;
         /* find a way to incorporate bank_database */
+        document.getElementById("labeler").textContent = `${database[0]}`;
         for (const element of database) {
             console.log(element);
             const newDiv = document.createElement("div");
