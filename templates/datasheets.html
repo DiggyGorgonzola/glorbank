@@ -88,14 +88,6 @@
         <input type="text" id="search" onkeyup="search()" style="margin-bottom:10px;" placeholder="Search for an account"/>
         <br>
         <select name="filter" id="filter_select">
-            <option value="username">Filter: Username</option>
-            <option value="account_id">Filter: Account ID</option>
-            <option value="password">Filter: Password</option>
-            <option value="email">Filter: Email</option>
-            <option value="ip">Filter: IP</option>
-            <option value="date">Filter: Date</option>
-            <option value="admin">Filter: Admin Capabilities</option>
-            <option value="national_id">Filter: National ID</option>
         </select>
     </div>
 
@@ -126,7 +118,7 @@
 
     document.getElementById('clock-display').innerText = `${formattedDate} ${formattedTime}`;
   };
-    var filter_ing = "username";
+    var filter_ing = "";
 
     function database_render() {
         setInterval(updateClock, 1000);
@@ -142,25 +134,35 @@
         document.getElementById("password1").value = `${admin_user[2]}`;
         document.getElementById("national1").value = `${admin_user[7]}`;
         document.getElementById("labeler").textContent = `${type} Datasheet`;
-        /* find a way to incorporate bank_database */
+
         for (const element of database) {
-            let key = keys[database.indexOf(element)];
+            let key = keys; /* this HAS to be here for some reason. IT IS CURSED!*/
             const newDiv = document.createElement("div");
-            newDiv.className = "microbox"; /* WIP FIGURE THIS OUT SO THAT IT PRINTS USER DATA */
+            newDiv.className = "microbox";
             newDiv.id = element[0];
-            let text = element[0];
+            let text = `${key[0]}: ${element[0]}`;
+            const newFilter = document.createElement("select");
+            newFilter.id = "select_options";
+            newFilter.innerHTML = ``;
             newDiv.innerHTML = `<h1>${text}</h1>`
             for (const thing of element) {
                 let label = key[element.indexOf(thing)];
                 newDiv.innerHTML = newDiv.innerHTML + `
-                <div style="display:flex; align-items:center;">
+                <div id="${label}" style="display:flex; align-items:center;">
                     <label for="${thing}" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">${label}:</label>
                     <pre id="${thing}">${thing}</pre>
                 </div>
                 `;
+            /*`<option value="${key}">Filter: ${key}</option>`*/
             const parentElement = document.getElementById("List");
             parentElement.appendChild(newDiv);
         };
+        for (var i = 0; i<keys.length;i++) {
+                let thing = keys[i];
+                newFilter.innerHTML += `<option value="${thing}">Filter: ${thing}</option>`;
+        };
+        var filter_ing = keys[0];
+        document.getElementById("filter_select").innerHTML = newFilter.innerHTML;;
     };};
 
     function add_money_admin(id) {
@@ -169,23 +171,22 @@
     };
 
     function search() {
-        var input, filter, ul, li, a, i, txtValue, search_val, gaga;
+        var input, filter, objects, item, tag, i, txtValue;
         filter_ing = document.getElementById("filter_select").value;
         input = document.getElementById('search');
         filter = input.value.toUpperCase();
-        ul = document.getElementById("List");
-        li = ul.getElementsByClassName("microbox");
-        for (i = 0; i < li.length; i++) {
-            gaga = li[i];
-            console.log(gaga);
-            a = gaga.querySelector(`#${filter_ing}`);
-            txtValue = a.textContent;
+        objects = document.getElementById("List").getElementsByClassName("microbox"); /* array-like of all accounts */
+        for (i = 0; i < objects.length; i++) {
+            item = objects[i]; /* i-th account */
+            tag = item.querySelector(`#${filter_ing}`); /*see the filter_ing-th variable in the i-th account*/
+            /*document.getElementById("labeler").textContent = tag;*/
+            txtValue = tag.innerText;
             if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                li[i].style.display = "";
+                item.style.display = "";
             } else {
-                li[i].style.display = "none";
+                item.style.display = "none";
             };
-        };
+        };;
     };
 </script>
   </html>
