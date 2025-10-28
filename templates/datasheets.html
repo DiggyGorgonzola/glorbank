@@ -95,6 +95,7 @@
     <div class="box" id="box">
     <h1>GLORBENIAN NATIONAL BANK</h1>
     <p id="labeler">Admin Panel</p>
+    <p id="labeler2">Admin Panel</p>
     <ul id="List" style="padding-inline-start: 0px;">
 
     </ul>
@@ -134,17 +135,17 @@
         document.getElementById("password1").value = `${admin_user[2]}`;
         document.getElementById("national1").value = `${admin_user[7]}`;
         document.getElementById("labeler").textContent = `${type} Datasheet`;
-
+        var filter_ing = keys[0];
         for (const element of database) {
             let key = keys; /* this HAS to be here for some reason. IT IS CURSED!*/
             const newDiv = document.createElement("div");
-            newDiv.className = "microbox";
             newDiv.id = element[0];
-            let text = `${key[0]}: ${element[0]}`;
+            let text = `${element[0]}`;
             const newFilter = document.createElement("select");
             newFilter.id = "select_options";
             newFilter.innerHTML = ``;
-            newDiv.innerHTML = `<h1>${text}</h1>`
+            newDiv.innerHTML = `<h1>${database.indexOf(element)}</h1>`;
+            newDiv.className = "microbox";
             for (const thing of element) {
                 let label = key[element.indexOf(thing)];
                 newDiv.innerHTML = newDiv.innerHTML + `
@@ -161,7 +162,6 @@
                 let thing = keys[i];
                 newFilter.innerHTML += `<option value="${thing}">Filter: ${thing}</option>`;
         };
-        var filter_ing = keys[0];
         document.getElementById("filter_select").innerHTML = newFilter.innerHTML;;
     };};
 
@@ -178,8 +178,9 @@
         objects = document.getElementById("List").getElementsByClassName("microbox"); /* array-like of all accounts */
         for (i = 0; i < objects.length; i++) {
             item = objects[i]; /* i-th account */
+            /* find the title of the i-th account and replace it!*/
+
             tag = item.querySelector(`#${filter_ing}`); /*see the filter_ing-th variable in the i-th account*/
-            /*document.getElementById("labeler").textContent = tag;*/
             txtValue = tag.innerText;
             if (txtValue.toUpperCase().indexOf(filter) > -1) {
                 item.style.display = "";
