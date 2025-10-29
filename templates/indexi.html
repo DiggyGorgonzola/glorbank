@@ -139,10 +139,9 @@
 
             Link.className = "registration";
             Link.innerHTML = `<form action="/accountpage/datasheets" method="POST">
-        <input type="hidden" name="username" value="${useracc[1]}"/>
-        <input type="hidden" name="admin_capabilities" value="${useracc[4]}"/>
         <input type="hidden" name="datasheet" value="User"/>
-        <input type="submit" value="Datasheets"/>
+        <input type="hidden" name="admin_user" value="${useracc}"/>
+        <input type="submit" value="Datasheets (User)"/>
         </form>`;
             parentElement.appendChild(Link);
         };
