@@ -401,19 +401,19 @@ def adminlink():
 @app.route('/accountpage/datasheets', methods=["GET", "POST"])
 def datasheets():
   if request.method == "POST":
-    if 'datasheet' in request.form.keys():
-      datasheet = request.form['datasheet']
-      username = request.form['username']
-      admin_capabilities = request.form['admin_capabilities']
-      user = session.query(User).filter_by(username=username).first()
-      database_list,database_keys = [],[]
-      if user.admin == int(admin_capabilities):
-        database_list = [InfoGet.List(i) for i in session.query(globals()[datasheet]).all()]
-        database_keys = InfoGet.SQLattrs(session.query(globals()[datasheet]).first())
-      print(database_keys)
-      return render_template("datasheets.html", database=database_list, keys=database_keys, admin_user=InfoGet.List(user), type=datasheet)
-      return error("Something happened!", user_info=[user.username, user.password, user.national_id], redirect="/register")
-    return error(redirect="/")
+    datasheet = request.form['datasheet']
+    stuff = request.form["admin_user"].split(",")
+    username = stuff[1]
+    admin_capabilities = stuff[4]
+    user = session.query(User).filter_by(username=username).first()
+    database_list,database_keys = [],[]
+    if user.admin == int(admin_capabilities):
+      database_list = [InfoGet.List(i) for i in session.query(globals()[datasheet]).all()]
+      database_keys = InfoGet.SQLattrs(session.query(globals()[datasheet]).first())
+    print(database_keys)
+    return render_template("datasheets.html", database=database_list, keys=database_keys, admin_user=InfoGet.List(user), type=datasheet)
+    return error("Something happened!", user_info=[user.username, user.password, user.national_id], redirect="/register")
+    return error(request.form['admin_user'],redirect="/")
     ''' FOUR HUNDRED AND SEVENTEEN!!!!
     %%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%&&&@@&&&&@@&%%#((//******,,,,,,,*,*/#%&@%%%%&&@@&%%%%%%%%%%%%%%%%%%%%%%
