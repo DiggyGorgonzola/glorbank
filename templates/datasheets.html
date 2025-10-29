@@ -1,4 +1,4 @@
-<!-- adminpanel.html -->
+<!-- adminpanel.html  FIXXXXX-->
 
 <!DOCTYPE html>
 <html>
@@ -70,17 +70,15 @@
     <div id="button_container" style="position:relative; display:flex; top:calc(20% - 70px);">
         <div class="homer" style="width:135px;">
             <form action="/accountpage" method="POST">
-                <input type="hidden" id="username1" name="username1" value=""/>
-                <input type="hidden" id="password1" name="password1" value=""/>
-                <input type="hidden" id="national1" name="national1" value=""/>
                 <input type="submit" value="Go to Account Page"/>
             </form>
         </div>
         <div class="homer" style="width:65px;">
-            <form action="/accountpage/reports" method="POST">
-                <input type="hidden" id="username" name="username" value=""/>
-                <input type="hidden" id="admin_capabilities" name="admin_capabilities" value=""/>
-                <input type="submit" value="Reports"/>
+            <form action="/accountpage/datasheets" id="DATA_USER" method="POST">
+            </form>
+        </div>
+        <div class="homer" style="width:65px;">
+            <form action="/accountpage/datasheets" id="DATA_BANK" method="POST">
             </form>
         </div>
     </div>
@@ -129,12 +127,10 @@
         const type = "{{ type }}";
         console.log(database);
         console.log("Hello world");
-        document.getElementById("username").value = `${admin_user[1]}`;
-        document.getElementById("admin_capabilities").value = `${admin_user[4]}`;
-        document.getElementById("username1").value = `${admin_user[1]}`;
-        document.getElementById("password1").value = `${admin_user[2]}`;
-        document.getElementById("national1").value = `${admin_user[7]}`;
-        document.getElementById("labeler").textContent = `${type} Datasheet`;
+        const data = `<input type="hidden" name="admin_user" value="${[admin_user]}"/>`;
+        document.getElementById("DATA_USER").innerHTML = document.getElementById("DATA_USER").innerHTML+`<input type="hidden" name="datasheet" value="User"/>`+data+`<input type="submit" value="Datasheets (User)"/>`;
+        document.getElementById("DATA_BANK").innerHTML = document.getElementById("DATA_BANK").innerHTML+`<input type="hidden" name="datasheet" value="User"/>`+data+`<input type="submit" value="Datasheets (Bank)"/>`;
+        document.getElementById("labeler").textContent = document.getElementById("DATA_USER").innerHTML;
         var filter_ing = keys[0];
         for (const element of database) {
             let key = keys; /* this HAS to be here for some reason. IT IS CURSED!*/
@@ -169,7 +165,6 @@
         const input = document.getElementById(id).querySelect("#bank_input").value
 
     };
-
     function search() {
         var input, filter, objects, item, tag, i, txtValue;
         filter_ing = document.getElementById("filter_select").value;
