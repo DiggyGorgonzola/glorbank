@@ -42,6 +42,67 @@
         }
 
 </style>
+<!-- SCHOOL-BASED ERROR DETECTION!! (can't inspect elements at school)-->
+<!-- I'm gonna fucking dieEEEE -->
+<div id="screamo"></div>
+<script>
+    let whimper = document.createElement("h"); whimper.setAttribute("innerText", "Nothing yet. This is good!");
+    document.getElementById("screamo").appendChild(whimper);
+    let error_counter = 0;
+
+    /* fix fix fix! */
+    function returnError(e) {
+        try {
+            let error = document.createElement("h");
+            error.id = `E${error_counter++}`;
+            error.textContent = e;
+        } catch (error) {
+            
+        }
+    }
+</script>
+
+
+<!-- MIGHT WANNA USE THIS ON ALL FILES -->
+<script>
+    function byId(id) {
+        try {
+            let g = document.getElementBy(id);
+        } catch (error) {
+            let g = none;
+            console.error(`Error in byId("${id}"): ${error.message}`)
+        }
+        return g;
+    }
+    function byIds(id) {
+        return document.querySelectorAll(`[id=${id}]`)
+    }
+</script>
+<script>
+    const adming = {{ adming }};
+    const useracc = {{ useracc | tojson}};
+    const bankacc = {{bankacc|tojson}};
+
+    function isNumeric(value) {
+        return Number.isFinite(Number(value)) && !Number.isNaN(Number(value));
+    }
+
+    function createSig() {
+        document.getElementById("username_sig").value = useracc[1];
+        document.getElementById("pass_sig").value = useracc[2];
+        document.getElementById("natid_sig").value = useracc[7];
+    }
+
+    function signature(element) {
+        document.getElementById(element).innerHTML = signature.innerHTML;
+    }
+</script>
+
+<div class="signature" id="signature" onload="createSig()">
+    <input type="hidden" id="username_sig" name="username"/>
+    <input type="hidden" id="pass_sig" name="password"/>
+    <input type="hidden" id="natid_sig" name="national"/>
+</div>
 <body onload="Adming()"> 
     <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
     <div id="button_container" style="position:relative; display:flex; top:calc(20% - 70px);">
@@ -74,6 +135,42 @@
             </div>
         </div>
     </div>
+    <div class="transactioner">
+        <label for="gay">Send Woolong</label>
+        <div id="gay">
+            <script>
+                /* my magnum opus owo nyaaaa*/
+                function check(num_woolong, account_to_transfer) {
+                    if (num_woolong>bankacc[1]||num_woolong==""||num_woolong<=0||!isNumeric(num_woolong)) {
+                        document.getElementById("guh").disabled = true;
+                        document.getElementById("uhohhh").innerText = "Please enter a valid number of Woolong to transfer.";
+                    }
+                    if (!isNumeric(account_to_transfer)||account_to_transfer=="") {
+                        document.getElementById()
+                    }
+                    else {
+                        document.getElementById("guh").disabled = false;
+                        document.getElementById("uhohhh").innerText = "";
+                    }
+                }
+                function checke(val) {
+                    if (!isNumeric(val)||val=="") {
+                        document.getElementById("guh").disabled = true;
+                        if (!isNumeric(val)) {
+                            document.getElementById("uhohhh").innerText = "Account IDs must be numeric.";
+                        }
+                    }
+                }
+            </script>
+            <form id="hehehe" action="/accountpage/sendmoney" method="POST">
+                <h id="uhohhh" style="font-size:10px;"></h><h id="accuhohhh" style="font-size:10px;"></h><br>
+                <input type="text" onkeyup="check(document.getElementById('num_woolong').value)" id="num_woolong" name="num_woolong" placeholder="Enter the number of woolong you would like to transfer"/>
+                <br><input type="text" onkeyup="checke(document.getElementById('guhhhh').value)"id="guhhhh" name="account_to_transfer" placeholder="Enter the account ID you would likee to transfer to"/>
+                <div id="signature1" onload="signature1"></div>
+                <button type="submit" id="guh" disabled>Send Woolong</button>
+            </form>
+        </div>
+    </div>
   </div>
 </body>
 <script>
@@ -97,11 +194,9 @@
 
     function Adming() {
         setInterval(updateClock, 1000);
-        const adming = {{ adming }};
-        const useracc = {{ useracc | tojson}};
-        const bankacc = {{bankacc|tojson}};
         document.getElementById("welcome").textContent = `Welcome, ${useracc[1]}`;
         document.getElementById("bank_balance_woolong").textContent = `${bankacc[1]}`;
+        document.get
         document.getElementById("bank_balance_parts").textContent = `${bankacc[2]}`;
         document.getElementById("bank_balance_credit").textContent = `${bankacc[3]}`;
         if (adming > 0) {
