@@ -20,7 +20,7 @@ USERDATABASE = [
 ]
 
 BANKDATABASE = [
-  [USERDATABASE[0][4], USERDATABASE[0][6], "-999999", "-999999", "-999999"],
+  [USERDATABASE[0][4], USERDATABASE[0][6], "999999", "99999", "999999"],
   [USERDATABASE[1][4], USERDATABASE[1][6], "0", "0", "0"],
   [USERDATABASE[2][4], USERDATABASE[2][6], "0", "0", "0"],
 ]
@@ -490,17 +490,6 @@ def reports():
     return render_template("reports.html", admin_user=[i for i in InfoGet.List(admin_user)], database=database_list)
   return error("Page not found. ~ -1", redirect="register.html")
 
-
-@app.route('/login/organization', methods=["GET", "POST"])
-# function 7
-def logorg():
-  # FINISH THIS !!!
-  if request.method == "POST":
-    pass
-  elif request.method == "GET":
-    return render_template("organization_login.html", info=[])
-  return error("Page not found. ~ -1", redirect="register.html")
-
 @app.route('/accountpage', methods=["GET", "POST"])
 # function 8
 def accountpage():
@@ -531,6 +520,27 @@ def accountpage():
         bank = element
       return render_template("indexi.html", useracc=[i for i in InfoGet.List(user)], adming=user.admin, bankacc=[i for i in InfoGet.List(bank)])
   return error("Page not found", redirect="register.html")
+
+@app.route('/accountpage/sendmoney', methods=["GET", "POST"])
+def sendmoney():
+  if request.method == "POST":
+    value = request.form["num_woolong"]
+    account = request.form["account_to_transfer"]
+    value = decimal(value)
+    print(value)
+    accountpage()
+
+@app.route('/login/organization', methods=["GET", "POST"])
+# function 7
+def logorg():
+  # FINISH THIS !!!
+  if request.method == "POST":
+    pass
+  elif request.method == "GET":
+    return render_template("organization_login.html", info=[])
+  return error("Page not found. ~ -1", redirect="register.html")
+
+
 
 # function 9
 @app.route('/accountpage/pending_organizations', methods=["GET", "POST"])
