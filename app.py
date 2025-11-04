@@ -521,7 +521,9 @@ def accountpage():
       return render_template("indexi.html", useracc=[i for i in InfoGet.List(user)], adming=user.admin, bankacc=[i for i in InfoGet.List(bank)])
   return error("Page not found", redirect="register.html")
 
+
 @app.route('/accountpage/sendmoney', methods=["GET", "POST"])
+# gooner function lmao
 def sendmoney():
   if request.method == "POST":
     value = request.form["num_woolong"]
