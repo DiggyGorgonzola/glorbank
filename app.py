@@ -528,10 +528,20 @@ def sendmoney():
   if request.method == "POST":
     value = request.form["num_woolong"]
     account = request.form["account_to_transfer"]
-    value = decimal(value)
-    print(value)
-    accountpage()
+    national_id = request.form["nationalid"]
+    user = request.form['user']
+    if national_id == user:
+      print("HAAAAIII")
+      g = session.query(User).filter_by(national_id=national_id).first()
+      b = session.query(Bank).filter_by(national_id=national_id).first()
+      k = decimal(b.woolong)
+      k -= decimal(value)
+      b.woolong = k
+      # fix this please
 
+    print(value)
+    return render_template("home.html", info=["", "", ""])
+  return error("Page not found", redirect="register.html")
 @app.route('/login/organization', methods=["GET", "POST"])
 # function 7
 def logorg():
@@ -560,10 +570,14 @@ def organizations():
       database_list = InfoGet.pendOrgCollect(admin_user.admin, session.query(RegisteringOrganizations).all())
       return render_template("pending_orgs.html", admin_user=[i for i in InfoGet.List(admin_user)], database=database_list)
   return error("Page not found", redirect="register.html")
+
+  
 def Delete():
   Base.metadata.drop_all(engine)
   print("Deleting Database...")
 #DELETES THE ENTIRE DATABASE
+
+
 
 # function 10
 @app.route('/accountpage/withdraw', methods=["GET", "POST"])
