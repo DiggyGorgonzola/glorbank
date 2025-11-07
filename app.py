@@ -527,18 +527,26 @@ def accountpage():
 def sendmoney():
   if request.method == "POST":
     value = request.form["num_woolong"]
-    account = request.form["account_to_transfer"]
-    national_id = request.form["nationalid"]
+    sendto = request.form["account_to_transfer"]
+    sendfrom = request.form["nationalid"]
     user = request.form['user']
-    if national_id == user:
+    if sendfrom == user:
       print("HAAAAIII")
-      g = session.query(User).filter_by(national_id=national_id).first()
-      b = session.query(Bank).filter_by(national_id=national_id).first()
-      k = decimal(b.woolong)
-      k -= decimal(value)
-      b.woolong = k
-      # fix this please
+      account = session.query(User).filter_by(national_id=sendfrom).first()
+      accountto = session.query(User).filter_by(id=sendto).first()
+      acc_from = session.query(Bank).filter_by(national_id=sendfrom).first()
+      acc_to = session.query(Bank).filter_by(id=sendto).first()
+      acc_from.woolong = str(decimal(acc_from.woolong) - decimal(value))
+      acc_to.woolong = str(decimal(acc_to.woolong) + decimal(value))
 
+      # fix this please
+      #new_report = Reports(money=str(bank_val), information=f"Done manually via Admin Panel by {admin_user.username}", date=datetime.datetime.now(), id_from=admin_user.national_id, id_to=user.national_id) 
+
+      transaction_report = Reports(money=str(value), information=f"{account.username} gave {accountto.username} {str(value)} woolong.", date=datetime.datetime.now(), id_from=acc_from.national_id, id_to=acc_to.national_id)
+      session.add(transaction_report)
+      session.commit()
+    else:
+      print("Something bad happened")
     print(value)
     return render_template("home.html", info=["", "", ""])
   return error("Page not found", redirect="register.html")
