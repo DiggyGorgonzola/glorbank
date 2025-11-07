@@ -249,6 +249,9 @@ class InfoGet():
       database_list.append(stringy)
     return database_list
 
+def checkUser():
+  # <something for like... validating the user is the correct user. Idk. IP maybe? 
+  pass
 
 #print the database for testing purposes
 a = session.query(User).all()
