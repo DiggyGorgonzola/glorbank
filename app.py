@@ -254,8 +254,7 @@ def checkUser():
   pass
 
 #print the database for testing purposes
-a = session.query(User).all()
-for user in a:
+for user in session.query(User).all():
   print(str(InfoGet.List(user)))
   
 
