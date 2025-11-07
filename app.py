@@ -414,9 +414,6 @@ def datasheets():
       database_list = [InfoGet.List(i) for i in session.query(globals()[datasheet]).all()]
       database_keys = InfoGet.SQLattrs(session.query(globals()[datasheet]).first())
     print(database_keys)
-    return render_template("datasheets.html", database=database_list, keys=database_keys, admin_user=InfoGet.List(user), type=datasheet)
-    return error("Something happened!", user_info=[user.username, user.password, user.national_id], redirect="/register")
-    return error(request.form['admin_user'],redirect="/")
     ''' FOUR HUNDRED AND SEVENTEEN!!!!
     %%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%&&&@@&&&&@@&%%#((//******,,,,,,,*,*/#%&@%%%%&&@@&%%%%%%%%%%%%%%%%%%%%%%
@@ -451,6 +448,9 @@ def datasheets():
     ((##%%(((((##&&%%%%%%%%&%#//**,,,,,,,*///(#%%#####%%#((((//((#(//(((/////(((//((
     (######(((###%&%%#%%%%&&&%(///*******/((/(####(##%%%(/((////(((((/////(((##(//(#
     '''
+    return render_template("datasheets.html", database=database_list, keys=database_keys, admin_user=InfoGet.List(user), type=datasheet)
+    return error("Something happened!", user_info=[user.username, user.password, user.national_id], redirect="/register")
+    return error(request.form['admin_user'],redirect="/")
   return render_template("home.html")
 
 @app.route('/accountpage/adminpanel/addmoney',methods=["GET", "POST"])
