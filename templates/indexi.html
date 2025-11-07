@@ -42,6 +42,8 @@
         }
 
 </style>
+<script src="../static/style/sig.js"></script>
+
 <!-- SCHOOL-BASED ERROR DETECTION!! (can't inspect elements at school)-->
 <!-- I'm gonna fucking dieEEEE
 <div id="screamo"></div>
@@ -139,13 +141,31 @@
         <label for="gay">Send Woolong</label>
         <div id="gay">
             <form id="hehehe" action="/accountpage/sendmoney" method="POST">
+                <script>
+                    /* fix ts */
+                    const butonn = document.getElementById("guh")
+                    function validateTransaction() {
+                        let value = Int(document.getElementById("num_woolong").value)
+                        let total_money = Int(document.getElementById(""))
+                        if (!isNumeric(value)) {
+                            buton.disabled = true;
+                        };
+                        if (!isNumeric(acc_to)) {
+                            buton.disabled = false; 
+                        }
+                        if (0 < value < total_money) {
+                            buton.disabled = true;
+                        };
+                        buton.disabled = false;
+                    };
+                </script>
                 <h id="uhohhh" style="font-size:10px;"></h><br>
                 <input type="text" id="num_woolong" name="num_woolong" placeholder="Enter the number of woolong you would like to transfer"/>
                 <br><input type="text" id="guhhhh" name="account_to_transfer" placeholder="Enter the account ID you would likee to transfer to"/>
                 <br><input type="text" id="nationalid" name="nationalid" placeholder="Enter your national id"/>
                 <br><input type="hidden" id="user" name="user"/>
                 <div id="signature1" onload=""></div>
-                <button type="submit" id="guh">Send Woolong</button>
+                <button type="submit" id="guh" disabled="true">Send Woolong</button>
             </form>
         </div>
     </div>
