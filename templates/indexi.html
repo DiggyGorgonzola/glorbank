@@ -40,7 +40,15 @@
             border-radius: 15px;
             border: 2px solid #24853e;
         }
-
+    .silly-boy {
+        width:400px;
+        font-size:15px;
+        font-family:Arial, Helvetica, sans-serif;
+    }
+    .silliest-billy {
+        font-size:30px;
+        font-family: "Brush Script MT", cursive;
+    }
 </style>
 <script src="../static/style/sig.js"></script>
 
@@ -137,35 +145,42 @@
             </div>
         </div>
     </div>
-    <div class="transactioner">
-        <label for="gay">Send Woolong</label>
-        <div id="gay">
-            <form id="hehehe" action="/accountpage/sendmoney" method="POST">
-                <script>
+    <br><br>
+    <div class="bank-info">
+        <label for="gay" style="font-size:30px;font-family:Arial, Helvetica, sans-serif;text-decoration: underline;">Send Woolong</label>
+        <div id="gay" class="bank-info">
+            <script>
                     /* fix ts */
-                    const butonn = document.getElementById("guh")
                     function validateTransaction() {
-                        let value = Int(document.getElementById("num_woolong").value)
-                        let total_money = Int(document.getElementById(""))
+                        let value = document.getElementById("num_woolong").value
+                        let acc_to = document.getElementById("guhhhh").value;
+                        let total_money = bankacc[1];
+                        document.getElementById("uhohhh").innerText = "";
                         if (!isNumeric(value)) {
-                            buton.disabled = true;
-                        };
-                        if (!isNumeric(acc_to)) {
-                            buton.disabled = false; 
+                            document.getElementById("guh").disabled = true;
+                            document.getElementById("uhohhh").innerText = "Please enter a numeric number of Woolong.";
                         }
-                        if (0 < value < total_money) {
-                            buton.disabled = true;
-                        };
-                        buton.disabled = false;
+                        else if (!isNumeric(acc_to)) {
+                            document.getElementById("guh").disabled = true; 
+                            document.getElementById("uhohhh").innerText = "Please enter a numeric account ID.";
+                        }
+                        else if (value>total_money||value<0) {
+                            document.getElementById("guh").disabled = true; 
+                            document.getElementById("uhohhh").innerText = "Please enter a valid number of Woolong.";
+                        }
+                        else if (value!=""&&acc_to!=""&&document.getElementById("nationalid").value==useracc[7]) {
+                            document.getElementById("uhohhh").innerText = "Good job UwU Nya~! Have fun transfering thos woolong :3";
+                            document.getElementById("guh").disabled = false;}
                     };
                 </script>
-                <h id="uhohhh" style="font-size:10px;"></h><br>
-                <input type="text" id="num_woolong" name="num_woolong" placeholder="Enter the number of woolong you would like to transfer"/>
-                <br><input type="text" id="guhhhh" name="account_to_transfer" placeholder="Enter the account ID you would likee to transfer to"/>
-                <br><input type="text" id="nationalid" name="nationalid" placeholder="Enter your national id"/>
-                <br><input type="hidden" id="user" name="user"/>
-                <div id="signature1" onload=""></div>
-                <button type="submit" id="guh" disabled="true">Send Woolong</button>
+            <form id="hehehe" action="/accountpage/sendmoney" method="POST">
+                
+                <h id="uhohhh" class="silliest-billy"></h><br><br><br>
+                <input type="text" class="silly-boy" id="num_woolong" name="num_woolong" onkeyup="validateTransaction()" placeholder="Enter the number of woolong you would like to transfer"/>
+                <br><br><input type="text" class="silly-boy" id="guhhhh" name="account_to_transfer" onkeyup="validateTransaction()" placeholder="Enter the account ID you would likee to transfer to"/>
+                <br><br><input type="text" class="silly-boy" id="nationalid" name="nationalid" onkeyup="validateTransaction()" placeholder="Enter your national id"/>
+                <br><br><input type="hidden" id="user" name="user"/>
+                <br><br><button type="submit" style="font-size:20px;font-family:Arial, Helvetica, sans-serif;" id="guh" disabled>Send Woolong</button>
             </form>
         </div>
     </div>
