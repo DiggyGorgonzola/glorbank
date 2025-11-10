@@ -248,7 +248,6 @@ class InfoGet():
       stringy.append(element.credit)
       database_list.append(stringy)
     return database_list
-
 def checkUser():
   # <something for like... validating the user is the correct user. Idk. IP maybe? 
   pass
@@ -292,17 +291,17 @@ def login():
     try:
       nationalID = int(nationalID)
     except:
-      return error("The username, password, or national ID provided is incorrect. ~ 1.1.0", redirect="home.html", user_info=user_info)
+      return render_template("home.html", error="The username, password, or national ID provided is incorrect. ~ 1.1.0", info=user_info)
     for element in session.query(User).filter_by(username=username):
       user = element
     if user == None:
-      return error("The username, password, or national ID provided is incorrect. ~ 1.1.1", redirect="home.html", user_info=user_info)
+      return render_template("home.html", error="The username, password, or national ID provided is incorrect. ~ 1.1.1", info=user_info)
     
     #See if the credentials are valid. (WIP add IP 2fa)
     print(user.national_id, nationalID)
     print(type(user.national_id), type(nationalID))
     if user.password != password or user.national_id != nationalID:
-      return error("The username, password, or national ID provided is incorrect. ~ 1.1.2", redirect="home.html", user_info=user_info)
+      return render_template("home.html", error="The username, password, or national ID provided is incorrect. ~ 1.1.2", info=user_info)
 
 
     elif user.password == password and user.national_id == nationalID:
@@ -413,6 +412,8 @@ def datasheets():
       database_list = [InfoGet.List(i) for i in session.query(globals()[datasheet]).all()]
       database_keys = InfoGet.SQLattrs(session.query(globals()[datasheet]).first())
     print(database_keys)
+
+
     ''' FOUR HUNDRED AND SEVENTEEN!!!!
     %%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%&&&@@&&&&@@&%%#((//******,,,,,,,*,*/#%&@%%%%&&@@&%%%%%%%%%%%%%%%%%%%%%%
@@ -533,9 +534,11 @@ def sendmoney():
     sendfrom = request.form["nationalid"]
     user = request.form['user']
     if sendfrom == user:
+
+      # fix this please!
       print("HAAAAIII")
       account = session.query(User).filter_by(national_id=sendfrom).first()
-      accountto = session.query(User).filter_by(id=sendto).first()
+      accountto = session.query(Bank).filter_by(id=sendto).first()
       acc_from = session.query(Bank).filter_by(national_id=sendfrom).first()
       acc_to = session.query(Bank).filter_by(id=sendto).first()
       acc_from.woolong = str(decimal(acc_from.woolong) - decimal(value))
