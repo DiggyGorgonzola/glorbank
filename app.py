@@ -32,7 +32,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
 
-
+suspicious_transaction_limit = 100
 # create the db and encryption
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
@@ -307,7 +307,7 @@ def login():
     elif user.password == password and user.national_id == nationalID:
       for element in session.query(Bank).filter_by(national_id=user.national_id):
         bank = element
-      return render_template("indexi.html", useracc=InfoGet.List(user), adming=user.admin, bankacc=InfoGet.List(bank))
+      return render_template("indexi.html", useracc=InfoGet.List(user), adming=user.admin, bankacc=InfoGet.List(bank), sus=suspicious_transaction_limit)
     return error("Something went wrong. ~ 1.2", redirect="home.html", user_info=user_info)  # <-- error code 1.2
   return render_template("home.html", info=["", "", ""])
   
@@ -521,7 +521,7 @@ def accountpage():
     elif user.password == password and user.national_id == nationalID:
       for element in session.query(Bank).filter_by(national_id=user.national_id):
         bank = element
-      return render_template("indexi.html", useracc=[i for i in InfoGet.List(user)], adming=user.admin, bankacc=[i for i in InfoGet.List(bank)])
+      return render_template("indexi.html", useracc=[i for i in InfoGet.List(user)], adming=user.admin, bankacc=[i for i in InfoGet.List(bank)], sus=suspicious_transaction_limit)
   return error("Page not found", redirect="register.html")
 
 
@@ -537,17 +537,26 @@ def sendmoney():
 
       # fix this please!
       print("HAAAAIII")
-      account = session.query(User).filter_by(national_id=sendfrom).first()
-      accountto = session.query(Bank).filter_by(id=sendto).first()
-      acc_from = session.query(Bank).filter_by(national_id=sendfrom).first()
-      acc_to = session.query(Bank).filter_by(id=sendto).first()
-      acc_from.woolong = str(decimal(acc_from.woolong) - decimal(value))
-      acc_to.woolong = str(decimal(acc_to.woolong) + decimal(value))
+      accountfrom = session.query(User).filter_by(national_id=sendfrom).first()
+      accountto = session.query(User).filter_by(id=sendto).first()
 
+      bank_accountfrom = session.query(Bank).filter_by(national_id=accountfrom.national_id).first()
+      bank_accountto = session.query(Bank).filter_by(national_id=accountto.national_id).first()
+
+
+      print(InfoGet.List(bank_accountfrom))
+      woolong_accountfrom = decimal(bank_accountfrom.woolong)
+      woolong_accountto = decimal(bank_accountto.woolong)
+
+      woolong_accountfrom -= decimal(value)
+      bank_accountfrom.woolong = int(woolong_accountfrom)
+
+      woolong_accountto += decimal(value)
+      bank_accountto.woolong = int(woolong_accountto)
       # fix this please
       #new_report = Reports(money=str(bank_val), information=f"Done manually via Admin Panel by {admin_user.username}", date=datetime.datetime.now(), id_from=admin_user.national_id, id_to=user.national_id) 
 
-      transaction_report = Reports(money=str(value), information=f"{account.username} gave {accountto.username} {str(value)} woolong.", date=datetime.datetime.now(), id_from=acc_from.national_id, id_to=acc_to.national_id)
+      transaction_report = Reports(money=str(value), information=f"{accountfrom.username} gave {accountto.username} {str(value)} woolong.", date=datetime.datetime.now(), id_from=accountfrom.national_id, id_to=accountto.national_id)
       session.add(transaction_report)
       session.commit()
     else:
