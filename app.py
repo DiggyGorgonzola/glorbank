@@ -3,7 +3,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from decimal import Decimal as decimal
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, text, Boolean, LargeBinary
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, text, Boolean, LargeBinary, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from flask_bcrypt import Bcrypt
@@ -18,7 +18,10 @@ USERDATABASE = [
   ["Dinky Gonky", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 1],
   ["Dinky Gonky Alt", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 2],
 ]
-
+USERMAIL = [
+  [1, [["Hello Diggy", "Hello Die It's Me, App.pY", "Contact: app.py"], ["Hello Diggy", "Hello Diggy It's Me, App.pY", "Contact: app.py"]]],
+  [2, [["Hello Dinky", "Hello Die It's Me, App.pY", "Contact: app.py"], ["Hello Diggy", "Hello Diggy It's Me, App.pY", "Contact: app.py"]]]
+]
 BANKDATABASE = [
   [USERDATABASE[0][4], USERDATABASE[0][6], "999999", "99999", "999999"],
   [USERDATABASE[1][4], USERDATABASE[1][6], "0", "0", "0"],
@@ -61,6 +64,12 @@ class Bank(Base):
   credit = db.Column(db.String, nullable=False)
   accdate = db.Column(db.DateTime)
   national_id = db.Column(db.Integer, nullable=False, unique=True)
+
+class Mail(Base):
+  __tablename__ = "Mail"
+  id = db.Column(db.Integer, primary_key=True)
+  unread = db.Column(JSON) 
+  read = db.Column(JSON) 
 
 class OngoingTransactions(Base):
   __tablename__ = "OngoingTransactions"
@@ -130,7 +139,7 @@ session.begin()
 #Add a basic database for testing purposes
 existing_user = session.query(User).first()
 existing_bankacc = session.query(Bank).first()
-
+existing_usermail = session.query(Mail).first()
 
 #Add a predefined database for testing purposes
 if not existing_user:
@@ -158,6 +167,15 @@ if not existing_bankacc:
     session.add(new_bankacc)
     session.commit()
 
+if not existing_usermail:
+  for mail in USERMAIL:
+    new_mail = Mail(
+      unread = mail[1]
+    )
+    session.add(new_mail)
+    session.commit()
+
+print([i for i in session.query(Mail).first().unread])
 class InfoGet():
   def SQLattrs(obj):
     return [attr for attr in type(obj).__dict__ if not attr.startswith('_') and not callable(getattr(obj, attr)) and attr not in ['metadata', 'registry']]
@@ -255,7 +273,8 @@ def checkUser():
 #print the database for testing purposes
 for user in session.query(User).all():
   print(str(InfoGet.List(user)))
-  
+for mail in session.query(Mail).all():
+  print(str(mail.unread))
 
 @app.route('/error', methods=["GET", "POST"])
 def error(error_msg="", /, user_info=NONEARRAY, redirect=HOMEREDIRECT):
@@ -307,7 +326,8 @@ def login():
     elif user.password == password and user.national_id == nationalID:
       for element in session.query(Bank).filter_by(national_id=user.national_id):
         bank = element
-      return render_template("indexi.html", useracc=InfoGet.List(user), adming=user.admin, bankacc=InfoGet.List(bank), sus=suspicious_transaction_limit)
+      print(session.query(Mail).filter_by(id=user.id).first().unread)
+      return render_template("indexi.html", useracc=InfoGet.List(user), adming=user.admin, bankacc=InfoGet.List(bank), sus=suspicious_transaction_limit, mail_unread=session.query(Mail).filter_by(id=user.id).first().unread)
     return error("Something went wrong. ~ 1.2", redirect="home.html", user_info=user_info)  # <-- error code 1.2
   return render_template("home.html", info=["", "", ""])
   
