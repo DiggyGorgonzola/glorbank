@@ -70,6 +70,9 @@ html, body {
               text-decoration: 2px underline #000;
             }
 
-.entry {
-    
-}
+
+    .flex {
+        display: flex;
+        justify-content: space-around;
+        align-items:center;
+    }
