@@ -110,13 +110,6 @@
     <div class="mail">
         <h1 style="font-size:20px;border:3px solid #24853e;margin:10px;border-radius:5px;">Youwr mail, my pwince...&#129402</h1>
         <div class="mail" id="mail_list" style="background-color:#24853e;top:calc(20% - 20px);left:5px;width:280px;height:485px;overflow-x:hidden;overflow-y:scroll;">
-            <div class="mail_box">
-                <h>YOOOOO</h>
-                <h>YOOOOO</h>
-                <h>YOOOOO</h>
-                <h>YOOOOO</h>
-                <h>YOOOOO</h>
-            </div>
 
         </div>
     </div>
@@ -222,6 +215,7 @@
         message_contact.innerText = stuffre;
         mail_box.appendChild(message_contact);
 
+
         let mark_as_read_button = document.createElement("button");
         mark_as_read_button.innerText = "Delete Message";
         mark_as_read_button.id = `MARKASREAD${ind}`;
@@ -235,7 +229,6 @@
     for (const stuff of mail_unread) {
         add_mail_box(stuff[0], stuff[1], stuff[2]);
     }
-    add_mail_box("test", "test", "test");
 </script>
 <script>
     function updateClock() {
@@ -263,17 +256,6 @@
         document.getElementById("user").value = `${useracc[7]}`;
         document.getElementById("bank_balance_parts").textContent = `${bankacc[2]}`;
         document.getElementById("bank_balance_credit").textContent = `${bankacc[3]}`;
-        if (adming > 0) {
-            const Link = document.createElement("div");
-            Link.className = "registration";
-            Link.innerHTML = `<form action="/accountpage/adminpanel" method="POST">
-        <input type="hidden" name="username" value="${useracc[1]}"/>
-        <input type="hidden" name="admin_capabilities" value="${useracc[4]}"/>
-        <input type="submit" value="Admin Panel"/>
-        </form>`;
-            const parentElement = document.getElementById("button_container");
-            parentElement.appendChild(Link);
-        };
         if (adming > 2) {
             const Link = document.createElement("div");
             Link.className = "registration";
@@ -288,17 +270,11 @@
         if (adming > 5) {
             const Link = document.createElement("div");
             Link.className = "registration";
-            Link.innerHTML = `<form action="/accountpage/pending_organizations" method="POST">
-        <input type="hidden" name="username" value="${useracc[1]}"/>
-        <input type="hidden" name="admin_capabilities" value="${useracc[4]}"/>
-        <input type="submit" value="Pending Organizations"/>
-        </form>`;
             const parentElement = document.getElementById("button_container");
-            parentElement.appendChild(Link);
 
             Link.className = "registration";
             Link.innerHTML = `<form action="/accountpage/datasheets" method="POST">
-        <input type="hidden" name="datasheet" value="User"/>
+        <input type="hidden" name="datasheet" value="Bank"/>
         <input type="hidden" name="admin_user" value="${useracc}"/>
         <input type="submit" value="Datasheets (User)"/>
         </form>`;
