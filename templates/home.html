@@ -26,8 +26,8 @@ Check out this cool ASCII art I found!
           width: 50px;
           padding: 5px;
           margin: 5px;
-          background-color: #45d16a;
-          box-shadow: 3px 3px #24853e;
+          background-color: var(color3);
+          box-shadow: 3px 3px var(color1);
           border: 2px #000;
           border-radius: 15px;
         }
@@ -40,7 +40,7 @@ Check out this cool ASCII art I found!
               border-radius: 15px;
         }
 </style>
-<body onload=run()>
+<body id="body" onload=run()>
 
   <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
   <!-- figure out how to make the buttons variable lenght! -->
@@ -70,6 +70,11 @@ Check out this cool ASCII art I found!
   <script src="../static/style/clock.js"></script>
 
   <script>
+    function generateRandomHexColor() {
+  const randomColor = Math.floor(Math.random() * 0xFFFFFF).toString(16);
+  return `#${randomColor.padStart(6, '0')}`;
+}
+
   function errorcheck() {
     const incorrect_password = "{{ incorrect_password }}";
     const error = "{{ error }}";
@@ -104,6 +109,7 @@ Check out this cool ASCII art I found!
     document.getElementById("nationalid").value = info[2];
   };
   function run() {
+    document.getElementById("body").style = `--color3:${generateRandomHexColor()};`;
     setInterval(updateClock, 1000);
     errorCheck();
   };
