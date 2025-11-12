@@ -92,8 +92,7 @@
 
     <div class="box" id="box">
     <h1>GLORBENIAN NATIONAL BANK</h1>
-    <p id="labeler">Admin Panel</p>
-    <p id="labeler2">Admin Panel</p>
+    <p id="labeler">Datasheets</p>
     <ul id="List" style="padding-inline-start: 0px;">
 
     </ul>
@@ -130,7 +129,6 @@
         const data = `<input type="hidden" name="admin_user" value="${[admin_user]}"/>`;
         document.getElementById("DATA_USER").innerHTML = document.getElementById("DATA_USER").innerHTML+`<input type="hidden" name="datasheet" value="User"/>`+data+`<input type="submit" value="Datasheets (User)"/>`;
         document.getElementById("DATA_BANK").innerHTML = document.getElementById("DATA_BANK").innerHTML+`<input type="hidden" name="datasheet" value="User"/>`+data+`<input type="submit" value="Datasheets (Bank)"/>`;
-        document.getElementById("labeler").textContent = document.getElementById("DATA_USER").innerHTML;
         var filter_ing = keys[0];
         for (const element of database) {
             let key = keys; /* this HAS to be here for some reason. IT IS CURSED!*/
@@ -140,7 +138,7 @@
             const newFilter = document.createElement("select");
             newFilter.id = "select_options";
             newFilter.innerHTML = ``;
-            newDiv.innerHTML = `<h1>${database.indexOf(element)}</h1>`;
+            newDiv.innerHTML = `<h1>${type} ${database.indexOf(element)}</h1>`;
             newDiv.className = "microbox";
             for (const thing of element) {
                 let label = key[element.indexOf(thing)];
