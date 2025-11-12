@@ -1,6 +1,9 @@
 html, body {
-        background: linear-gradient(#82ffa3, #24853e);
-        background-color: #82ffa3;
+        --color3: #45d16a;
+        --color1: color-mix(in srgb, var(--color3), white);
+        --color2: color-mix(in srgb, var(--color3), black);
+        background: linear-gradient(var(--color1), var(--color2));
+        background-color: color1;
         font-family: 'Times New Roman', Times, serif;
         color: #000;
         margin: 0;
@@ -43,8 +46,8 @@ html, body {
             padding: 5px;
             margin: 5px;
             margin-top: 30px;
-            background-color: #45d16a;
-            box-shadow: 3px 3px #24853e;
+            background-color: var(--color3);
+            box-shadow: 3px 3px var(--color2);
             border: 2px #000;
             border-radius: 15px;
         }
