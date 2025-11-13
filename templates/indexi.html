@@ -249,18 +249,7 @@
         document.getElementById("user").value = `${useracc[7]}`;
         document.getElementById("bank_balance_parts").textContent = `${bankacc[2]}`;
         document.getElementById("bank_balance_credit").textContent = `${bankacc[3]}`;
-        if (adming > 2) {
-            const Link = document.createElement("div");
-            Link.className = "registration";
-            Link.innerHTML = `<form action="/accountpage/reports" method="POST">
-        <input type="hidden" name="username" value="${useracc[1]}"/>
-        <input type="hidden" name="admin_capabilities" value="${useracc[4]}"/>
-        <input type="submit" value="Reports"/>
-        </form>`;
-            const parentElement = document.getElementById("button_container");
-            parentElement.appendChild(Link);
-        };
-        if (adming > 5) {
+        if (adming > 1) {
             const Link = document.createElement("div");
             Link.className = "registration";
             const parentElement = document.getElementById("button_container");
