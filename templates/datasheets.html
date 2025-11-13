@@ -23,8 +23,6 @@
     }
     .homer {
             position: relative;
-            top: calc(20% - 70px);
-            left: calc(50% - 300px);
             width: 200px;
             padding: 5px;
             margin: 5px;
@@ -84,12 +82,15 @@
 <body onload='database_render()'>
     <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
     <script src="../static/style/clock.js"></script>
-    <div id="button_container" style="position:relative; display:flex; justify-content:space-evenly; top:calc(20% - 70px); width:1000px; left:calc(50% - 500px);">
-        <div class="homer">
-            <form action="/accountpage" method="POST">
-                <input type="submit" value="Go to Account Page" style="width:100%;"/>
-            </form>
-        </div>
+    <div class="homer" style="top:calc(20% - 70px); left:calc(50% - 500px);">
+    <form action="/accountpage" method="POST">
+        <input type="hidden" value="" name="username" id="username"/>
+        <input type="hidden" value="" name="password" id="password"/>
+        <input type="hidden" value="" name="national" id="national"/>
+        <input type="submit" value="Go to Account Page" style="width:100%;"/>
+    </form>
+    </div>
+    <div id="button_container" style="position:relative; display:flex; top:calc(20% - 70px); width:1000px; left:calc(50% - 500px);">
         <div class="homer">
             <form action="/accountpage/datasheets" id="DATA_USER" method="POST" style="width:100%;">
             </form>
@@ -98,12 +99,17 @@
             <form action="/accountpage/datasheets" id="DATA_BANK" method="POST" style="width:100%;">
             </form>
         </div>
+        <div class="homer">
+            <form action="/accountpage/datasheets" id="DATA_TRANSACTIONS" method="POST" style="width:100%;">
+            </form>
+        </div>
     </div>
 
 
     <div class="box" id="box" style="position:relative;left:calc(50% - 500px);width:1000px;">
         <div class="searchbar" style="position:absolute;left:calc(50% - 750px);top:-5%;">
-        <input type="text" id="search" onkeyup="search()" style="margin-bottom:10px;" placeholder="Search for an account"/>
+            <p style="font-size:10px;text-decoration:none;">FIIIIXXX</p>
+        <input type="text" id="search" onkeyup="search()" style="margin-bottom:10px;" placeholder="Search . . . "/>
         <br>
         <select name="filter" id="filter_select">
         </select>
@@ -111,7 +117,7 @@
     <h1>GLORBENIAN NATIONAL BANK</h1>
 
     <p id="labeler">Datasheets</p>
-    <h id="type" style="margin:10px;font-size:30px;text-decoration:underline;border:3px solid var(--color2);padding:2px;">Hello!</h>
+    <h id="type" style="margin:10px;font-size:30px;text-decoration:underline;border:3px solid var(--color2);padding:2px;background-color:white;">Hello!</h>
     <div class="labels">
     <table style="width:100%;table-layout:fixed;">
         <tr id="TableKeys">
@@ -154,8 +160,13 @@
         console.log(database);
         console.log("Hello world");
         const data = `<input type="hidden" name="admin_user" value="${[admin_user]}"/>`;
+        document.getElementById("type").innerText = type;
+        document.getElementById("username").value = admin_user[1];
+        document.getElementById("password").value = admin_user[2];
+        document.getElementById("national").value = admin_user[7];
         document.getElementById("DATA_USER").innerHTML = document.getElementById("DATA_USER").innerHTML+`<input type="hidden" name="datasheet" value="User"/>`+data+`<input type="submit" value="Datasheets (User)" style="width:100%;"/>`;
         document.getElementById("DATA_BANK").innerHTML = document.getElementById("DATA_BANK").innerHTML+`<input type="hidden" name="datasheet" value="Bank"/>`+data+`<input type="submit" value="Datasheets (Bank)" style="width:100%;"/>`;
+        document.getElementById("DATA_TRANSACTIONS").innerHTML = document.getElementById("DATA_TRANSACTIONS").innerHTML+`<input type="hidden" name="datasheet" value="Reports"/>`+data+`<input type="submit" value="Datasheets (Transactions)" style="width:100%;"/>`;
         var filter_ing = keys[0];
         for (const keye of keys) {
             let guh = document.createElement("th");
@@ -180,23 +191,26 @@
             };
             indexy += 1;
         };
-        for (var i = 0; i<keys.length;i++) {
-                let thing = keys[i];
-                newFilter.innerHTML += `<option value="${thing}">Filter: ${thing}</option>`;
+        for (const keyee of keys) {
+                let thing = document.createElement("option");
+                thing.value = keyee;
+                thing.id = keyee;
+                thing.innerText = `Filter: ${keyee}`;
+                document.getElementById("filter_select").appendChild(thing);
         };
-        document.getElementById("filter_select").innerHTML = newFilter.innerHTML;;
     };
 
     function add_money_admin(id) {
         const input = document.getElementById(id).querySelect("#bank_input").value
 
     };
+
     function search() {
         var input, filter, objects, item, tag, i, txtValue;
         filter_ing = document.getElementById("filter_select").value;
         input = document.getElementById('search');
         filter = input.value.toUpperCase();
-        objects = document.getElementById("List").getElementsByClassName("microbox"); /* array-like of all accounts */
+        objects = document.getElementById("scrolly").getElementsByClassName("tr"); /* array-like of all accounts */
         for (i = 0; i < objects.length; i++) {
             item = objects[i]; /* i-th account */
             /* find the title of the i-th account and replace it!*/
