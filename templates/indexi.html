@@ -88,6 +88,7 @@
     const bankacc = {{bankacc|tojson}};
     const sus = {{sus}};
     const mail_unread =  {{mail_unread|tojson}};
+    let new_mailread = [];
 
     function isNumeric(value) {
         return Number.isFinite(Number(value)) && !Number.isNaN(Number(value));
@@ -189,9 +190,6 @@
     </div>
 </body>
 <script id="for mail :3">
-    function delete_message(elem) {
-        elem.style.display = 'none';
-    }
     let ind = 0;
     function add_mail_box(stufftitle, stuffinfo, stuffre) {
         // finish dis
@@ -213,21 +211,16 @@
         let message_contact = document.createElement("p");
         message_contact.style = "font-size:10px;text-align:right;"
         message_contact.innerText = stuffre;
-        mail_box.appendChild(message_contact);
-
-
-        let mark_as_read_button = document.createElement("button");
-        mark_as_read_button.innerText = "Delete Message";
-        mark_as_read_button.id = `MARKASREAD${ind}`;
-        mark_as_read_button.setAttribute("onclick", `delete_message(document.getElementById("MAILBOX${ind}"))`);
-        mark_as_read_button.style = "position:relative;top:calc(0%);right:calc(0%);";
-        mail_box.appendChild(mark_as_read_button);
+        mail_box.appendChild(message_contact)
         
         document.getElementById("mail_list").appendChild(mail_box);
         ind += 1;
     }
+    let guh = 0;
     for (const stuff of mail_unread) {
-        add_mail_box(stuff[0], stuff[1], stuff[2]);
+        if (guh < 100) {
+            add_mail_box(stuff[0], stuff[1], stuff[2]);
+        }
     }
 </script>
 <script>
