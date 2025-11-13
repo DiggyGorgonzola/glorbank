@@ -19,7 +19,7 @@ USERDATABASE = [
   ["Dinky Gonky Alt", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 2],
 ]
 USERMAIL = [
-  [1, [], []],
+  [1, [["TITLE", "INFO", "CONTACT DIGGY!!!"]], []],
   [2, [], []],
   [3, [], []]
 ]
