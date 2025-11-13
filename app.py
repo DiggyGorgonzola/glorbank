@@ -15,7 +15,7 @@ HOMEREDIRECT = "register.html"
 
 USERDATABASE = [
   ["Diggy Gorgonzola", "417", None, "127.0.0.1", datetime.datetime.now(), 1000, -1],
-  ["Dinky Gonky", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 1],
+  ["Dinky Gonky", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 2, 1],
   ["Dinky Gonky Alt", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 2],
 ]
 USERMAIL = [
@@ -122,7 +122,7 @@ class Frozen(Base):
 class Reports(Base):
   __tablename__ = "Reports"
   id = db.Column(db.Integer, primary_key=True)
-  money = db.Column(db.String, nullable=False)
+  woolong = db.Column(db.String, nullable=False)
   information = db.Column(db.String, nullable=True)
   date = db.Column(db.DateTime)
   id_from = db.Column(db.String, nullable=False)
@@ -230,7 +230,7 @@ class InfoGet():
     for element in reports:
       stringy = [element.id]
       if admin_level > 3:
-        stringy.append(element.money)
+        stringy.append(element.woolong)
       else:
         stringy.append("HIDDEN")
       if admin_level > 2:
@@ -490,7 +490,7 @@ def addmoney():
     user_bank = session.query(Bank).filter_by(national_id=user.national_id).first()
     if user_bank:
       user_bank.woolong = str(decimal(user_bank.woolong) + bank_val)
-      new_report = Reports(money=str(bank_val), information=f"Done manually via Admin Panel by {admin_user.username}", date=datetime.datetime.now(), id_from=admin_user.national_id, id_to=user.national_id) 
+      new_report = Reports(woolong=str(bank_val), information=f"Done manually via Admin Panel by {admin_user.username}", date=datetime.datetime.now(), id_from=admin_user.national_id, id_to=user.national_id) 
       session.add(new_report)
       session.commit()
     print(user)
@@ -517,9 +517,9 @@ def reports():
 # function 8
 def accountpage():
   if request.method == "POST":
-    username = request.form['username1']
-    password = request.form['password1']
-    nationalID = request.form['national1']
+    username = request.form['username']
+    password = request.form['password']
+    nationalID = request.form['national']
     user = None
     bank = None
     user_info = [username, password, nationalID]
@@ -541,7 +541,7 @@ def accountpage():
     elif user.password == password and user.national_id == nationalID:
       for element in session.query(Bank).filter_by(national_id=user.national_id):
         bank = element
-      return render_template("indexi.html", useracc=[i for i in InfoGet.List(user)], adming=user.admin, bankacc=[i for i in InfoGet.List(bank)], sus=suspicious_transaction_limit)
+      return render_template("indexi.html", useracc=[i for i in InfoGet.List(user)], adming=user.admin, bankacc=[i for i in InfoGet.List(bank)], sus=suspicious_transaction_limit, mail_unread=[])
   return error("Page not found", redirect="register.html")
 
 
@@ -576,7 +576,7 @@ def sendmoney():
       # fix this please
       #new_report = Reports(money=str(bank_val), information=f"Done manually via Admin Panel by {admin_user.username}", date=datetime.datetime.now(), id_from=admin_user.national_id, id_to=user.national_id) 
 
-      transaction_report = Reports(money=str(value), information=f"{accountfrom.username} gave {accountto.username} {str(value)} woolong.", date=datetime.datetime.now(), id_from=accountfrom.national_id, id_to=accountto.national_id)
+      transaction_report = Reports(woolong=str(value), information=f"{accountfrom.username} gave {accountto.username} {str(value)} woolong.", date=datetime.datetime.now(), id_from=accountfrom.national_id, id_to=accountto.national_id)
       session.add(transaction_report)
       session.commit()
     else:
