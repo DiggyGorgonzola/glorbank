@@ -9,12 +9,23 @@
         </head>
 <style>
 
+    .body {
+        width: 1000px;
+        left: calc(50%-500px);
+    }
+
+    .labels {
+        width: 970px;
+        margin:10px;
+        background-color: white;
+        border: 3px solid var(--color2);
+        text-align: center;
+    }
     .homer {
             position: relative;
             top: calc(20% - 70px);
             left: calc(50% - 300px);
-            display: flex;
-            width: 85px;
+            width: 200px;
             padding: 5px;
             margin: 5px;
             background-color: #47d16c;
@@ -61,24 +72,30 @@
                 font-family: Arial, Helvetica, sans-serif;
                 text-decoration:#000;
             }
-
+    .scrolly {
+        width: 976px;
+        margin: 10px;
+        border: 1px solid var(--color2);
+        background-color: var(--color2);
+        height: 200px;
+    }
 
 </style>
-<body onload=database_render()>
+<body onload='database_render()'>
     <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
     <script src="../static/style/clock.js"></script>
-    <div id="button_container" style="position:relative; display:flex; top:calc(20% - 70px);">
-        <div class="homer" style="width:135px;">
+    <div id="button_container" style="position:relative; display:flex; justify-content:space-evenly; top:calc(20% - 70px); width:1000px; left:calc(50% - 500px);">
+        <div class="homer">
             <form action="/accountpage" method="POST">
-                <input type="submit" value="Go to Account Page"/>
+                <input type="submit" value="Go to Account Page" style="width:100%;"/>
             </form>
         </div>
-        <div class="homer" style="width:65px;">
-            <form action="/accountpage/datasheets" id="DATA_USER" method="POST">
+        <div class="homer">
+            <form action="/accountpage/datasheets" id="DATA_USER" method="POST" style="width:100%;">
             </form>
         </div>
-        <div class="homer" style="width:65px;">
-            <form action="/accountpage/datasheets" id="DATA_BANK" method="POST">
+        <div class="homer">
+            <form action="/accountpage/datasheets" id="DATA_BANK" method="POST" style="width:100%;">
             </form>
         </div>
     </div>
@@ -90,12 +107,22 @@
     </div>
 
 
-    <div class="box" id="box">
+    <div class="box" id="box" style="position:relative;left:calc(50% - 500px);width:1000px;">
     <h1>GLORBENIAN NATIONAL BANK</h1>
-    <p id="labeler">Datasheets</p>
-    <ul id="List" style="padding-inline-start: 0px;">
 
-    </ul>
+    <p id="labeler">Datasheets</p>
+    <h id="type" style="margin:10px;font-size:30px;text-decoration:underline;border:3px solid var(--color2);padding:2px;">Hello!</h>
+    <div class="labels">
+    <table style="width:100%;table-layout:fixed;">
+        <tr id="TableKeys">
+
+        </tr>
+    </table></div>
+    <div class="scrolly" style="text-align:left;overflow:auto;overflow-x:hidden;overflow-y:auto;">
+        <table id="scrolly" style="width:100%;table-layout:fixed;">
+
+        </table>
+    </div>
   </div>
 </body>
 <script>
@@ -127,37 +154,38 @@
         console.log(database);
         console.log("Hello world");
         const data = `<input type="hidden" name="admin_user" value="${[admin_user]}"/>`;
-        document.getElementById("DATA_USER").innerHTML = document.getElementById("DATA_USER").innerHTML+`<input type="hidden" name="datasheet" value="User"/>`+data+`<input type="submit" value="Datasheets (User)"/>`;
-        document.getElementById("DATA_BANK").innerHTML = document.getElementById("DATA_BANK").innerHTML+`<input type="hidden" name="datasheet" value="User"/>`+data+`<input type="submit" value="Datasheets (Bank)"/>`;
+        document.getElementById("DATA_USER").innerHTML = document.getElementById("DATA_USER").innerHTML+`<input type="hidden" name="datasheet" value="User"/>`+data+`<input type="submit" value="Datasheets (User)" style="width:100%;"/>`;
+        document.getElementById("DATA_BANK").innerHTML = document.getElementById("DATA_BANK").innerHTML+`<input type="hidden" name="datasheet" value="Bank"/>`+data+`<input type="submit" value="Datasheets (Bank)" style="width:100%;"/>`;
         var filter_ing = keys[0];
+        for (const keye of keys) {
+            let guh = document.createElement("th");
+            guh.innerText = keye;
+            guh.style.fontSize = "20px";
+            guh.style.border = "1px solid var(--color2)";
+            document.getElementById("TableKeys").appendChild(guh);
+        };
+        let indexy = 0;
         for (const element of database) {
-            let key = keys; /* this HAS to be here for some reason. IT IS CURSED!*/
-            const newDiv = document.createElement("div");
-            newDiv.id = element[0];
-            let text = `${element[0]}`;
-            const newFilter = document.createElement("select");
-            newFilter.id = "select_options";
-            newFilter.innerHTML = ``;
-            newDiv.innerHTML = `<h1>${type} ${database.indexOf(element)}</h1>`;
-            newDiv.className = "microbox";
-            for (const thing of element) {
-                let label = key[element.indexOf(thing)];
-                newDiv.innerHTML = newDiv.innerHTML + `
-                <div id="${label}" style="display:flex; align-items:center;">
-                    <label for="${thing}" style="margin-right:10px;font-family:Arial,Helvetica,sans-serif;">${label}:</label>
-                    <pre id="${thing}">${thing}</pre>
-                </div>
-                `;
-            /*`<option value="${key}">Filter: ${key}</option>`*/
-            const parentElement = document.getElementById("List");
-            parentElement.appendChild(newDiv);
+            let row = document.createElement("tr");
+            row.id = `ROW${indexy}`;
+            document.getElementById("scrolly").appendChild(row);
+            for (const guh of element) {
+                let goon = document.createElement("th")
+                goon.textContent = guh;
+                goon.style.fontSize = "20px";
+                goon.style.padding = "10px";
+                goon.style.backgroundColor = "white";
+                goon.style.border = "1px solid black";
+                document.getElementById(`ROW${indexy}`).appendChild(goon)
+            };
+            indexy += 1;
         };
         for (var i = 0; i<keys.length;i++) {
                 let thing = keys[i];
                 newFilter.innerHTML += `<option value="${thing}">Filter: ${thing}</option>`;
         };
         document.getElementById("filter_select").innerHTML = newFilter.innerHTML;;
-    };};
+    };
 
     function add_money_admin(id) {
         const input = document.getElementById(id).querySelect("#bank_input").value
