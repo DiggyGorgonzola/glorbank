@@ -19,9 +19,9 @@ USERDATABASE = [
   ["Dinky Gonky Alt", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 2],
 ]
 USERMAIL = [
-  [1, [["TITLE", "INFO", "CONTACT DIGGY!!!"]], []],
-  [2, [], []],
-  [3, [], []]
+  [1, 1, "TITLE", "MESSAGE", "CONTACT"],
+  [2, 1, "TITLE", "MESSAGE", "CONTACT"],
+  [3, 1, "TITLE", "MESSAGE", "CONTACT"],
 ]
 
 BANKDATABASE = [
@@ -72,8 +72,10 @@ class Bank(Base):
 class Mail(Base):
   __tablename__ = "Mail"
   id = db.Column(db.Integer, primary_key=True)
-  unread = db.Column(JSON) 
-  read = db.Column(JSON) 
+  acc_id_to = db.Column(db.Integer, nullable=False)
+  title = db.Column(db.String, nullable=False)
+  message = db.Column(db.String, nullable=False)
+  contact = db.Column(db.String)
 
 class OngoingTransactions(Base):
   __tablename__ = "OngoingTransactions"
@@ -174,7 +176,10 @@ if not existing_bankacc:
 if not existing_usermail:
   for mail in USERMAIL:
     new_mail = Mail(
-      unread = mail[1]
+      acc_id_to=mail[1],
+      title=mail[2],
+      message=mail[3],
+      contact=mail[4]
     )
     session.add(new_mail)
     session.commit()
@@ -272,8 +277,14 @@ class InfoGet():
 #print the database for testing purposes
 for user in session.query(User).all():
   print(str(InfoGet.List(user)))
-for mail in session.query(Mail).all():
-  print(str(mail.unread))
+
+def getMail(userid):
+  outlist = []
+  for k in session.query(Mail).all():
+    if k.acc_id_to == userid:
+      outlist.append([k.title,k.message,k.contact if k.contact else None])
+  return outlist
+print(getMail(1))
 
 @app.route('/error', methods=["GET", "POST"])
 def error(error_msg="", /, user_info=NONEARRAY, redirect=HOMEREDIRECT):
@@ -325,8 +336,7 @@ def login():
     elif user.password == password and user.national_id == nationalID:
       for element in session.query(Bank).filter_by(national_id=user.national_id):
         bank = element
-      print(session.query(Mail).filter_by(id=user.id).first().unread)
-      return render_template("indexi.html", useracc=InfoGet.List(user), adming=user.admin, bankacc=InfoGet.List(bank), sus=suspicious_transaction_limit, mail_unread=session.query(Mail).filter_by(id=user.id).first().unread)
+      return render_template("indexi.html", useracc=InfoGet.List(user), adming=user.admin, bankacc=InfoGet.List(bank), sus=suspicious_transaction_limit, mail_unread=getMail(user.id))
     return error("Something went wrong. ~ 1.2", redirect="home.html", user_info=user_info)  # <-- error code 1.2
   return render_template("home.html", info=["", "", ""])
   
@@ -367,8 +377,6 @@ def register():
         session.commit()
         new_bank = Bank(woolong=0, parts=0, credit=0, accdate=session.query(User).filter_by(national_id=nationalID).first().accdate, national_id=nationalID)
         session.add(new_bank)
-
-        new_mails = Mail(unread=[])
         session.commit()
         return render_template("register.html", info=[username, password, nationalID, email], skinky="Your account has been registered!")
   return render_template("register.html", info=[])
@@ -406,14 +414,6 @@ def adminlink():
     username = request.form['username']
     admin_capabilities = int(request.form['admin_capabilities'])
     if 'addwoolong' in request.form.keys():
-      try:
-        acc = session.query(Bank).filter_by(id=request.form['account']).first()
-        acc.woolong = str(decimal(acc.woolong) + decimal(request.form['addwoolong']))
-        session.commit()
-      except:
-        return error("You entered an invalid number", redirect="adminpanel.html")
-    if session.query(User).filter_by(username=username).first().admin == admin_capabilities:
-      database_list = InfoGet.accCollect(admin_capabilities, session.query(User).all())
       ''' FOUR HUNDRED AND SEVENTEEN!!!!
       %%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
       %%%%%%%%%&&&@@&&&&@@&%%#((//******,,,,,,,*,*/#%&@%%%%&&@@&%%%%%%%%%%%%%%%%%%%%%%
@@ -448,6 +448,14 @@ def adminlink():
       ((##%%(((((##&&%%%%%%%%&%#//**,,,,,,,*///(#%%#####%%#((((//((#(//(((/////(((//((
       (######(((###%&%%#%%%%&&&%(///*******/((/(####(##%%%(/((////(((((/////(((##(//(#
       '''
+      try:
+        acc = session.query(Bank).filter_by(id=request.form['account']).first()
+        acc.woolong = str(decimal(acc.woolong) + decimal(request.form['addwoolong']))
+        session.commit()
+      except:
+        return error("You entered an invalid number", redirect="adminpanel.html")
+    if session.query(User).filter_by(username=username).first().admin == admin_capabilities:
+      database_list = InfoGet.accCollect(admin_capabilities, session.query(User).all())
       admin_user = session.query(User).filter_by(username=username).first()
       return render_template("adminpanel.html", admin_user=InfoGet.List(admin_user), database=database_list)
     return error("HACKER. ~ 3.1", redirect="register.html")
@@ -541,7 +549,7 @@ def accountpage():
     elif user.password == password and user.national_id == nationalID:
       for element in session.query(Bank).filter_by(national_id=user.national_id):
         bank = element
-      return render_template("indexi.html", useracc=[i for i in InfoGet.List(user)], adming=user.admin, bankacc=[i for i in InfoGet.List(bank)], sus=suspicious_transaction_limit, mail_unread=[])
+      return render_template("indexi.html", useracc=[i for i in InfoGet.List(user)], adming=user.admin, bankacc=[i for i in InfoGet.List(bank)], sus=suspicious_transaction_limit, mail_unread=getMail(user.id))
   return error("Page not found", redirect="register.html")
 
 
@@ -579,6 +587,10 @@ def sendmoney():
       transaction_report = Reports(woolong=str(value), information=f"{accountfrom.username} gave {accountto.username} {str(value)} woolong.", date=datetime.datetime.now(), id_from=accountfrom.national_id, id_to=accountto.national_id)
       session.add(transaction_report)
       session.commit()
+      new_mail = Mail(acc_id_to=accountfrom.id, title="Transaction Information", message=f"    At {datetime.datetime.now().strftime("%I:%M %p, %A, %B %d, %Y")} you have sent {value} Woolong to another bank account.\n\n    If you believe this to be an error, please send a message to the gmail provided below.", contact="bendole3141592@gmail.com (main provider of the G.N.B. service).")
+      session.add(new_mail)
+      session.commit()
+    
     else:
       print("Something bad happened")
     print(value)
