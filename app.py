@@ -74,6 +74,7 @@ class Mail(Base):
 class OngoingTransactions(Base):
   __tablename__ = "OngoingTransactions"
   id = db.Column(db.Integer, primary_key=True)
+  woolong = db.Column(db.String, nullable=False)
   information = db.Column(db.String, nullable=True)
   date = db.Column(db.DateTime)
   natid_from = db.Column(db.Integer, nullable=False, unique=True)
@@ -179,7 +180,7 @@ class InfoGet():
           contact=mail[4]
         )
         session.add(new_mail)
-        session.commit(
+        session.commit()
 
   def accCollect(admin_level, accs):
     database_list = []
@@ -552,6 +553,22 @@ def accountpage():
       return render_template("indexi.html", useracc=[i for i in InfoGet.List(user)], adming=user.admin, bankacc=[i for i in InfoGet.List(bank)], sus=suspicious_transaction_limit, mail_unread=InfoGet.getMail(user.id))
   return error("Page not found", redirect="register.html")
 
+def transact(nidfrom, nidto, amt):
+  print("HAAAAIII")
+  bank_accountfrom = session.query(Bank).filter_by(national_id=nidfrom).first()
+  bank_accountto = session.query(Bank).filter_by(national_id=nidto).first()
+
+
+  print(InfoGet.List(bank_accountfrom))
+  woolong_accountfrom = decimal(bank_accountfrom.woolong)
+  woolong_accountto = decimal(bank_accountto.woolong)
+
+  woolong_accountfrom -= decimal(amt)
+  bank_accountfrom.woolong = int(woolong_accountfrom)
+
+  woolong_accountto += decimal(amt)
+  bank_accountto.woolong = int(woolong_accountto)
+  session.commit()
 
 @app.route('/accountpage/sendmoney', methods=["GET", "POST"])
 # gooner function lmao
@@ -562,35 +579,22 @@ def sendmoney():
     sendfrom = request.form["nationalid"]
     user = request.form['user']
     if sendfrom == user:
-
-      # fix this please!
-      print("HAAAAIII")
       accountfrom = session.query(User).filter_by(national_id=sendfrom).first()
       accountto = session.query(User).filter_by(id=sendto).first()
+      if int(value) < suspicious_transaction_limit:
+        transact(accountfrom.national_id, accountto.national_id, value)
 
-      bank_accountfrom = session.query(Bank).filter_by(national_id=accountfrom.national_id).first()
-      bank_accountto = session.query(Bank).filter_by(national_id=accountto.national_id).first()
+        transaction_report = Reports(woolong=str(value), information=f"{accountfrom.username} gave {accountto.username} {str(value)} woolong.", date=datetime.datetime.now(), id_from=accountfrom.national_id, id_to=accountto.national_id)
+        session.add(transaction_report)
+        session.commit()
 
-
-      print(InfoGet.List(bank_accountfrom))
-      woolong_accountfrom = decimal(bank_accountfrom.woolong)
-      woolong_accountto = decimal(bank_accountto.woolong)
-
-      woolong_accountfrom -= decimal(value)
-      bank_accountfrom.woolong = int(woolong_accountfrom)
-
-      woolong_accountto += decimal(value)
-      bank_accountto.woolong = int(woolong_accountto)
-      # fix this please
-      #new_report = Reports(money=str(bank_val), information=f"Done manually via Admin Panel by {admin_user.username}", date=datetime.datetime.now(), id_from=admin_user.national_id, id_to=user.national_id) 
-
-      transaction_report = Reports(woolong=str(value), information=f"{accountfrom.username} gave {accountto.username} {str(value)} woolong.", date=datetime.datetime.now(), id_from=accountfrom.national_id, id_to=accountto.national_id)
-      session.add(transaction_report)
-      session.commit()
-      new_mail = Mail(acc_id_to=accountfrom.id, title="Transaction Information", message=f"    At {datetime.datetime.now().strftime("%I:%M %p, %A, %B %d, %Y")} you have sent {value} Woolong to another bank account.\n\n    If you believe this to be an error, please send a message to the gmail provided below.", contact="bendole3141592@gmail.com (main provider of the G.N.B. service).")
-      session.add(new_mail)
-      session.commit()
-    
+        new_mail = Mail(acc_id_to=accountfrom.id, title="Transaction Information", message=f"    At {datetime.datetime.now().strftime("%I:%M %p, %A, %B %d, %Y")} you have sent {value} Woolong to another bank account.\n\n    If you believe this to be an error, please send a message to the gmail provided below.", contact="bendole3141592@gmail.com (main provider of the G.N.B. service).")
+        session.add(new_mail)
+        session.commit()
+      else:
+        pending_transaction = OngoingTransactions(woolong=value, information=f"{accountfrom.username} wishes to make a transaction with {accountto.username}", date=datetime.datetime.now(), natid_from=accountfrom.national_id, natid_to=accountto.national_id)
+        session.add(pending_transaction)
+        session.commit()
     else:
       print("Something bad happened")
     print(value)
