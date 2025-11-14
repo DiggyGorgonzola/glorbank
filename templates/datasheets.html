@@ -107,12 +107,16 @@
 
 
     <div class="box" id="box" style="position:relative;left:calc(50% - 500px);width:1000px;">
-        <div class="searchbar" style="position:absolute;left:calc(50% - 750px);top:-5%;">
-            <p style="font-size:10px;text-decoration:none;">FIIIIXXX</p>
-        <input type="text" id="search" onkeyup="search()" style="margin-bottom:10px;" placeholder="Search . . . "/>
+        <div class="searchbar" style="position:absolute;left:calc(50% - 750px);top:-5%;"> 
+            <div style="display:flex;">
+            <input type="text" id="search" onkeyup="search()" style="margin-bottom:10px;" placeholder="Search . . . "/>
+            <input type="checkbox" onclick="search()"style="transform:scale(1.5);margin-bottom:15px;" title="Check this box if you want the search results to filter by EXACTLY what you input." id="includer"/></div>
         <br>
+
+
         <select name="filter" id="filter_select">
         </select>
+
     </div>
     <h1>GLORBENIAN NATIONAL BANK</h1>
 
@@ -150,7 +154,7 @@
     document.getElementById('clock-display').innerText = `${formattedDate} ${formattedTime}`;
   };
     var filter_ing = "";
-
+    let indexy = 0;
     function database_render() {
         setInterval(updateClock, 1000);
         const admin_user = {{ admin_user | tojson }};
@@ -175,14 +179,17 @@
             guh.style.border = "1px solid var(--color2)";
             document.getElementById("TableKeys").appendChild(guh);
         };
-        let indexy = 0;
         for (const element of database) {
             let row = document.createElement("tr");
             row.id = `ROW${indexy}`;
+            row.className = "row-class";
+            //row.style.display = "none";
             document.getElementById("scrolly").appendChild(row);
             for (const guh of element) {
                 let goon = document.createElement("th")
                 goon.textContent = guh;
+                goon.id = `ROW${indexy}-${keys[element.indexOf(guh)]}`;
+                goon.style.overflowX = "auto";
                 goon.style.fontSize = "20px";
                 goon.style.padding = "10px";
                 goon.style.backgroundColor = "white";
@@ -194,7 +201,7 @@
         for (const keyee of keys) {
                 let thing = document.createElement("option");
                 thing.value = keyee;
-                thing.id = keyee;
+                thing.id = `FILTER_${keyee}`;
                 thing.innerText = `Filter: ${keyee}`;
                 document.getElementById("filter_select").appendChild(thing);
         };
@@ -206,23 +213,28 @@
     };
 
     function search() {
-        var input, filter, objects, item, tag, i, txtValue;
-        filter_ing = document.getElementById("filter_select").value;
-        input = document.getElementById('search');
-        filter = input.value.toUpperCase();
-        objects = document.getElementById("scrolly").getElementsByClassName("tr"); /* array-like of all accounts */
-        for (i = 0; i < objects.length; i++) {
-            item = objects[i]; /* i-th account */
-            /* find the title of the i-th account and replace it!*/
+        const x = document.getElementsByClassName("row-class");
+        filter_ing = document.getElementById("filter_select").value;;
+        for (var lele = 0; lele <= indexy; lele++) {
+            let row_elemnt = document.getElementById(`ROW${lele}`);
+            let congruence = document.getElementById("includer").checked;
+            let search_value = document.getElementById("search").value.toUpperCase();
+            let to_test = document.getElementById(`ROW${lele}-${filter_ing}`).textContent.toUpperCase();
 
-            tag = item.querySelector(`#${filter_ing}`); /*see the filter_ing-th variable in the i-th account*/
-            txtValue = tag.innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                item.style.display = "";
-            } else {
-                item.style.display = "none";
+            if (!congruence) {
+                if (!to_test.includes(search_value)) {
+                    row_elemnt.style.display = "none";
+                } else {
+                    row_elemnt.style.display = "";
+            };}
+            else if (congruence) {
+                if (to_test != search_value) {
+                    row_elemnt.style.display = "none";
+                } else {
+                    row_elemnt.style.display = "";
+                }
             };
-        };;
+        };
     };
 </script>
   </html>
