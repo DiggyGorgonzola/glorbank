@@ -14,7 +14,7 @@ NONEARRAY = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
 HOMEREDIRECT = "register.html"
 
 USERDATABASE = [
-  ["Diggy Gorgonzola", "417", None, "127.0.0.1", datetime.datetime.now(), 1000, -1],
+  ["Diggy Gorgonzola", "417", "bendole3141592@gmail.com", "127.0.0.1", datetime.datetime.now(), 1000, -1],
   ["Dinky Gonky", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 2, 1],
   ["Dinky Gonky Alt", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 2],
 ]
