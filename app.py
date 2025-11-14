@@ -136,53 +136,51 @@ Session = sessionmaker(bind=engine)
 session = Session()
 session.begin()
 
-#Add a basic database for testing purposes
-existing_user = session.query(User).first()
-existing_bankacc = session.query(Bank).first()
-existing_usermail = session.query(Mail).first()
-
-#Add a predefined database for testing purposes
-if not existing_user:
-  for user in USERDATABASE:
-      new_user = User(
-          username=user[0],
-          password=user[1],
-          email=user[2],
-          ip=user[3],
-          accdate=user[4],
-          admin=user[5],
-          national_id=user[6]
-      )
-      session.add(new_user)
-      session.commit()
-if not existing_bankacc:
-  for bankacc in BANKDATABASE:
-    new_bankacc = Bank(
-      accdate=bankacc[0],
-      national_id=bankacc[1],
-      woolong=bankacc[2],
-      parts=bankacc[3],
-      credit=bankacc[4]
-    )
-    session.add(new_bankacc)
-    session.commit()
-
-if not existing_usermail:
-  for mail in USERMAIL:
-    new_mail = Mail(
-      acc_id_to=mail[1],
-      title=mail[2],
-      message=mail[3],
-      contact=mail[4]
-    )
-    session.add(new_mail)
-    session.commit()
-
 class InfoGet():
   def SQLattrs(obj):
     return [attr for attr in type(obj).__dict__ if not attr.startswith('_') and not callable(getattr(obj, attr)) and attr not in ['metadata', 'registry']]
   def List(obj):
     return [obj.__dict__[i] for i in type(obj).__dict__ if i in InfoGet.SQLattrs(obj)]
+  def BuildDb():
+    #Add a basic database for testing purposes
+    existing_user = session.query(User).first()
+    existing_bankacc = session.query(Bank).first()
+    existing_usermail = session.query(Mail).first()
+    if not existing_user:
+      for user in USERDATABASE:
+          new_user = User(
+              username=user[0],
+              password=user[1],
+              email=user[2],
+              ip=user[3],
+              accdate=user[4],
+              admin=user[5],
+              national_id=user[6]
+          )
+          session.add(new_user)
+          session.commit()
+    if not existing_bankacc:
+      for bankacc in BANKDATABASE:
+        new_bankacc = Bank(
+          accdate=bankacc[0],
+          national_id=bankacc[1],
+          woolong=bankacc[2],
+          parts=bankacc[3],
+          credit=bankacc[4]
+        )
+        session.add(new_bankacc)
+        session.commit()   
+    if not existing_usermail:
+      for mail in USERMAIL:
+        new_mail = Mail(
+          acc_id_to=mail[1],
+          title=mail[2],
+          message=mail[3],
+          contact=mail[4]
+        )
+        session.add(new_mail)
+        session.commit(
+
   def accCollect(admin_level, accs):
     database_list = []
     for element in accs:
@@ -222,6 +220,14 @@ class InfoGet():
         stringy.append("HIDDEN")
       database_list.append(stringy)
     return database_list
+
+  #make this dependent on admin level!
+  def getMail(userid):
+    outlist = []
+    for k in session.query(Mail).all():
+      if k.acc_id_to == userid:
+        outlist.append([k.title,k.message,k.contact if k.contact else None])
+    return outlist
     
   #Collects reports based on the admin's level
   def reportCollect(admin_level, reports):
@@ -268,17 +274,12 @@ class InfoGet():
       stringy.append(element.credit)
       database_list.append(stringy)
     return database_list
+
+
+InfoGet.BuildDb()
 #print the database for testing purposes
 for user in session.query(User).all():
   print(str(InfoGet.List(user)))
-
-def getMail(userid):
-  outlist = []
-  for k in session.query(Mail).all():
-    if k.acc_id_to == userid:
-      outlist.append([k.title,k.message,k.contact if k.contact else None])
-  return outlist
-print(getMail(1))
 
 @app.route('/error', methods=["GET", "POST"])
 def error(error_msg="", /, user_info=NONEARRAY, redirect=HOMEREDIRECT):
@@ -330,7 +331,7 @@ def login():
     elif user.password == password and user.national_id == nationalID:
       for element in session.query(Bank).filter_by(national_id=user.national_id):
         bank = element
-      return render_template("indexi.html", useracc=InfoGet.List(user), adming=user.admin, bankacc=InfoGet.List(bank), sus=suspicious_transaction_limit, mail_unread=getMail(user.id))
+      return render_template("indexi.html", useracc=InfoGet.List(user), adming=user.admin, bankacc=InfoGet.List(bank), sus=suspicious_transaction_limit, mail_unread=InfoGet.getMail(user.id))
     return error("Something went wrong. ~ 1.2", redirect="home.html", user_info=user_info)  # <-- error code 1.2
   return render_template("home.html", info=["", "", ""])
   
@@ -408,6 +409,11 @@ def adminlink():
     username = request.form['username']
     admin_capabilities = int(request.form['admin_capabilities'])
     if 'addwoolong' in request.form.keys():
+
+
+
+
+      
       ''' FOUR HUNDRED AND SEVENTEEN!!!!
       %%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
       %%%%%%%%%&&&@@&&&&@@&%%#((//******,,,,,,,*,*/#%&@%%%%&&@@&%%%%%%%%%%%%%%%%%%%%%%
@@ -543,7 +549,7 @@ def accountpage():
     elif user.password == password and user.national_id == nationalID:
       for element in session.query(Bank).filter_by(national_id=user.national_id):
         bank = element
-      return render_template("indexi.html", useracc=[i for i in InfoGet.List(user)], adming=user.admin, bankacc=[i for i in InfoGet.List(bank)], sus=suspicious_transaction_limit, mail_unread=getMail(user.id))
+      return render_template("indexi.html", useracc=[i for i in InfoGet.List(user)], adming=user.admin, bankacc=[i for i in InfoGet.List(bank)], sus=suspicious_transaction_limit, mail_unread=InfoGet.getMail(user.id))
   return error("Page not found", redirect="register.html")
 
 
