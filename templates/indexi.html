@@ -191,6 +191,9 @@
 </body>
 <script id="for mail :3">
     let ind = 0;
+    function delMes(msgid) {
+        document.getElementById(msgid).style.display = "none";
+    }
     function add_mail_box(stufftitle, stuffinfo, stuffre) {
         // finish dis
         let mail_box = document.createElement("div");
@@ -211,9 +214,18 @@
         let message_contact = document.createElement("p");
         message_contact.style = "font-size:10px;text-align:right;"
         message_contact.innerText = stuffre;
-        mail_box.appendChild(message_contact)
+        mail_box.appendChild(message_contact);
         
+        /*
         document.getElementById("mail_list").appendChild(mail_box);
+
+        let message_delete_botton = document.createElement("button");
+        message_delete_button.textContent = "Delete";
+        message_delete_button.onclick = `delMes(MAILBOX${ind})`;
+        mail_box.appendChild(message_delete_button);
+        
+        fix this please
+        */
         ind += 1;
     }
     let guh = 0;
