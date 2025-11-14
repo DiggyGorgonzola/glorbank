@@ -1,11 +1,13 @@
 html, body {
+        --shade: #000;
+        --tint: #FFF;
         --color3: #45d16a;
-        --color1: color-mix(in srgb, var(--color3), white);
-        --color2: color-mix(in srgb, var(--color3), black);
+        --color1: color-mix(in srgb, var(--color3), var(--tint));
+        --color2: color-mix(in srgb, var(--color3), var(--shade));
         background: linear-gradient(var(--color1), var(--color2));
         background-color: color1;
         font-family: 'Times New Roman', Times, serif;
-        color: #000;
+        color: var(--shade);
         margin: 0;
         padding: 0;
         height: 100%;
