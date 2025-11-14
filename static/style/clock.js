@@ -1,12 +1,13 @@
+var user_location = 'en-US'
 function updateClock() {
     const now = new Date();
-    const formattedTime = now.toLocaleTimeString('en-US', {
+    const formattedTime = now.toLocaleTimeString(user_location, {
         hour: 'numeric',
         minute: 'numeric',
         second: 'numeric',
         hour12: false
         });
-    const formattedDate = now.toLocaleDateString('en-US', {
+    const formattedDate = now.toLocaleDateString(user_location, {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
@@ -19,12 +20,3 @@ function startClock() {
     setInterval(updateClock, 1000);
 };
 
-
-//maybe useful functions
-function setText(elem, text) {
-    document.getElementById("elem").innerText = text;
-};
-
-function byId(elem) {
-    return document.getElementById(elem);
-};
