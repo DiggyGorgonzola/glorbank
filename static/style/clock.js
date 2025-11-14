@@ -18,3 +18,13 @@ function updateClock() {
 function startClock() {
     setInterval(updateClock, 1000);
 };
+
+
+//maybe useful functions
+function setText(elem, text) {
+    document.getElementById("elem").innerText = text;
+};
+
+function byId(elem) {
+    return document.getElementById(elem);
+};
