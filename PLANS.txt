@@ -7,7 +7,7 @@ Reports <- almost done !!!
   -Reports for organization transactions
 Editing a live database
 Automatic bank interest
-Make moving between pages a lot easier
+DONE? Make moving between pages a lot easier
 Add graphs for the accountpage
 Allow admins with a level of greater than 10 to edit the information of another account
 Add a "Frozen" tag for personal and organization accounts. If a transaction attempts to happen with a "frozen" account, it will go into OngoingTransactions! <- half done
@@ -16,12 +16,17 @@ Add bank notes for conversion between Glorbenian Nation Bank money and other cur
 Add a limit to how many organizations you can have registered or pending. (5)
 Add a timeout for typing an incorrect password 3x.
 DONE: Add a "Bank Account ULTIMATE" for full control over the bank website (admin level A THOUSAND!)
-Split app.py into smaller modules for simplicity. It's way too complicated vro.
-  DONE: info_get.py for parsing SQL tables
-  -appdata.py for starting SQL tables
-HALF DONE: Add support for Parts and credit score
-Change admin info display to a spreadsheet system <- datasheets.html
 
+MIGHT NOT NEED TO DO THIS:
+Split app.py into smaller modules for simplicity. It's way too complicated vro.
+  -info_get.py for parsing SQL tables
+  -appdata.py for starting SQL tables
+
+DONE: Add support for Parts and credit score
+DONE: Change admin info display to a spreadsheet system <- datasheets.html
+
+
+DONE: Fancy colors :D
 make sure to change error so that it can redirect you to specific websites!
 
 
