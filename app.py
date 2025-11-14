@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from flask_bcrypt import Bcrypt
 from werkzeug.security import generate_password_hash, check_password_hash
 import os, datetime
-
+from CBI import suspicious_transaction_limit
 NONEARRAY = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
 HOMEREDIRECT = "register.html"
 
@@ -34,13 +34,7 @@ app = Flask(__name__)
 Base = declarative_base()
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'  # SQLite file
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-
-
-suspicious_transaction_limit = 100
-
-
-# create the db and encryption
+# create the db and encryption?
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
