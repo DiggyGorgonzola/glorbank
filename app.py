@@ -346,7 +346,7 @@ def register():
     username = request.form['username']
     password = request.form['password']
     nationalID = int(request.form['national'])
-    user_ip = request.remote_addr
+    user_ip = request.headers.get("X-Real-IP") or request.headers.get("X-Forwarded-For", "").split(',')[0]
     email = ""
     if request.form['email']:
       email = request.form['email']
