@@ -10,12 +10,13 @@ class Fetches:
     return None
 
   #dubious function
+
+  #should be used instead of jsonify I think due to its shorthandedness...
   def json_out(status, received, **kwargs):
     v = {'status':status, 'received':received}
     for key,value in kwargs.items():
       v[key] = value
     return jsonify(v)
-
 
   
   @fetch.route('/usermail', methods=["GET","POST"])
