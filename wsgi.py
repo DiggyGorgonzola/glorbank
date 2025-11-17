@@ -1,9 +1,10 @@
 from app import app, Delete
+from CBI import cbidict as thing
 
 if __name__ == "__main__":
   #Delete()
   #DELETES ENTIRE DATABASE
-  debug = app.cbidict["debug"][0] if app.cbidict is not None else False
+  debug = thing["debug"][0] if thing is not None else False
   app.run(debug=debug) #<- This might not work. If it doesn't, use app.run(debug=True) or smth...
 
 #I'm so skibidi I'm so skibidi skibidi skibidi skibidi biden. I'm so skibidi I'm so skibidi skibidi skibidi skibidi biden
