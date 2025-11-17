@@ -26,11 +26,16 @@ class Fetches:
         mail_unread = InfoGet.getMail(received_data['useraccount'][0]
         return json_out("success", received_data, response=mail_unread)
       except Exception as error:
-        return jsonify("failure", received_data, response=error.lower())
+        return json_out("failure", received_data, response=error.lower())
     return None
 
   @fetch.route('/getuser', methods=["GET", "POST"]
   def getuser():
     if request.method == 'POST':
       recieved_data = request.json
+      try:
+        user_account = [i for i in InfoGet.List(session,query(User).filter_by(id=received_data["id"])
+        return json_out("success", received_data, response=user_account)
+      except Exception as error:
+        return json_out("failure", received_data, response=error.lower())
     return None
