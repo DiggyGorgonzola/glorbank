@@ -1,4 +1,5 @@
 #CBI.py
+import datetime
 
 # MAIN BANK VARIABLES
 # ---------
@@ -27,6 +28,7 @@ LOCKDOWN = False # Basically freezes the bank entirely
 SECRETKEY = "GINGINATOR3000" # Secret ID key for changing variables (Do not keep it GINGINATOR3000 for the real app. People can see this github page
 HISTORY = [] # Variable change history
 CHANGEVALUEALLOW = False # Allow bank values to be changed
+HOMEREDIRECT = "register.html"
 # ---------
 
 
