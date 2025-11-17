@@ -17,7 +17,7 @@ from decimal import Decimal as decimal
 
 from ..appdata.database import Base, engine, DATABASE_URL
 from ..appdata.models import User, Bank, Mail, Reports, OngoingTransaction, RegisteringOrganizations, Organization, Employees, Frozen
-from CBI import cbidict, HOMEREDIRECT
+from ..CBI import cbidict, HOMEREDIRECT
 
 import os, datetime, json
 
@@ -636,7 +636,7 @@ class Fetches:
     if request.method == 'POST':
       received_data = request.json
       try:
-        return Fetches.json_out("success", received_data, response="mail")
+        return Fetches.json_out("success", received_data, response=InfoGet.getMail(received_data["useraccount"][0])
       except Exception as error:
         return Fetches.json_out("failure", received_data, response=error.lower())
     return None
