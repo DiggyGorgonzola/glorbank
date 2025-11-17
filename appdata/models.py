@@ -1,10 +1,13 @@
 # models.py
 
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, DateTime, text, Boolean, LargeBinary, JSON
-from .database import Base 
+from .database import Base
+
 '''
 User, Bank, Mail, Reports, OngoingTransaction, RegisteringOrganizations, Organization, Employees, Frozen
 '''
+db = SQLAlchemy()
 class User(Base):
   __tablename__ = "User"
   id = db.Column(db.Integer, primary_key=True)
