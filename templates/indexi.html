@@ -87,8 +87,19 @@
     const useracc = {{ useracc | tojson}};
     const bankacc = {{bankacc|tojson}};
     const sus = {{sus}};
-    const mail_unread =  {{mail_unread|tojson}};
-    let new_mailread = [];
+    let mail_unread = [];
+    function DiggyWillGetYourMail() {
+        const postData = { "useraccount": useracc};
+        fetch('/usermail', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json',},
+            body: JSON.stringify(postData),})
+        .then(response => response.json())
+        .then(data => {
+            console.log('POST response:', data);
+            document.getElementById("gooner2").innerText = data;})
+    };
+    DiggyWillGetYourMail();
 
     function isNumeric(value) {
         return Number.isFinite(Number(value)) && !Number.isNaN(Number(value));
@@ -96,6 +107,7 @@
 </script>
 <body onload="Adming()"> 
     <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
+    <h id="gooner2"></h>
 
     <!-- BUTTON CONTAINER -->
     <div id="button_container" style="position:relative; display:flex; top:calc(20% - 70px);left: calc(50% - 1100px);">
@@ -106,6 +118,27 @@
         </div>
     </div>
 
+    <!-- SILLY BILLY THING FOR FETCH
+    <script>
+    function Diggy() {
+        const postData = { name: 'Alice', age: 30 };
+        fetch('/usermail', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json',},
+            body: JSON.stringify(postData),})
+        .then(response => response.json())
+        .then(data => {
+            console.log('POST response:', data);
+            document.getElementById("gooner2").innerText = data.response;})
+    };
+    </script>
+    <div>
+        <h id="gooner2">Hi</h>
+        <div class="homer" style="width:fit-content">
+            <button id="silly_button" onclick="Diggy()">Click me!</button>
+        </div>
+    </div>
+     -->
 
     <!-- MAIL -->
     <div class="mail">
@@ -261,6 +294,7 @@
     function Adming() {
         setInterval(updateClock, 1000);
         document.getElementById("welcome").textContent = `Welcome, ${useracc[1]} :3`;
+        document.getElementById("welcome").textContent = mail_unread;
         document.getElementById("bank_balance_woolong").textContent = `${bankacc[1]}`;
         document.getElementById("user").value = `${useracc[7]}`;
         document.getElementById("bank_balance_parts").textContent = `${bankacc[2]}`;
@@ -272,7 +306,7 @@
 
             Link.className = "registration";
             Link.innerHTML = `<form action="/accountpage/datasheets" method="POST">
-        <input type="hidden" name="datasheet" value="Bank"/>
+        <input type="hidden" name="datasheet" value="User"/>
         <input type="hidden" name="admin_user" value="${useracc}"/>
         <input type="submit" value="Datasheets)"/>
         </form>`;
