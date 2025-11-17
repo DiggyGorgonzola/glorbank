@@ -1,6 +1,6 @@
 # app.py
 
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, Blueprint
 from decimal import Decimal as decimal
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, text, Boolean, LargeBinary, JSON
@@ -8,9 +8,16 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from flask_bcrypt import Bcrypt
 from werkzeug.security import generate_password_hash, check_password_hash
-import os, datetime, json
 from CBI import suspicious_transaction_limit
+
+#Might freak out idk
+from Fetch import Fetches
+
+import os, datetime, json
+
+#globals
 NONEARRAY = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
+
 HOMEREDIRECT = "register.html"
 
 USERDATABASE = [
@@ -18,6 +25,7 @@ USERDATABASE = [
   ["Dinky Gonky", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 2, 1],
   ["Dinky Gonky Alt", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 2],
 ]
+
 USERMAIL = [
   [1, 1, "TITLE", "MESSAGE", "CONTACT"],
   [2, 1, "TITLE", "MESSAGE", "CONTACT"],
@@ -29,17 +37,26 @@ BANKDATABASE = [
   [USERDATABASE[1][4], USERDATABASE[1][6], "0", "0", "0"],
   [USERDATABASE[2][4], USERDATABASE[2][6], "0", "0", "0"],
 ]
-# create the db link
-app = Flask(__name__)
-Base = declarative_base()
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'  # SQLite file
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# create the db and encryption?
-db = SQLAlchemy(app)
-bcrypt = Bcrypt(app)
 
-#secret key!!!!
-app.secret_key = "Glorbank"
+def beginApp():
+  # create the db link
+  app = Flask(__name__)
+  
+  #try this?
+  app.register_blueprint('fetch')
+  
+  
+  Base = declarative_base()
+  app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'  # SQLite file
+  app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+  # create the db and encryption?
+  db = SQLAlchemy(app)
+  bcrypt = Bcrypt(app)
+
+  #secret key!!!!
+  app.secret_key = "Glorbank"
+  return "App Rendered!!!"
+beginApp()
 
 
 # db traits
@@ -126,16 +143,16 @@ class Reports(Base):
   id_to = db.Column(db.String, nullable=False)
   # fix whatever's wrong with this!
 
-
-# activate db
-engine = create_engine('sqlite:///users.db')
-Base.metadata.create_all(engine)
-
-
-# create session <- move to wsgi.py please
-Session = sessionmaker(bind=engine)
-session = Session()
-session.begin()
+def ActivateDb():
+  # activate db
+  engine = create_engine('sqlite:///users.db')
+  Base.metadata.create_all(engine)
+  
+  
+  # create session <- move to wsgi.py please if possible thank you
+  Session = sessionmaker(bind=engine)
+  session = Session()
+  session.begin()
 
 class InfoGet():
 
@@ -282,7 +299,7 @@ class InfoGet():
       database_list.append(stringy)
     return database_list
 
-
+ActivateDb()
 InfoGet.BuildDb()
 #print the database for testing purposes
 for user in session.query(User).all():
@@ -295,7 +312,7 @@ for user in session.query(User).all():
 # ITS SOOOO COOOOOOL
 
 
-
+#Dumb function we have a lot of work to do huh?
 @app.route('/error', methods=["GET", "POST"])
 def error(error_msg="", /, user_info=NONEARRAY, redirect=HOMEREDIRECT):
   print(redirect)
@@ -306,7 +323,7 @@ def error(error_msg="", /, user_info=NONEARRAY, redirect=HOMEREDIRECT):
 def home():
   return render_template("home.html", info=["", "", ""])
 
-# Figure this stuff out?
+# Figure this stuff out? <- Maybe should go to Fetches!
 @app.route('/goto', methods=["GET", "POST"])
 def goto():
   if request.method == "POST":
@@ -321,7 +338,7 @@ def goto():
 def login():
   if request.method == "POST":
 
-    #Save data entered from the form
+    #Save data entered from the form (We can used Fetches for this!
     username = request.form['username']
     password = request.form['password']
     nationalID = request.form['national']
