@@ -8,7 +8,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from flask_bcrypt import Bcrypt
 from werkzeug.security import generate_password_hash, check_password_hash
-from CBI import cbidict, DEBUG
+from CBI import cbidict
 
 #Might freak out idk
 from Fetch import Fetches
@@ -363,7 +363,7 @@ def login():
     elif user.password == password and user.national_id == nationalID:
       for element in session.query(Bank).filter_by(national_id=user.national_id):
         bank = element
-      return render_template("indexi.html", useracc=InfoGet.List(user), adming=user.admin, bankacc=InfoGet.List(bank), sus=cbidict[0], mail_unread=InfoGet.getMail(user.id))
+      return render_template("indexi.html", useracc=InfoGet.List(user), adming=user.admin, bankacc=InfoGet.List(bank), sus=cbidict["suspicious_transaction_limit"], mail_unread=InfoGet.getMail(user.id))
     return error("Something went wrong. ~ 1.2", redirect="home.html", user_info=user_info)  # <-- error code 1.2
   return render_template("home.html", info=["", "", ""])
   
@@ -575,7 +575,7 @@ def accountpage():
     elif user.password == password and user.national_id == nationalID:
       for element in session.query(Bank).filter_by(national_id=user.national_id):
         bank = element
-      return render_template("indexi.html", useracc=[i for i in InfoGet.List(user)], adming=user.admin, bankacc=[i for i in InfoGet.List(bank)], sus=cbidict[0], mail_unread=InfoGet.getMail(user.id))
+      return render_template("indexi.html", useracc=[i for i in InfoGet.List(user)], adming=user.admin, bankacc=[i for i in InfoGet.List(bank)], sus=cbidict["suspicious_transaction_limit"], mail_unread=InfoGet.getMail(user.id))
   return error("Page not found", redirect="register.html")
 
 def transact(nidfrom, nidto, amt):
@@ -595,6 +595,8 @@ def transact(nidfrom, nidto, amt):
   bank_accountto.woolong = int(woolong_accountto)
   session.commit()
 
+
+# Maybe move to Fetch.py
 @app.route('/usermail', methods=["GET", "POST"])
 def handlemail():
   user_id = 0
@@ -617,7 +619,7 @@ def sendmoney():
     if sendfrom == user:
       accountfrom = session.query(User).filter_by(national_id=sendfrom).first()
       accountto = session.query(User).filter_by(id=sendto).first()
-      if int(value) < cbidict[0]:
+      if int(value) < cbidict["suspicious_transaction_limit"]:
         transact(accountfrom.national_id, accountto.national_id, value)
 
         transaction_report = Reports(woolong=str(value), information=f"{accountfrom.username} gave {accountto.username} {str(value)} woolong.", date=datetime.datetime.now(), id_from=accountfrom.national_id, id_to=accountto.national_id)
