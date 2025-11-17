@@ -1,4 +1,4 @@
-from app import app, Delete
+from program.app import app, Delete
 from CBI import cbidict as thing
 
 if __name__ == "__main__":
