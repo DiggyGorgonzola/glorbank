@@ -1,61 +1,44 @@
 # app.py
-
-'''
-+-----------------------+
-| IMPORTS               |
-+-----------------------+
-'''
 from flask import Flask, render_template, request, redirect, url_for, jsonify, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-
-from sqlalchemy.orm import sessionmaker
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from decimal import Decimal as decimal
 
-from ..appdata.database import Base, engine, DATABASE_URL
-from ..appdata.models import User, Bank, Mail, Reports, OngoingTransaction, RegisteringOrganizations, Organization, Employees, Frozen
-from ..CBI import cbidict, HOMEREDIRECT
-
+from appdata.database import Base, engine, DATABASE_URL, start_session, Print
+from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Employees, Frozen
+from CBI import cbidict, HOMEREDIRECT
+from program.InfoGet import InfoGet
+from program.Fetch import fetch
 import os, datetime, json
 
 
 
-'''
-+-----------------------+
-| CONSTANTS             |
-+-----------------------+
-'''
 NONEARRAY = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
-
 USERDATABASE = [
   ["Diggy Gorgonzola", "417", "bendole3141592@gmail.com", "127.0.0.1", datetime.datetime.now(), 1000, -1],
   ["Dinky Gonky", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 2, 1],
   ["Dinky Gonky Alt", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 2],
 ]
-
 USERMAIL = [
   [1, 1, "TITLE", "MESSAGE", "CONTACT"],
   [2, 1, "TITLE", "MESSAGE", "CONTACT"],
   [3, 1, "TITLE", "MESSAGE", "CONTACT"],
 ]
-
 BANKDATABASE = [
   [USERDATABASE[0][4], USERDATABASE[0][6], "999999", "99999", "999999"],
   [USERDATABASE[1][4], USERDATABASE[1][6], "0", "0", "0"],
   [USERDATABASE[2][4], USERDATABASE[2][6], "0", "0", "0"],
 ]
-
 STM = False
+STATIC_FOLDER = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')), "static")
+TEMPLATES_FOLDER = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')), "templates")
 
-'''
-+-----------------------+
-| DATABASE CREATION     |
-+-----------------------+
-'''
-app = Flask(__name__, static_folder="../static", template_folder="../template")
+
+
+app = Flask(__name__, static_folder=STATIC_FOLDER, template_folder=TEMPLATES_FOLDER)
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL  # SQLite file
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = STM
 db = SQLAlchemy(app)
@@ -64,180 +47,59 @@ app.secret_key = "Glorbank" # change this for safety
 Base.metadata.create_all(bind=engine)
 
 
-# create session <- move to wsgi.py please if possible thank you
-Session = sessionmaker(bind=engine)
-session = Session()
-session.begin()
-'''
+app.register_blueprint(fetch)
 
 
+session = start_session()
 
 
-
-+-----------------------+
-| INFOGET               |
-+-----------------------+
-'''
-class InfoGet():
-
-  '''SQLattrs lists all the attributes of the SQL class given'''
-  def SQLattrs(obj):
-    return [attr for attr in type(obj).__dict__ if not attr.startswith('_') and not callable(getattr(obj, attr)) and attr not in ['metadata', 'registry']]
-
-  '''List returns each corresponding value for SQLattrs'''
-  def List(obj):
-    return [obj.__dict__[i] for i in type(obj).__dict__ if i in InfoGet.SQLattrs(obj)]
-  
-  '''BuildDb is mainly for testing purposes. It creates a pre-existing SQL database if it doesn't already exist'''
-  def BuildDb():
-    #Add a basic database for testing purposes
-    existing_user = session.query(User).first()
-    existing_bankacc = session.query(Bank).first()
-    existing_usermail = session.query(Mail).first()
-    if not existing_user:
-      for user in USERDATABASE:
-          new_user = User(
-              username=user[0],
-              password=user[1],
-              email=user[2],
-              ip=user[3],
-              accdate=user[4],
-              admin=user[5],
-              national_id=user[6]
-          )
-          session.add(new_user)
-          session.commit()
-    if not existing_bankacc:
-      for bankacc in BANKDATABASE:
-        new_bankacc = Bank(
-          accdate=bankacc[0],
-          national_id=bankacc[1],
-          woolong=bankacc[2],
-          parts=bankacc[3],
-          credit=bankacc[4]
-        )
-        session.add(new_bankacc)
-        session.commit()   
-    if not existing_usermail:
-      for mail in USERMAIL:
-        new_mail = Mail(
-          acc_id_to=mail[1],
-          title=mail[2],
-          message=mail[3],
-          contact=mail[4]
-        )
-        session.add(new_mail)
-        session.commit()
-
-  def accCollect(admin_level, accs):
-    database_list = []
-    for element in accs:
-      stringy = []
-      if admin_level > 0:
-        stringy.append(element.id)
-        stringy.append(element.username)
-      if admin_level > 1:
-        stringy.append(element.password)
-      else:
-        stringy.append("HIDDEN")
-      if admin_level > 0:
-        stringy.append(element.email)
-      if admin_level > 1:
-        stringy.append(element.ip)
-      else:
-        stringy.append("HIDDEN")
-      if admin_level > 0:
-        stringy.append(element.accdate)
-        stringy.append(element.admin)
-      else:
-        stringy.append("HIDDEN")
-        stringy.append("HIDDEN")
-        stringy.append("HIDDEN")
-      if admin_level > 1:
-        stringy.append(element.national_id)
-      else:
-        stringy.append("HIDDEN")
-      if admin_level > 2:
-        gooner = session.query(Bank).filter_by(national_id=element.national_id).first()
-        stringy.append(gooner.woolong)
-        stringy.append(gooner.parts)
-        stringy.append(gooner.credit)
-      else:
-        stringy.append("HIDDEN")
-        stringy.append("HIDDEN")
-        stringy.append("HIDDEN")
-      database_list.append(stringy)
-    return database_list
-
-  #make this dependent on admin level!
-  def getMail(userid):
-    outlist = []
-    for k in session.query(Mail).all():
-      if k.acc_id_to == userid:
-        outlist.append([k.title,k.message,k.contact if k.contact else None])
-    return outlist
-    
-  #Collects reports based on the admin's level
-  def reportCollect(admin_level, reports):
-    database_list = []
-    for element in reports:
-      stringy = [element.id]
-      if admin_level > 3:
-        stringy.append(element.woolong)
-      else:
-        stringy.append("HIDDEN")
-      if admin_level > 2:
-        stringy.append(element.information)
-      else:
-        stringy.append("HIDDEN")
-      if admin_level > 2:
-        stringy.append(element.date)
-      else:
-        stringy.append("HIDDEN")
-      if admin_level > 2:
-        stringy.append(element.id_from)
-      else:
-        stringy.append("HIDDEN")
-      if admin_level > 2:
-        stringy.append(element.id_to)
-      else:
-        stringy.append("HIDDEN")
-      database_list.append(stringy)
-    return database_list
-  
-  def pendOrgCollect(admin_level, orgs):
-    database_list = []
-    for element in orgs:
-      stringy = [element.id, element.accdate, element.name, element.email, element.phone]
-      database_list.append(stringy)
-    return database_list
-  
-  def bankCollect(admin_level, accs):
-    database_list = []
-    for element in accs:
-      stringy = []
-      print(element.national_id)
-      stringy.append(element.woolong)
-      stringy.append(element.parts)
-      stringy.append(element.credit)
-      database_list.append(stringy)
-    return database_list
-
-InfoGet.BuildDb()
 #print the database for testing purposes
 for user in session.query(User).all():
   print(str(InfoGet.List(user)))
 
-'''
 
+'''BuildDb is mainly for testing purposes. It creates a pre-existing SQL database if it doesn't already exist'''
+def BuildDb():
+  #Add a basic database for testing purposes
+  existing_user = session.query(User).first()
+  existing_bankacc = session.query(Bank).first()
+  existing_usermail = session.query(Mail).first()
+  if not existing_user:
+    for user in USERDATABASE:
+        new_user = User(
+            username=user[0],
+            password=user[1],
+            email=user[2],
+            ip=user[3],
+            accdate=user[4],
+            admin=user[5],
+            national_id=user[6]
+        )
+        session.add(new_user)
+        session.commit()
+  if not existing_bankacc:
+    for bankacc in BANKDATABASE:
+      new_bankacc = Bank(
+        accdate=bankacc[0],
+        national_id=bankacc[1],
+        woolong=bankacc[2],
+        parts=bankacc[3],
+        credit=bankacc[4]
+      )
+      session.add(new_bankacc)
+      session.commit()   
+  if not existing_usermail:
+    for mail in USERMAIL:
+      new_mail = Mail(
+        acc_id_to=mail[1],
+        title=mail[2],
+        message=mail[3],
+        contact=mail[4]
+      )
+      session.add(new_mail)
+      session.commit()
+BuildDb()
 
-
-
-
-+-----------------------+
-| MISC FUNCS            |
-+-----------------------+
-'''
 # Figure this stuff out? <- Maybe should go to Fetches!
 @app.route('/goto', methods=["GET", "POST"])
 def goto():
@@ -415,40 +277,6 @@ class Routes:
       if session.query(User).filter_by(username=username).first().admin == admin_capabilities:
         database_list = InfoGet.accCollect(admin_capabilities, session.query(User).all())
         admin_user = session.query(User).filter_by(username=username).first()
-        ''' FOUR HUNDRED AND SEVENTEEN!!!!
-        %%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%&&&@@&&&&@@&%%#((//******,,,,,,,*,*/#%&@%%%%&&@@&%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%@@@&@@&%%%%###((///******************//(#%&&&&&@&%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%&@@@&%%%#%%%###((/////****,,,,,,,,,,,***/((((%&&&@&%%%%%%%&&&&&%&&&&&&%
-        %%%%%%%%%@@@&%###((///*****,,,,***********,,,,,****/((##%&&@&%%&&&&&&&%%%%%%%&&&
-        %%%%%%%%&@@@&&&&&&&&&&%#(/**,,,,,**********,,*****///((((#&@@&%%%%&&&&&&&&&&&&&&
-        %%%%%%%%&@&&&&%%###(((((((((/*,,,,,********//(##%%%&&&%%%%&@@&%&%%%&&&&&&&&&&&&&
-        %%%%%%%%@@&&%%####((((##(((((/***********//(((///////((#%&&@@&&&&&&&&&&&&&&&&&&&
-        %%%%%%%&@&%%########(#########(((///////((##((((//////(((#%&@&&&&&&&&&&&&&&&@@@@
-        %%%%%%%&&%%%####(#%%#(**/%######(/////((###(((//****/(((((#%&&&&&&&&&&&&&@@@@@@@
-        %%%%%%%%%%###%&&#*.,., ./###(((/**,,,,**//(##/,.,.,*(&&%(((#%&&&&&&&&&&&@@@@@@@@
-        %%%%%%%%%#####%%/,(@&&&(,,((//***,,,,,,,,*//,.(&%%%*.(&#((((%&&&&&&&&&@@@@@@@@@@
-        %%%%%%%%%##(//(#%#((#(((/*********,,,,**,,,***/#%#/**((/**/(%&&&&&&&&@@@@@@@@@@@
-        &&&&&&&%%#(//***//((((/*****////**,,,,****,,,*/(####(*,,,*/(%&&&&&&&&@@@@@@@@@@@
-        &&&&&&&%%#((/*************/////***,,,,,***,,,,,,,,,,,,,,,*/#&&&&&&&&&@@@@@@@@@@@
-        &&&&&&&%%%#((/****,,,*****/////**,,,,,,****,,,,,,,,,,,,,*/(#%&&&&&&&@@@@@@@@@@@@
-        &&&&&&&%%%%##(//*********///****,,,....,,,*,,,,,,,,,,,*//((#%&&&&&&&&&&@@@@@@@@@
-        &&&&&&&&%%%%##((///*****/(#(((//***,,,,,*///*,,,,,,,**//(###%&&&&&&&&&&&&&@@@@@@
-        &&&&&&&&&&%%%%##((//**/*(##%&&&%##(((/(%&@%#/,,*,,**//(###%%&&&&&&&&&&&&&&&&&@@@
-        &&&&&&&&&&&&&&%%#(((///**/(/*/(#%%%##(((*,***,,,,**//(##%%%&&&&&&&&&&&&&&&&&&@@@
-        %%%%%%%%%%&&&&&%%##((///*****,,***,,,,,,,,,,,,,***/(##%%%%%#(//(((((#####%&&&&@@
-        /(#####((##%&&&&%%%##((////****,,,,,,,,,,,,,,**//(##%%%%(/(#/*/(/*/(//*/(/*/%&@@
-        (((##((#(###%%&&&&&%%%#((((((/**,,,,,,********/(##%%%%#(((#(/((////////((/*,,,*#
-        ##(###(###(##%&&&&&%%%%%%%##/**,,,,,,,,,**((((##%%%%#((((##(#(/((///////********
-        (##(##((######&&&&&&&%&&&%#((//**,,,,,,***/(#%%%%%#####((#((#//((/*///(/*//*****
-        (#%###########&&&&&&&&&&&&&&&&&&&%%%%&&&&&&%%%%%%%##(#%%#(/((//((////((**//,****
-        (#%%#########%%&&&&&&&&&&&&&&&&&&&&&&&@@&&&&&%%%###((#%%#/*(((((/*//((///(/****/
-        #(#%#((#######%%&&&&&&&&&&&&&&%%%%%&&&&&&&&&%%%%###(#%%#(////(((/**/((///((/*//(
-        ###%##((#######%%&&%%&&&%#(#%&%%###%&&%####%%%%##(((#%%(////((((//(#(////((///(#
-        ###%%##(((##%%#%%%%%&%&&%#////(#(###(//(((#%%%##(((#%#(//////(#(//(#(////(((///(
-        ((##%%(((((##&&%%%%%%%%&%#//**,,,,,,,*///(#%%#####%%#((((//((#(//(((/////(((//((
-        (######(((###%&%%#%%%%&&&%(///*******/((/(####(##%%%(/((////(((((/////(((##(//(#
-        '''
         return render_template("adminpanel.html", admin_user=InfoGet.List(admin_user), database=database_list)
       return error("HACKER. ~ 3.1", redirect="register.html")
     return error("Something wrong happened. ~ 3.2", redirect="register.html")
@@ -585,6 +413,41 @@ class Routes:
       return render_template("organization_login.html", info=[])
     return error("Page not found. ~ -1", redirect="register.html")
 
+
+  ''' FOUR HUNDRED AND SEVENTEEN!!!!
+  %%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
+  %%%%%%%%%&&&@@&&&&@@&%%#((//******,,,,,,,*,*/#%&@%%%%&&@@&%%%%%%%%%%%%%%%%%%%%%%
+  %%%%%%%%%%@@@&@@&%%%%###((///******************//(#%&&&&&@&%%%%%%%%%%%%%%%%%%%%%
+  %%%%%%%%%&@@@&%%%#%%%###((/////****,,,,,,,,,,,***/((((%&&&@&%%%%%%%&&&&&%&&&&&&%
+  %%%%%%%%%@@@&%###((///*****,,,,***********,,,,,****/((##%&&@&%%&&&&&&&%%%%%%%&&&
+  %%%%%%%%&@@@&&&&&&&&&&%#(/**,,,,,**********,,*****///((((#&@@&%%%%&&&&&&&&&&&&&&
+  %%%%%%%%&@&&&&%%###(((((((((/*,,,,,********//(##%%%&&&%%%%&@@&%&%%%&&&&&&&&&&&&&
+  %%%%%%%%@@&&%%####((((##(((((/***********//(((///////((#%&&@@&&&&&&&&&&&&&&&&&&&
+  %%%%%%%&@&%%########(#########(((///////((##((((//////(((#%&@&&&&&&&&&&&&&&&@@@@
+  %%%%%%%&&%%%####(#%%#(**/%######(/////((###(((//****/(((((#%&&&&&&&&&&&&&@@@@@@@
+  %%%%%%%%%%###%&&#*.,., ./###(((/**,,,,**//(##/,.,.,*(&&%(((#%&&&&&&&&&&&@@@@@@@@
+  %%%%%%%%%#####%%/,(@&&&(,,((//***,,,,,,,,*//,.(&%%%*.(&#((((%&&&&&&&&&@@@@@@@@@@
+  %%%%%%%%%##(//(#%#((#(((/*********,,,,**,,,***/#%#/**((/**/(%&&&&&&&&@@@@@@@@@@@
+  &&&&&&&%%#(//***//((((/*****////**,,,,****,,,*/(####(*,,,*/(%&&&&&&&&@@@@@@@@@@@
+  &&&&&&&%%#((/*************/////***,,,,,***,,,,,,,,,,,,,,,*/#&&&&&&&&&@@@@@@@@@@@
+  &&&&&&&%%%#((/****,,,*****/////**,,,,,,****,,,,,,,,,,,,,*/(#%&&&&&&&@@@@@@@@@@@@
+  &&&&&&&%%%%##(//*********///****,,,....,,,*,,,,,,,,,,,*//((#%&&&&&&&&&&@@@@@@@@@
+  &&&&&&&&%%%%##((///*****/(#(((//***,,,,,*///*,,,,,,,**//(###%&&&&&&&&&&&&&@@@@@@
+  &&&&&&&&&&%%%%##((//**/*(##%&&&%##(((/(%&@%#/,,*,,**//(###%%&&&&&&&&&&&&&&&&&@@@
+  &&&&&&&&&&&&&&%%#(((///**/(/*/(#%%%##(((*,***,,,,**//(##%%%&&&&&&&&&&&&&&&&&&@@@
+  %%%%%%%%%%&&&&&%%##((///*****,,***,,,,,,,,,,,,,***/(##%%%%%#(//(((((#####%&&&&@@
+  /(#####((##%&&&&%%%##((////****,,,,,,,,,,,,,,**//(##%%%%(/(#/*/(/*/(//*/(/*/%&@@
+  (((##((#(###%%&&&&&%%%#((((((/**,,,,,,********/(##%%%%#(((#(/((////////((/*,,,*#
+  ##(###(###(##%&&&&&%%%%%%%##/**,,,,,,,,,**((((##%%%%#((((##(#(/((///////********
+  (##(##((######&&&&&&&%&&&%#((//**,,,,,,***/(#%%%%%#####((#((#//((/*///(/*//*****
+  (#%###########&&&&&&&&&&&&&&&&&&&%%%%&&&&&&%%%%%%%##(#%%#(/((//((////((**//,****
+  (#%%#########%%&&&&&&&&&&&&&&&&&&&&&&&@@&&&&&%%%###((#%%#/*(((((/*//((///(/****/
+  #(#%#((#######%%&&&&&&&&&&&&&&%%%%%&&&&&&&&&%%%%###(#%%#(////(((/**/((///((/*//(
+  ###%##((#######%%&&%%&&&%#(#%&%%###%&&%####%%%%##(((#%%(////((((//(#(////((///(#
+  ###%%##(((##%%#%%%%%&%&&%#////(#(###(//(((#%%%##(((#%#(//////(#(//(#(////(((///(
+  ((##%%(((((##&&%%%%%%%%&%#//**,,,,,,,*///(#%%#####%%#((((//((#(//(((/////(((//((
+  (######(((###%&%%#%%%%&&&%(///*******/((/(####(##%%%(/((////(((((/////(((##(//(#
+  '''
   # function 9
   @app.route('/accountpage/pending_organizations', methods=["GET", "POST"])
   def organizations():
@@ -608,35 +471,3 @@ class Routes:
     if request.method == "POST":
       return error("We haven't done this yet! ~ 10.1")
     return error("Page not found", redirect="register.html")
-
-
-'''
-
-
-
-
-
-+-----------------------+
-| FETCHES               |
-+-----------------------+
-'''
-#if there is an error it is probably gonna be in line 2. Importing app might make it freak out.
-class Fetches:
-  #dubious function
-  #should be used instead of jsonify I think due to its shorthandedness...
-  def json_out(status, received, **kwargs):
-    v = {'status':status, 'received':received}
-    for key,value in kwargs.items():
-      v[key] = value
-    return jsonify(v)
-
-  
-  @app.route('/usermail', methods=["GET","POST"])
-  def handlemail():
-    if request.method == 'POST':
-      received_data = request.json
-      try:
-        return Fetches.json_out("success", received_data, response=InfoGet.getMail(received_data["useraccount"][0])
-      except Exception as error:
-        return Fetches.json_out("failure", received_data, response=error.lower())
-    return None
