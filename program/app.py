@@ -15,8 +15,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from decimal import Decimal as decimal
 
-from appdata.database import Base, engine
-from appdata.models import User, Bank, Mail, Reports, OngoingTransaction, RegisteringOrganizations, Organization, Employees, Frozen
+from ..appdata.database import Base, engine
+from ..appdata.models import User, Bank, Mail, Reports, OngoingTransaction, RegisteringOrganizations, Organization, Employees, Frozen
 from CBI import cbidict, HOMEREDIRECT
 
 import os, datetime, json
