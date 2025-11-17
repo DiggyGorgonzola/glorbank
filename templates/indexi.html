@@ -88,6 +88,9 @@
     const bankacc = {{bankacc|tojson}};
     const sus = {{sus}};
     let mail_unread = [];
+    function JR(json_thing) {
+        return JSON.stringyify(json_thing, null, 2);
+    };
     function DiggyWillGetYourMail() {
         const postData = { "useraccount": useracc};
         fetch('/usermail', {
@@ -97,7 +100,9 @@
         .then(response => response.json())
         .then(data => {
             console.log('POST response:', data);
-            document.getElementById("gooner2").innerText = data;})
+            mail_unread = data.response;})
+            document.getElementById("gooner2").textContent = data.response;
+            // we gotta fix this
     };
     DiggyWillGetYourMail();
 
