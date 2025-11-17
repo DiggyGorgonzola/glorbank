@@ -732,7 +732,7 @@ class Routes:
 
 
 +-----------------------+
-| HTML ROUTES           |
+| FETCHES               |
 +-----------------------+
 '''
 #if there is an error it is probably gonna be in line 2. Importing app might make it freak out.
