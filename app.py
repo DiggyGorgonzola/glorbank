@@ -138,10 +138,16 @@ session = Session()
 session.begin()
 
 class InfoGet():
+
+  '''SQLattrs lists all the attributes of the SQL class given'''
   def SQLattrs(obj):
     return [attr for attr in type(obj).__dict__ if not attr.startswith('_') and not callable(getattr(obj, attr)) and attr not in ['metadata', 'registry']]
+
+  '''List returns each corresponding value for SQLattrs'''
   def List(obj):
     return [obj.__dict__[i] for i in type(obj).__dict__ if i in InfoGet.SQLattrs(obj)]
+  
+  '''BuildDb is mainly for testing purposes. It creates a pre-existing SQL database if it doesn't already exist'''
   def BuildDb():
     #Add a basic database for testing purposes
     existing_user = session.query(User).first()
@@ -569,6 +575,20 @@ def transact(nidfrom, nidto, amt):
   woolong_accountto += decimal(amt)
   bank_accountto.woolong = int(woolong_accountto)
   session.commit()
+
+@app.route('/usermail', methods=["GET", "POST"])
+def handlemail():
+  user_id = 0
+  meme = 0
+  if request.method == 'GET':
+    data = {'mail': meme}
+    return jsonify(data)
+  elif request.method == 'POST':
+    received_data = request.json
+    print(f"Received Data: {received_data}")
+    print(f"Mail: {InfoGet.getMail(received_data["useraccount"][0])}")
+    meme = InfoGet.getMail(received_data["useraccount"][0])
+    return jsonify({'status': 'success', 'received': received_data})
 
 @app.route('/accountpage/sendmoney', methods=["GET", "POST"])
 # gooner function lmao
