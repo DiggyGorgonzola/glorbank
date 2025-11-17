@@ -8,7 +8,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from flask_bcrypt import Bcrypt
 from werkzeug.security import generate_password_hash, check_password_hash
-import os, datetime
+import os, datetime, json
 from CBI import suspicious_transaction_limit
 NONEARRAY = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
 HOMEREDIRECT = "register.html"
@@ -580,15 +580,12 @@ def transact(nidfrom, nidto, amt):
 def handlemail():
   user_id = 0
   meme = 0
-  if request.method == 'GET':
-    data = {'mail': meme}
-    return jsonify(data)
-  elif request.method == 'POST':
+  if request.method == 'POST':
     received_data = request.json
     print(f"Received Data: {received_data}")
     print(f"Mail: {InfoGet.getMail(received_data["useraccount"][0])}")
     meme = InfoGet.getMail(received_data["useraccount"][0])
-    return jsonify({'status': 'success', 'received': received_data})
+    return jsonify({'status': 'success', 'received': received_data, 'response': json.dumps(meme)})
 
 @app.route('/accountpage/sendmoney', methods=["GET", "POST"])
 # gooner function lmao
