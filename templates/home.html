@@ -45,16 +45,32 @@ Check out this cool ASCII art I found!
 </style>
 <body id="body" onload=run()><script src="../static/style/clock.js"></script>
   <!-- figure out how to make the buttons variable lenght! -->
-  <div style="display:flex;position:relative;top:calc(20% - 70px);">
-    <div class="registration" style="width:70px;">
+  <div style="display:flex;position:relative;top:calc(20% - 50px);left:calc(50% - 300px);">
+    <div class="homer">
       <form action="/register">
         <input type="submit" value="Register"/>
       </form>
     </div>
-    <div class="registration" style="width:145px;">
+    <div class="homer">
       <form action="/login/organization">
         <input type="submit" value="Log in (Organization)"/>
       </form>
+    </div>
+    <div class="homer">
+      <script>
+        function HELL() {
+          const postData = "HELL"
+          fetch('/dropsigmas', {
+          method: "POST",
+          headers: {'Content-Type': 'application/json',},
+          body: JSON.stringify(postData),})
+          .then(response => response.json)
+          .then(data => {
+            console.log('POST response:', data);})
+            document.getElementById("HELL").innerText = "Gilbert";
+        };
+      </script>
+        <button onclick="HELL()" id="HELL">Delete Signatures</button>
     </div>
   </div>
   <div class="box" id="box">
