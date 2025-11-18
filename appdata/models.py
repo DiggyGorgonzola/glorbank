@@ -5,7 +5,7 @@ from sqlalchemy import Column, Integer, String, DateTime, text, Boolean, LargeBi
 from .database import Base
 
 '''
-User, Bank, Mail, Reports, OngoingTransaction, RegisteringOrganizations, Organization, Employees, Frozen
+User, Bank, Mail, Reports, OngoingTransaction, RegisteringOrganizations, Organization, Frozen
 '''
 db = SQLAlchemy()
 class User(Base):
@@ -64,16 +64,6 @@ class Organization(Base):
   accdate = db.Column(db.DateTime)
   orgid = db.Column(db.String, unique=True, nullable=False)
 
-# Perhaps make a separate table for each organization. Procedurally.
-class Employees(Base):
-  __tablename__ = "Employees"
-  id = db.Column(db.Integer, primary_key=True)
-  organization = db.Column(db.String, nullable=False)
-  primary_owner = db.Column(db.String, nullable=True)
-  secondary_owners = db.Column(db.String, nullable=True)
-  org_admins = db.Column(db.String, nullable=True)
-  org_employees = db.Column(db.String, nullable=True)
-
 
 # For frozen users
 class Frozen(Base):
@@ -90,3 +80,9 @@ class Reports(Base):
   id_from = db.Column(db.String, nullable=False)
   id_to = db.Column(db.String, nullable=False)
   # fix whatever's wrong with this!
+
+class Signature(Base):
+  __tablename__ = "Signature"
+  id = db.Column(db.Integer, primary_key=True)
+  signature = db.Column(db.String, nullable=False)
+  national_id = db.Column(db.Integer, nullable=False, unique=True)
