@@ -8,7 +8,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from decimal import Decimal as decimal
 
 from appdata.database import Base, engine, DATABASE_URL, start_session, Print
-from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Employees, Frozen
+from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Frozen
+from appdata.models import Signature
+import appdata.signatures
 from CBI import cbidict, HOMEREDIRECT
 from program.InfoGet import InfoGet
 from program.Fetch import fetch
@@ -56,7 +58,8 @@ session = start_session()
 #print the database for testing purposes
 for user in session.query(User).all():
   print(str(InfoGet.List(user)))
-
+for signature in session.query(Signature).all():
+  print(str(InfoGet.List(signature)))
 
 '''BuildDb is mainly for testing purposes. It creates a pre-existing SQL database if it doesn't already exist'''
 def BuildDb():
@@ -64,6 +67,7 @@ def BuildDb():
   existing_user = session.query(User).first()
   existing_bankacc = session.query(Bank).first()
   existing_usermail = session.query(Mail).first()
+  existing_signature = session.query(Signature).all()
   if not existing_user:
     for user in USERDATABASE:
         new_user = User(
@@ -97,6 +101,10 @@ def BuildDb():
         contact=mail[4]
       )
       session.add(new_mail)
+      session.commit()
+  if existing_signature:
+    for sig in existing_signature:
+      session.delete(sig)
       session.commit()
 BuildDb()
 
@@ -192,6 +200,9 @@ class Routes:
       elif user.password == password and user.national_id == nationalID:
         for element in session.query(Bank).filter_by(national_id=user.national_id):
           bank = element
+        appdata.signatures.createSignature(nationalID)
+        for i in session.query(Signature).all():
+          print([i.signature, i.national_id])
         return render_template("indexi.html", useracc=InfoGet.List(user), adming=user.admin, bankacc=InfoGet.List(bank), sus=cbidict["suspicious_transaction_limit"], mail_unread=InfoGet.getMail(user.id))
       return error("Something went wrong. ~ 1.2", redirect="home.html", user_info=user_info)  # <-- error code 1.2
     return render_template("home.html", info=["", "", ""])
@@ -292,13 +303,11 @@ class Routes:
       user = session.query(User).filter_by(username=username).first()
       database_list,database_keys = [],[]
       if user.admin == int(admin_capabilities):
-        database_list = [InfoGet.List(i) for i in session.query(globals()[datasheet]).all()]
+        database_list = [InfoGet.ListCensor(i) for i in session.query(globals()[datasheet]).all()]
         database_keys = InfoGet.SQLattrs(session.query(globals()[datasheet]).first())
       print(database_keys)
 
       return render_template("datasheets.html", database=database_list, keys=database_keys, admin_user=InfoGet.List(user), type=datasheet)
-      return error("Something happened!", user_info=[user.username, user.password, user.national_id], redirect="/register")
-      return error(request.form['admin_user'],redirect="/")
     return render_template("home.html")
 
   @app.route('/accountpage/adminpanel/addmoney',methods=["GET", "POST"])
@@ -405,15 +414,6 @@ class Routes:
 
   @app.route('/login/organization', methods=["GET", "POST"])
   # function 7
-  def logorg():
-    # FINISH THIS !!!
-    if request.method == "POST":
-      pass
-    elif request.method == "GET":
-      return render_template("organization_login.html", info=[])
-    return error("Page not found. ~ -1", redirect="register.html")
-
-
   ''' FOUR HUNDRED AND SEVENTEEN!!!!
   %%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
   %%%%%%%%%&&&@@&&&&@@&%%#((//******,,,,,,,*,*/#%&@%%%%&&@@&%%%%%%%%%%%%%%%%%%%%%%
@@ -448,6 +448,13 @@ class Routes:
   ((##%%(((((##&&%%%%%%%%&%#//**,,,,,,,*///(#%%#####%%#((((//((#(//(((/////(((//((
   (######(((###%&%%#%%%%&&&%(///*******/((/(####(##%%%(/((////(((((/////(((##(//(#
   '''
+  def logorg():
+    # FINISH THIS !!!
+    if request.method == "POST":
+      pass
+    elif request.method == "GET":
+      return render_template("organization_login.html", info=[])
+    return error("Page not found. ~ -1", redirect="register.html")
   # function 9
   @app.route('/accountpage/pending_organizations', methods=["GET", "POST"])
   def organizations():
