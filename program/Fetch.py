@@ -4,12 +4,12 @@ from flask import Blueprint, request, jsonify
 from appdata.database import Base, engine, DATABASE_URL, start_session
 from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Frozen
 from program.InfoGet import InfoGet
-
+import appdata.signatures
+LS = appdata.signatures.LoginSignatures
 start_session()
 
 fetch = Blueprint('fetch', __name__)
 
-#if there is an error it is probably gonna be in line 2. Importing app might make it freak out.
 class Fetches:
   #dubious function
   #should be used instead of jsonify I think due to its shorthandedness...
@@ -29,3 +29,15 @@ class Fetches:
       except Exception as error:
         return Fetches.json_out("failure", received_data, response=error.lower())
     return None
+  
+  @fetch.route("/dropsigmas", methods=["POST", "GET"])
+  def dropSigmas():
+    if request.method == "POST":
+      received_data = request.json
+      LS.deleteAllSignatures()
+      try:
+        return Fetches.json_out("success", received_data, response="Gilbert")
+      except Exception as error:
+        return Fetches.json_out("failure", received_data, response=error.lower())
+    return None
+
