@@ -32,6 +32,73 @@ HOMEREDIRECT = "register.html"
 # ---------
 
 
+# My beloved admin level json <3
+# admin 1 should be able to see anonymous info
+# admin 2 should be able to know who it is
+# admin 3 should be able to almost log into it
+# admin 4 should know national ID
+ALJ = {'User':{
+          "id": 1,
+          "username": 2,
+          "password": 3,
+          "email": 2,
+          "admin": 1,
+          "ip": 3,
+          "accdate": 2,
+          "national_id": 4
+        },
+        "Bank":{
+          "id": 1,
+          "woolong": 2,
+          "parts": 2,
+          "credit": 3,
+          "accdate": 1,
+          "national_id": 4
+        },
+        "Mail":{
+          "id": 1,
+          "acc_id_to": 2,
+          "title": 3,
+          "message": 4,
+          "contact": 3
+        },
+        "OngoingTransactions": {
+          "id": 1,
+          "woolong": 2,
+          "information": 3,
+          "date": 3,
+          "natid_from": 4,
+          "natid_to": 4
+        },
+        "RegisteringOrganizations": {
+          "id": 1,
+          "accdate": 1,
+          "name": 2,
+          "email": 2,
+          "phone": 3,
+          "orgpass": 4,
+        },
+        "Organizations": {
+          "id": 1,
+          "name": 2,
+          "email": 3,
+          "accdate": 1,
+          "orgid": 4
+        },
+        "Frozen": {
+          "id": 1,
+          "national_id": 3
+        },
+        "Reports": {
+          "id": 1,
+          "woolong": 2,
+          "information": 3,
+          "date": 3,
+          "id_from": 4,
+          "id_to": 4
+        }
+}
+
 
 # CHANGE BANK VALUES
 # ---------
