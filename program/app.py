@@ -16,13 +16,13 @@ from program.InfoGet import InfoGet
 from program.Fetch import fetch
 import os, datetime, json
 
-
+LS = appdata.signatures.LoginSignatures
 
 NONEARRAY = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
 USERDATABASE = [
-  ["Diggy Gorgonzola", "417", "bendole3141592@gmail.com", "127.0.0.1", datetime.datetime.now(), 1000, -1],
-  ["Dinky Gonky", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 2, 1],
-  ["Dinky Gonky Alt", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 2],
+  ["Diggy Gorgonzola", "417", "bendole3141592@gmail.com", "127.0.0.1", datetime.datetime.now(), 1000, -1, "Diggy Inc."],
+  ["Dinky Gonky", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 2, 1, "Diggy Inc."],
+  ["Dinky Gonky Alt", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 2, "Diggy Inc."],
 ]
 USERMAIL = [
   [1, 1, "TITLE", "MESSAGE", "CONTACT"],
@@ -77,7 +77,8 @@ def BuildDb():
             ip=user[3],
             accdate=user[4],
             admin=user[5],
-            national_id=user[6]
+            national_id=user[6],
+            employer_org_id=user[7]
         )
         session.add(new_user)
         session.commit()
@@ -140,7 +141,6 @@ def transact(nidfrom, nidto, amt):
   bank_accountto.woolong = int(woolong_accountto)
   session.commit()
 
-
 '''
 
 
@@ -200,7 +200,7 @@ class Routes:
       elif user.password == password and user.national_id == nationalID:
         for element in session.query(Bank).filter_by(national_id=user.national_id):
           bank = element
-        appdata.signatures.createSignature(nationalID)
+        LS.createSignature(nationalID)
         for i in session.query(Signature).all():
           print([i.signature, i.national_id])
         return render_template("indexi.html", useracc=InfoGet.List(user), adming=user.admin, bankacc=InfoGet.List(bank), sus=cbidict["suspicious_transaction_limit"], mail_unread=InfoGet.getMail(user.id))
@@ -412,8 +412,8 @@ class Routes:
       return render_template("home.html", info=["", "", ""])
     return error("Page not found", redirect="register.html")
 
-  @app.route('/login/organization', methods=["GET", "POST"])
-  # function 7
+
+
   ''' FOUR HUNDRED AND SEVENTEEN!!!!
   %%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
   %%%%%%%%%&&&@@&&&&@@&%%#((//******,,,,,,,*,*/#%&@%%%%&&@@&%%%%%%%%%%%%%%%%%%%%%%
@@ -448,6 +448,8 @@ class Routes:
   ((##%%(((((##&&%%%%%%%%&%#//**,,,,,,,*///(#%%#####%%#((((//((#(//(((/////(((//((
   (######(((###%&%%#%%%%&&&%(///*******/((/(####(##%%%(/((////(((((/////(((##(//(#
   '''
+  @app.route('/login/organization', methods=["GET", "POST"])
+  # function 7
   def logorg():
     # FINISH THIS !!!
     if request.method == "POST":
