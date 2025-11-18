@@ -18,4 +18,3 @@ def start_session():
 def Print(*args, documentation=False):
     if debug[0]:
         print(" ".join(args))
-    
