@@ -67,8 +67,7 @@
 
 
 </style>
-<body onload=database_render()>
-    <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
+<body onload=database_render()><script src="../static/style/clock.js"></script>
     <div style="display:flex;position:relative;top:calc(20% - 70px);">
     <div class="homer" style="width:140px;">
       <form action="/accountpage" method="POST">
@@ -108,27 +107,9 @@
   </div>
 </body>
 <script>
-    function updateClock() {
-    const now = new Date();
-    const formattedTime = now.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      hour12: false
-    });
-    const formattedDate = now.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-
-    document.getElementById('clock-display').innerText = `${formattedDate} ${formattedTime}`;
-  };
     var filter_ing = "id";
 
     function database_render() {
-        setInterval(updateClock, 1000);
         const admin_user = {{ admin_user | tojson }};
         const database = {{ database | tojson }}; /*ignore error. it works */
         console.log(database);
