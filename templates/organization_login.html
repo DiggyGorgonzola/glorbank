@@ -47,9 +47,7 @@
                 }
 
 </style>
-<body onload=errorcheck()>
-
-  <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
+<body onload=errorcheck()><script src="../static/style/clock.js"></script>
   <!-- figure out how to make the buttons variable lenght! -->
   <div style="display:flex;position:relative;top:calc(20% - 70px);">
     <div class="registration" style="width:70px;">
@@ -77,26 +75,8 @@
     </form>
   </div>
   <script>
-  function updateClock() {
-    const now = new Date();
-    const formattedTime = now.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      hour12: false
-    });
-    const formattedDate = now.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-
-    document.getElementById('clock-display').innerText = `${formattedDate} ${formattedTime}`;
-  };
 
   function errorcheck() {
-    setInterval(updateClock, 1000);
     const incorrect_password = "{{ incorrect_password }}";
     const error = "{{ error }}";
     const info = {{ info | tojson }};
