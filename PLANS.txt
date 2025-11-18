@@ -7,7 +7,7 @@ Reports <- almost done !!!
   -Reports for organization transactions
 Editing a live database
 Automatic bank interest
-DONE? Make moving between pages a lot easier
+DONE: Make moving between pages a lot easier
 Add graphs for the accountpage
 Allow admins with a level of greater than 10 to edit the information of another account
 Add a "Frozen" tag for personal and organization accounts. If a transaction attempts to happen with a "frozen" account, it will go into OngoingTransactions! <- half done
@@ -17,7 +17,7 @@ Add a limit to how many organizations you can have registered or pending. (5)
 Add a timeout for typing an incorrect password 3x.
 DONE: Add a "Bank Account ULTIMATE" for full control over the bank website (admin level A THOUSAND!)
 
-MIGHT NOT NEED TO DO THIS:
+MIGHT NOT NEED TO DO THIS: (we did it)
 Split app.py into smaller modules for simplicity. It's way too complicated vro.
   -info_get.py for parsing SQL tables
   -appdata.py for starting SQL tables
