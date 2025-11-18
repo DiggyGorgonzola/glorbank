@@ -3,7 +3,8 @@
 
 from flask import Blueprint
 from appdata.database import Base, engine, DATABASE_URL, start_session
-from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Employees, Frozen
+from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Frozen
+from CBI import ALJ
 session = start_session()
 
 class InfoGet:
@@ -16,6 +17,22 @@ class InfoGet:
   def List(obj):
     return [obj.__dict__[i] for i in type(obj).__dict__ if i in InfoGet.SQLattrs(obj)]
   
+  def ListCensor(obj, admin=0):
+    k = []
+    m = InfoGet.SQLattrs(obj)
+    traits = {}
+    print(type(obj), list(ALJ.keys()))
+    if obj.__class__.__name__ in ALJ.keys():
+      print("HELLLO")
+      traits = ALJ[obj.__class__.__name__]
+      print(f"\n\n\n\n{admin}\n\n\n\n")
+    for i in m:
+      if i in traits.keys() and int(traits[i]) < int(admin):
+        k.append("Hidden")
+      else:
+        k.append(obj.__dict__[i])
+    return k
+
   def accCollect(admin_level, accs):
     database_list = []
     for element in accs:
