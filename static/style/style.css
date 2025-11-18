@@ -81,3 +81,13 @@ html, body {
         justify-content: space-around;
         align-items:center;
     }
+.homer {
+    position: relative;
+    width: fit-content;
+    padding: 5px;
+    margin: 5px;
+    background-color: var(--color3);
+    box-shadow: 3px 3px var(--color2);
+    border: 2px #000;
+    border-radius: 15px;
+}
