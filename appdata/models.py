@@ -18,6 +18,7 @@ class User(Base):
   ip = db.Column(db.Text)
   accdate = db.Column(db.DateTime)
   national_id = db.Column(db.Integer, nullable=False, unique=True)
+  employer_org_id = db.Column(db.Integer, nullable=True)
 
 class Bank(Base):
   __tablename__ = "Bank"
@@ -81,8 +82,18 @@ class Reports(Base):
   id_to = db.Column(db.String, nullable=False)
   # fix whatever's wrong with this!
 
+
+
+# non-bank-related models
 class Signature(Base):
   __tablename__ = "Signature"
   id = db.Column(db.Integer, primary_key=True)
   signature = db.Column(db.String, nullable=False)
   national_id = db.Column(db.Integer, nullable=False, unique=True)
+
+class LongAwait(Base):
+  __tablename__ = "LongAwait"
+  id = db.Column(db.Integer, primary_key=True)
+  user_id = db.Column(db.Integer, nullable=False, unique=True)
+  fails = db.Column(db.Integer, nullable=False)
+  most_recent_fail = db.Column(db.DateTime, nullable=False)
