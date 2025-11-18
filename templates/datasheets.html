@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
         <head>
-                <title>Admin Panel</title>
+                <title>GNB Datasheets</title>
                 <meta charset="UTF-8">
                 <link rel="stylesheet" type="text/css" href="../static/style/style.css">
         </head>
@@ -21,16 +21,6 @@
         border: 3px solid var(--color2);
         text-align: center;
     }
-    .homer {
-            position: relative;
-            width: 200px;
-            padding: 5px;
-            margin: 5px;
-            background-color: #47d16c;
-            box-shadow: 3px 3px #24853e;
-            border: 2px #000;
-            border-radius: 15px;
-        }
     
     .searchbar {
             position: relative;
@@ -81,7 +71,7 @@
 </style>
 <body onload='database_render()'>
     <script src="../static/style/clock.js"></script>
-    <div class="homer" style="top:calc(20% - 70px); left:calc(50% - 500px);width:fit-content;">
+    <div class="homer" style="top:calc(20% - 70px); left:calc(50% - 500px);">
     <form action="/accountpage" method="POST">
         <input type="hidden" value="" name="username" id="username"/>
         <input type="hidden" value="" name="password" id="password"/>
