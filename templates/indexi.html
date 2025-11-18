@@ -80,7 +80,6 @@
     }
 
 </style>
-<script src="../static/style/sig.js"></script>
 
 <script>
     const adming = {{ adming }};
@@ -110,14 +109,13 @@
         return Number.isFinite(Number(value)) && !Number.isNaN(Number(value));
     }
 </script>
-<body onload="Adming()"> 
-    <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
+<body onload="Adming()"><script src="../static/style/clock.js"></script>
     <h id="gooner2"></h>
 
     <!-- BUTTON CONTAINER -->
     <div id="button_container" style="position:relative; display:flex; top:calc(20% - 70px);left: calc(50% - 1100px);">
         <div class="homer">
-            <form action="/login">
+            <form action="/login" method="POST">
                 <input type="submit" value="Go to Login"/>
             </form>
         </div>
@@ -278,24 +276,6 @@
     }
 </script>
 <script>
-    function updateClock() {
-    const now = new Date();
-    const formattedTime = now.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      hour12: false
-    });
-    const formattedDate = now.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-
-    document.getElementById('clock-display').innerText = `${formattedDate} ${formattedTime}`;
-  };
-
     function Adming() {
         setInterval(updateClock, 1000);
         document.getElementById("welcome").textContent = `Welcome, ${useracc[1]} :3`;
