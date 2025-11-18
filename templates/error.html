@@ -16,8 +16,6 @@
 
 </style>
 <body onload=errorcheck()>
-
-  <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
   <script src="../static/style/clock.js"></script>
   <!-- figure out how to make the buttons variable lenght! -->
   <div class="box" id="box">
@@ -50,7 +48,6 @@
       document.getElementById("national").value = info[2];
       document.getElementById("heading3").innerHTML = info;
     };
-    setInterval(updateClock, 1000);
   };
   </script>
 </body>
