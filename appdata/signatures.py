@@ -19,8 +19,14 @@ class LoginSignatures:
     def deleteSignature(signature):
         k = session.query(Signature).filter_by(signature=signature).first()
         if k:
-            session.remove(k)
+            session.delete(k)
             session.commit()
             return None
         else:
             return "Signature doesn't exist!"
+
+    def deleteAllSignatures():
+        for i in session.query(Signature).all():
+            session.delete(i)
+        session.commit()
+        return None
