@@ -43,10 +43,7 @@ Check out this cool ASCII art I found!
               border-radius: 15px;
         }
 </style>
-<body id="body" onload=run()>
-
-  <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
-  <script src="../static/style/clock.js"></script>
+<body id="body" onload=run()><script src="../static/style/clock.js"></script>
   <!-- figure out how to make the buttons variable lenght! -->
   <div style="display:flex;position:relative;top:calc(20% - 70px);">
     <div class="registration" style="width:70px;">
@@ -113,7 +110,6 @@ Check out this cool ASCII art I found!
   };
   function run() {
     document.getElementById("body").style = `--color3:${generateRandomHexColor()};`;
-    setInterval(updateClock, 1000);
     errorCheck();
   };
   </script>
