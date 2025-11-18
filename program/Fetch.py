@@ -1,6 +1,8 @@
+# Fetch.py
+
 from flask import Blueprint, request, jsonify
 from appdata.database import Base, engine, DATABASE_URL, start_session
-from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Employees, Frozen
+from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Frozen
 from program.InfoGet import InfoGet
 
 start_session()
