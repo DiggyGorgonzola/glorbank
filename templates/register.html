@@ -40,8 +40,7 @@
               font-family: Arial, Helvetica, sans-serif;
             }
 </style>
-<body onload=errorcheck()>
-  <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
+<body onload=errorcheck()><script src="../static/style/clock.js"></script>
   <div style="display:flex;position:relative;top:calc(20% - 70px);">
     <div class="homer" style="width:85px;">
       <form action="/login">
@@ -57,7 +56,6 @@
   <div class="box" id="box">
     <h1>GLORBENIAN NATIONAL BANK</h1>
     <p>Register (Personal Account)</p>
-    <div id="clock-display" style="font-size:20px;text-align:center;text-decoration:0px;"></div>
     <h2 id="heading2"></h2>
     <form id="register_form" action="/register" method="POST">
       <div class="forme">
@@ -84,23 +82,6 @@
     <h3>Terms of Service: By checking "I agree to the ToS," you agree to the following terms and conditions. The Glorbenian National Bank will collect and store the provided username, password, national ID number, (and email or phone number). The Glorbenian National Bank may also collect data regarding your bank account (I.E. recent transactions), however this will be only under official government request. Any and all data provided goes through the host service onrender.com, only create an account if you trust them. In the event of fraud, the Glorbenian National Bank has the right to deactivate your account and repossess all money still in the account.</h3>
   </div>
   <script>
-  function updateClock() {
-    const now = new Date();
-    const formattedTime = now.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      hour12: false
-    });
-    const formattedDate = now.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-
-    document.getElementById('clock-display').innerText = `${formattedDate} ${formattedTime}`;
-  }
   const usernameInput = document.getElementById('usernameID');
   const userCharCount = document.getElementById('userCharCount');
   const userMaxChars = 80;
@@ -139,7 +120,6 @@
 
 
   function errorcheck() {
-    setInterval(updateClock, 1000);
     const info = {{ info | tojson }};
     const error = "{{ error }}";
     const skinky = "{{ skinky }}";
