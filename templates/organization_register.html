@@ -41,8 +41,7 @@
               font-family: Arial, Helvetica, sans-serif;
             }
 </style>
-<body onload=errorcheck()>
-  <div id="clock-display" style="position:absolute;font-size:10px;text-align:left;text-decoration:0px;"></div>
+<body onload=errorcheck()><script src="../static/style/clock.js"></script>
   <div style="display:flex;position:relative;top:calc(20% - 70px);">
     <div class="homer" style="width:85px;">
       <form action="/login">
@@ -58,7 +57,6 @@
   <div class="box" id="box">
     <h1>GLORBENIAN NATIONAL BANK</h1>
     <p>Register (Organization)</p>
-    <div id="clock-display" style="font-size:20px;text-align:center;text-decoration:0px;"></div>
     <h2 id="heading2"></h2>
     <form id="register_form" action="/register/organization" method="POST">
       <div class="forme">
@@ -91,23 +89,6 @@
     <h3>Terms of Service: By checking "I agree to the ToS," you agree to the following terms and conditions.The Glorbenian National Bank will collect information entered in the form regarding organization's name, main email account, main phone number, and, upon registering, the Glorbenian National Bank shall produce for the organization a unique organization ID for logging in under the organization's name. An organization's account are given special permissions and special responsibilities, such as the ability to automatically pay their employees, but also an increased flat tax rate.</h3>
   </div>
   <script>
-  function updateClock() {
-    const now = new Date();
-    const formattedTime = now.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      hour12: false
-    });
-    const formattedDate = now.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-
-    document.getElementById('clock-display').innerText = `${formattedDate} ${formattedTime}`;
-  };
   const nameInput = document.getElementById('nameID');
   const nameCharCount = document.getElementById('nameCharCount');
   const nameMaxChars = 80;
@@ -145,7 +126,6 @@
 
 
   function errorcheck() {
-    setInterval(updateClock, 1000);
     const skinky = "{{ skinky }}";
     const info = {{ info | tojson }};
     const error = "{{ error }}";
