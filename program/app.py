@@ -201,9 +201,11 @@ class Routes:
         for element in session.query(Bank).filter_by(national_id=user.national_id):
           bank = element
         LS.createSignature(nationalID)
+        signature = session.query(Signature).filter_by(national_id=nationalID).first()
         for i in session.query(Signature).all():
           print([i.signature, i.national_id])
-        return render_template("indexi.html", useracc=InfoGet.List(user), adming=user.admin, bankacc=InfoGet.List(bank), sus=cbidict["suspicious_transaction_limit"], mail_unread=InfoGet.getMail(user.id))
+          #, mail_unread=InfoGet.getMail(user.id)
+        return render_template("indexi.html", useracc=InfoGet.List(user), adming=user.admin, bankacc=InfoGet.List(bank), sus=cbidict["suspicious_transaction_limit"], signature=InfoGet.List(signature))
       return error("Something went wrong. ~ 1.2", redirect="home.html", user_info=user_info)  # <-- error code 1.2
     return render_template("home.html", info=["", "", ""])
     
