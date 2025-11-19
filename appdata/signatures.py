@@ -28,5 +28,5 @@ class LoginSignatures:
     def deleteAllSignatures():
         for i in session.query(Signature).all():
             session.delete(i)
-        session.commit()
+            session.commit()
         return None
