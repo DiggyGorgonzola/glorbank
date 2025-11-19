@@ -80,12 +80,15 @@
     }
 
 </style>
-
+<script src="../static/javascript_snippets_uwu/signature.js"></script>
 <script>
     const adming = {{ adming }};
     const useracc = {{ useracc | tojson}};
     const bankacc = {{bankacc|tojson}};
     const sus = {{sus}};
+    const signature = {{signature|tojson}};
+    const userg = Signature(signature[1])
+
     let mail_unread = [];
     function JR(json_thing) {
         return JSON.stringyify(json_thing, null, 2);
@@ -297,6 +300,7 @@
     function Adming() {
         setInterval(updateClock, 1000);
         document.getElementById("welcome").textContent = `Welcome, ${useracc[1]} :3`;
+        document.getElementById("welcome").textContent = userg;
         document.getElementById("employer-name").textContent = useracc[8];
         document.getElementById("bank_balance_woolong").textContent = `${bankacc[1]}`;
         document.getElementById("user").value = `${useracc[6]}`;
