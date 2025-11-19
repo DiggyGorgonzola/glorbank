@@ -54,7 +54,7 @@ class Fetches:
         print(f"NATIONAL ID: {signature_instance.national_id}")
         print(InfoGet.List(user))
         try:
-          return Fetches.json_out("success", received_data, response=user) # <- idk man
+          return Fetches.json_out("success", received_data, response=InfoGet.List(user)) # <- idk man
         except Exception as error:
           return Fetches.json_out("failure", received_data, response=error.lower())
       else:
