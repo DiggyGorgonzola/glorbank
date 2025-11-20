@@ -87,7 +87,8 @@
     const bankacc = {{bankacc|tojson}};
     const sus = {{sus}};
     const signature = {{signature|tojson}};
-    const userg = Signature(signature[1])
+    const userg = Signature(signature[1]);
+
 
     let mail_unread = [];
     function JR(json_thing) {
@@ -300,10 +301,10 @@
     function Adming() {
         setInterval(updateClock, 1000);
         document.getElementById("welcome").textContent = `Welcome, ${useracc[1]} :3`;
-        document.getElementById("welcome").textContent = userg;
         document.getElementById("employer-name").textContent = useracc[8];
         document.getElementById("bank_balance_woolong").textContent = `${bankacc[1]}`;
         document.getElementById("user").value = `${useracc[6]}`;
+        document.getElementById("gooner2").textContent = userg[1];
         document.getElementById("bank_balance_parts").textContent = `${bankacc[2]}`;
         document.getElementById("bank_balance_credit").textContent = `${bankacc[3]}`;
         if (adming > 1) {
