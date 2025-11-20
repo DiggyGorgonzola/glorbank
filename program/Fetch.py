@@ -4,7 +4,7 @@ from flask import Blueprint, request, jsonify
 from appdata.database import Base, engine, DATABASE_URL, start_session
 from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Frozen, Signature
 from program.InfoGet import InfoGet
-import appdata.signatures
+import appdata.signatures, json
 LS = appdata.signatures.LoginSignatures
 session = start_session()
 
@@ -52,11 +52,6 @@ class Fetches:
       if signature_instance:
         user = InfoGet.List(session.query(User).filter_by(national_id=signature_instance.national_id).first())
         print(f"NATIONAL ID: {signature_instance.national_id}")
-        print(InfoGet.List(user))
-        try:
-          return Fetches.json_out("success", received_data, response=InfoGet.List(user)) # <- idk man
-        except Exception as error:
-          return Fetches.json_out("failure", received_data, response=error.lower())
-      else:
-        return Fetches.json_out("failure", received_data, response="signature doesn't exist!") #<- create a catch block or smth
+        print(user)
+        return jsonify({"success":"success", "received_data":received_data, "response":user}) # <- idk man
     return None
