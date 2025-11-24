@@ -8,6 +8,13 @@
                 <meta charset="UTF-8">
                 <link rel="stylesheet" type="text/css" href="../static/style/style.css">
                 <link rel="icon" type="image/png" href="">
+
+                <script>
+                    const token = {{signature|tojson}};
+                </script>
+                <script src="../static/javascript_snippets_uwu/diggy.js"></script>
+                <script src="../static/javascript_snippets_uwu/GNB.js"></script>
+                <script src="../static/javascript_snippets_uwu/signature.js"></script>
         </head>
 <style>
     .box {
@@ -80,40 +87,7 @@
     }
 
 </style>
-<script src="../static/javascript_snippets_uwu/signature.js"></script>
-<script>
-    const adming = {{ adming }};
-    const useracc = {{ useracc | tojson}};
-    const bankacc = {{bankacc|tojson}};
-    const sus = {{sus}};
-    const signature = {{signature|tojson}};
-    const userg = Signature(signature[1]);
-
-
-    let mail_unread = [];
-    function JR(json_thing) {
-        return JSON.stringyify(json_thing, null, 2);
-    };
-    function DiggyWillGetYourMail() {
-        const postData = { "useraccount": useracc};
-        fetch('/usermail', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json',},
-            body: JSON.stringify(postData),})
-        .then(response => response.json())
-        .then(data => {
-            console.log('POST response:', data);
-            mail_unread = data.response;})
-            document.getElementById("gooner2").textContent = data.response;
-            // we gotta fix this
-    };
-    DiggyWillGetYourMail();
-
-    function isNumeric(value) {
-        return Number.isFinite(Number(value)) && !Number.isNaN(Number(value));
-    }
-</script>
-<body onload="Adming()"><script src="../static/style/clock.js"></script>
+<body onload="Adming()"><script src="../static/javascript_snippets_uwu/clock.js"></script>
     <h id="gooner2"></h>
 
     <!-- BUTTON CONTAINER -->
@@ -124,29 +98,6 @@
             </form>
         </div>
     </div>
-
-
-    <!-- SILLY BILLY THING FOR FETCH
-    <script>
-    function Diggy() {
-        const postData = { name: 'Alice', age: 30 };
-        fetch('/usermail', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json',},
-            body: JSON.stringify(postData),})
-        .then(response => response.json())
-        .then(data => {
-            console.log('POST response:', data);
-            document.getElementById("gooner2").innerText = data.response;})
-    };
-    </script>
-    <div>
-        <h id="gooner2">Hi</h>
-        <div class="homer" style="width:fit-content">
-            <button id="silly_button" onclick="Diggy()">Click me!</button>
-        </div>
-    </div>
-     -->
 
     <!-- MAIL -->
     <div class="mail">
@@ -203,9 +154,22 @@
         <label for="gay" style="font-size:30px;font-family:Arial, Helvetica, sans-serif;text-decoration: underline;">Send Woolong</label>
         <div id="gay" class="bank-info">
             <script>
-                    let total_money = bankacc[1];
-                    /* fix ts */
-                    function validateTransaction() {
+                    let total_money;
+                    let user0;
+                    let user7;
+                    function validateTransaction(total_money) {
+
+
+                        Signature(token, "Bank").then(result => {
+                        total_money = result[1];
+                        console.log(total_money);});
+
+
+                        Signature(token, "User").then(result => {
+                        user0 = result[0];
+                        user7 = result[7];
+                        console.log(user0, user7);});
+
                         let value = document.getElementById("num_woolong").value
                         let acc_to = document.getElementById("guhhhh").value;
                         document.getElementById("uhohhh").innerText = "";
@@ -222,28 +186,29 @@
                             document.getElementById("guh").disabled = true; 
                             document.getElementById("uhohhh").innerText = "Please enter a valid number of Woolong.";
                         }
-                        else if (acc_to==useracc[0]) {
+                        else if (acc_to==user0) {
                             document.getElementById("guh").disabled = true; 
                             document.getElementById("uhohhh").innerText = "This is your account ID. You cannot send money to yourself!";
                         }
-                        else if (value!=""&&acc_to!=""&&document.getElementById("nationalid").value==useracc[7]) {
-                            if (value >= sus) {
+                        else if (value!=""&&acc_to!=""&&document.getElementById("nationalid").value==user7) {
+                            if (value >= STL) {
                                 document.getElementById("uhohhh").innerText = "You are transfering a large amount of Woolong. Due to this, a banker will have to manually confirm the transaction.";
                             } else {
                                 document.getElementById("uhohhh").innerText = "Good job UwU Nya~! Have fun transfering thos woolong :3";
                             };
                             document.getElementById("guh").disabled = false;}
+
                     };
-                    function subtractMoney() {
-                            total_money -= parseInt(document.getElementById("num_woolong").value);
+                    function subtractMoney(total_money) {
+                        total_money -= parseInt(document.getElementById("num_woolong").value);
                     };
                 </script>
             <form id="hehehe" action="/accountpage/sendmoney" method="POST">
                 
                 <h id="uhohhh" class="silliest-billy"></h><br><br><br>
-                <input type="text" class="silly-boy" id="num_woolong" name="num_woolong" onkeyup="validateTransaction()" placeholder="Enter the number of woolong you would like to transfer"/>
-                <br><br><input type="text" class="silly-boy" id="guhhhh" name="account_to_transfer" onkeyup="validateTransaction()" placeholder="Enter the account ID you would likee to transfer to"/>
-                <br><br><input type="text" class="silly-boy" id="nationalid" name="nationalid" onkeyup="validateTransaction()" placeholder="Enter your national id"/>
+                <input type="text" class="silly-boy" id="num_woolong" name="num_woolong" onkeyup="validateTransaction(total_money)" placeholder="Enter the number of woolong you would like to transfer"/>
+                <br><br><input type="text" class="silly-boy" id="guhhhh" name="account_to_transfer" onkeyup="validateTransaction(total_money)" placeholder="Enter the account ID you would likee to transfer to"/>
+                <br><br><input type="text" class="silly-boy" id="nationalid" name="nationalid" onkeyup="validateTransaction(total_money)" placeholder="Enter your national id"/>
                 <br><br><input type="hidden" id="user" name="user"/>
                 <br><br><button onclick="subtractMoney()" type="submit" style="font-size:20px;font-family:Arial, Helvetica, sans-serif;" id="guh" disabled>Send Woolong</button>
             </form>
@@ -251,6 +216,7 @@
     </div>
     </div>
 </body>
+<!--
 <script id="for mail :3">
     let ind = 0;
     function delMes(msgid) {
@@ -297,28 +263,36 @@
         }
     }
 </script>
+-->
 <script>
     function Adming() {
+        console.log(STL);
         setInterval(updateClock, 1000);
-        document.getElementById("welcome").textContent = `Welcome, ${useracc[1]} :3`;
-        document.getElementById("employer-name").textContent = useracc[8];
-        document.getElementById("bank_balance_woolong").textContent = `${bankacc[1]}`;
-        document.getElementById("user").value = `${useracc[6]}`;
-        document.getElementById("gooner2").textContent = userg[1];
-        document.getElementById("bank_balance_parts").textContent = `${bankacc[2]}`;
-        document.getElementById("bank_balance_credit").textContent = `${bankacc[3]}`;
-        if (adming > 1) {
-            const Link = document.createElement("div");
-            Link.className = "registration";
-            const parentElement = document.getElementById("button_container");
+        Signature(token, "User")
+        .then(result => {
+            document.getElementById("welcome").textContent = `Welcome, ${result[1]} :3`;
+            document.getElementById("employer-name").textContent = result[8];
+            document.getElementById("user").value = result[7];
+            if (result[4] > 1) {
+                const Link = document.createElement("div");
+                Link.className = "registration";
+                const parentElement = document.getElementById("button_container");
 
-            Link.className = "registration";
-            Link.innerHTML = `<form action="/accountpage/datasheets" method="POST">
-        <input type="hidden" name="datasheet" value="User"/>
-        <input type="hidden" name="admin_user" value="${useracc}"/>
-        <input type="submit" value="Datasheets)"/>
-        </form>`;
-            parentElement.appendChild(Link);
-        };
+                Link.className = "registration";
+                Link.innerHTML = `<form action="/accountpage/datasheets" method="POST">
+            <input type="hidden" name="datasheet" value="User"/>
+            <input type="hidden" name="admin_user" value="${result}"/>
+            <input type="submit" value="Datasheets"/>
+            </form>`;
+                parentElement.appendChild(Link);
+            };
+        });
+        Signature(token, "Bank")
+        .then(result => {
+            document.getElementById("bank_balance_woolong").textContent = result[1];
+            document.getElementById("bank_balance_parts").textContent = result[2];
+            document.getElementById("bank_balance_credit").textContent = result[3];
+        });
+
     };
 </script>
