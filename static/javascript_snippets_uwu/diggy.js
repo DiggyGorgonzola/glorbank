@@ -11,3 +11,7 @@ function setText(elem, text) {
 function byId(elem) {
     return document.getElementById(elem);
 };
+
+function isNumeric(value) {
+    return Number.isFinite(Number(value)) && !Number.isNaN(Number(value));
+};
