@@ -141,6 +141,16 @@ def transact(nidfrom, nidto, amt):
   bank_accountto.woolong = int(woolong_accountto)
   session.commit()
 
+
+def Index(national_id=None, signature=None):
+  model_signature = None
+  if national_id is not None:
+    model_signature = session.query(Signature).filter_by(national_id=national_id).first()
+  elif signature is not None:
+    model_signature = session.query(Signature).filter_by(signature=signature).first()
+  model_signature = InfoGet.List(model_signature)[1]
+  return render_template('indexi.html', signature=model_signature)
+
 '''
 
 
@@ -203,9 +213,9 @@ class Routes:
         LS.createSignature(nationalID)
         signature = session.query(Signature).filter_by(national_id=nationalID).first()
         for i in session.query(Signature).all():
-          print([i.signature, i.national_id])
+          print("HELLO HELLO HELLO HELLO", [i.signature, i.national_id])
           #, mail_unread=InfoGet.getMail(user.id)
-        return render_template("indexi.html", useracc=InfoGet.List(user), adming=user.admin, bankacc=InfoGet.List(bank), sus=cbidict["suspicious_transaction_limit"], signature=InfoGet.List(signature))
+        return Index(national_id=nationalID)
       return error("Something went wrong. ~ 1.2", redirect="home.html", user_info=user_info)  # <-- error code 1.2
     return render_template("home.html", info=["", "", ""])
     
@@ -219,7 +229,7 @@ class Routes:
       username = request.form['username']
       password = request.form['password']
       nationalID = int(request.form['national'])
-      user_ip = request.headers.get("X-Real-IP") or request.headers.get("X-Forwarded-For", "").split(',')[0]
+      user_ip = request.headers.get("X-Forwarded-For", request.remote_addr).split(",")[0].strip()
       email = ""
       if request.form['email']:
         email = request.form['email']
@@ -380,7 +390,7 @@ class Routes:
       elif user.password == password and user.national_id == nationalID:
         for element in session.query(Bank).filter_by(national_id=user.national_id):
           bank = element
-        return render_template("indexi.html", useracc=[i for i in InfoGet.List(user)], adming=user.admin, bankacc=[i for i in InfoGet.List(bank)], sus=cbidict["suspicious_transaction_limit"], mail_unread=InfoGet.getMail(user.id))
+        return Index(national_id=nationalID)
     return error("Page not found", redirect="register.html")
 
   @app.route('/accountpage/sendmoney', methods=["GET", "POST"])
@@ -391,6 +401,8 @@ class Routes:
       sendto = request.form["account_to_transfer"]
       sendfrom = request.form["nationalid"]
       user = request.form['user']
+      sendfrom = int(sendfrom)
+      user = int(user)
       if sendfrom == user:
         accountfrom = session.query(User).filter_by(national_id=sendfrom).first()
         accountto = session.query(User).filter_by(id=sendto).first()
@@ -402,6 +414,41 @@ class Routes:
           session.commit()
 
           new_mail = Mail(acc_id_to=accountfrom.id, title="Transaction Information", message=f"    At {datetime.datetime.now().strftime("%I:%M %p, %A, %B %d, %Y")} you have sent {value} Woolong to another bank account.\n\n    If you believe this to be an error, please send a message to the gmail provided below.", contact="bendole3141592@gmail.com (main provider of the G.N.B. service).")
+          ''' FOUR HUNDRED AND SEVENTEEN!!!!
+          %%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
+          %%%%%%%%%&&&@@&&&&@@&%%#((//******,,,,,,,*,*/#%&@%%%%&&@@&%%%%%%%%%%%%%%%%%%%%%%
+          %%%%%%%%%%@@@&@@&%%%%###((///******************//(#%&&&&&@&%%%%%%%%%%%%%%%%%%%%%
+          %%%%%%%%%&@@@&%%%#%%%###((/////****,,,,,,,,,,,***/((((%&&&@&%%%%%%%&&&&&%&&&&&&%
+          %%%%%%%%%@@@&%###((///*****,,,,***********,,,,,****/((##%&&@&%%&&&&&&&%%%%%%%&&&
+          %%%%%%%%&@@@&&&&&&&&&&%#(/**,,,,,**********,,*****///((((#&@@&%%%%&&&&&&&&&&&&&&
+          %%%%%%%%&@&&&&%%###(((((((((/*,,,,,********//(##%%%&&&%%%%&@@&%&%%%&&&&&&&&&&&&&
+          %%%%%%%%@@&&%%####((((##(((((/***********//(((///////((#%&&@@&&&&&&&&&&&&&&&&&&&
+          %%%%%%%&@&%%########(#########(((///////((##((((//////(((#%&@&&&&&&&&&&&&&&&@@@@
+          %%%%%%%&&%%%####(#%%#(**/%######(/////((###(((//****/(((((#%&&&&&&&&&&&&&@@@@@@@
+          %%%%%%%%%%###%&&#*.,., ./###(((/**,,,,**//(##/,.,.,*(&&%(((#%&&&&&&&&&&&@@@@@@@@
+          %%%%%%%%%#####%%/,(@&&&(,,((//***,,,,,,,,*//,.(&%%%*.(&#((((%&&&&&&&&&@@@@@@@@@@
+          %%%%%%%%%##(//(#%#((#(((/*********,,,,**,,,***/#%#/**((/**/(%&&&&&&&&@@@@@@@@@@@
+          &&&&&&&%%#(//***//((((/*****////**,,,,****,,,*/(####(*,,,*/(%&&&&&&&&@@@@@@@@@@@
+          &&&&&&&%%#((/*************/////***,,,,,***,,,,,,,,,,,,,,,*/#&&&&&&&&&@@@@@@@@@@@
+          &&&&&&&%%%#((/****,,,*****/////**,,,,,,****,,,,,,,,,,,,,*/(#%&&&&&&&@@@@@@@@@@@@
+          &&&&&&&%%%%##(//*********///****,,,....,,,*,,,,,,,,,,,*//((#%&&&&&&&&&&@@@@@@@@@
+          &&&&&&&&%%%%##((///*****/(#(((//***,,,,,*///*,,,,,,,**//(###%&&&&&&&&&&&&&@@@@@@
+          &&&&&&&&&&%%%%##((//**/*(##%&&&%##(((/(%&@%#/,,*,,**//(###%%&&&&&&&&&&&&&&&&&@@@
+          &&&&&&&&&&&&&&%%#(((///**/(/*/(#%%%##(((*,***,,,,**//(##%%%&&&&&&&&&&&&&&&&&&@@@
+          %%%%%%%%%%&&&&&%%##((///*****,,***,,,,,,,,,,,,,***/(##%%%%%#(//(((((#####%&&&&@@
+          /(#####((##%&&&&%%%##((////****,,,,,,,,,,,,,,**//(##%%%%(/(#/*/(/*/(//*/(/*/%&@@
+          (((##((#(###%%&&&&&%%%#((((((/**,,,,,,********/(##%%%%#(((#(/((////////((/*,,,*#
+          ##(###(###(##%&&&&&%%%%%%%##/**,,,,,,,,,**((((##%%%%#((((##(#(/((///////********
+          (##(##((######&&&&&&&%&&&%#((//**,,,,,,***/(#%%%%%#####((#((#//((/*///(/*//*****
+          (#%###########&&&&&&&&&&&&&&&&&&&%%%%&&&&&&%%%%%%%##(#%%#(/((//((////((**//,****
+          (#%%#########%%&&&&&&&&&&&&&&&&&&&&&&&@@&&&&&%%%###((#%%#/*(((((/*//((///(/****/
+          #(#%#((#######%%&&&&&&&&&&&&&&%%%%%&&&&&&&&&%%%%###(#%%#(////(((/**/((///((/*//(
+          ###%##((#######%%&&%%&&&%#(#%&%%###%&&%####%%%%##(((#%%(////((((//(#(////((///(#
+          ###%%##(((##%%#%%%%%&%&&%#////(#(###(//(((#%%%##(((#%#(//////(#(//(#(////(((///(
+          ((##%%(((((##&&%%%%%%%%&%#//**,,,,,,,*///(#%%#####%%#((((//((#(//(((/////(((//((
+          (######(((###%&%%#%%%%&&&%(///*******/((/(####(##%%%(/((////(((((/////(((##(//(#
+          '''
+          
           session.add(new_mail)
           session.commit()
         else:
@@ -411,45 +458,13 @@ class Routes:
       else:
         print("Something bad happened")
       print(value)
-      return render_template("home.html", info=["", "", ""])
+      print(sendfrom)
+      signature = [InfoGet.List(i) for i in session.query(Signature).all()]
+      print(signature)
+      signature2 = session.query(Signature).filter_by(national_id=sendfrom).first()
+      print("USER:", InfoGet.List(signature))
+      return render_template("indexi.html", signature=InfoGet.List(signature2)[1])
     return error("Page not found", redirect="register.html")
-
-
-
-  ''' FOUR HUNDRED AND SEVENTEEN!!!!
-  %%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
-  %%%%%%%%%&&&@@&&&&@@&%%#((//******,,,,,,,*,*/#%&@%%%%&&@@&%%%%%%%%%%%%%%%%%%%%%%
-  %%%%%%%%%%@@@&@@&%%%%###((///******************//(#%&&&&&@&%%%%%%%%%%%%%%%%%%%%%
-  %%%%%%%%%&@@@&%%%#%%%###((/////****,,,,,,,,,,,***/((((%&&&@&%%%%%%%&&&&&%&&&&&&%
-  %%%%%%%%%@@@&%###((///*****,,,,***********,,,,,****/((##%&&@&%%&&&&&&&%%%%%%%&&&
-  %%%%%%%%&@@@&&&&&&&&&&%#(/**,,,,,**********,,*****///((((#&@@&%%%%&&&&&&&&&&&&&&
-  %%%%%%%%&@&&&&%%###(((((((((/*,,,,,********//(##%%%&&&%%%%&@@&%&%%%&&&&&&&&&&&&&
-  %%%%%%%%@@&&%%####((((##(((((/***********//(((///////((#%&&@@&&&&&&&&&&&&&&&&&&&
-  %%%%%%%&@&%%########(#########(((///////((##((((//////(((#%&@&&&&&&&&&&&&&&&@@@@
-  %%%%%%%&&%%%####(#%%#(**/%######(/////((###(((//****/(((((#%&&&&&&&&&&&&&@@@@@@@
-  %%%%%%%%%%###%&&#*.,., ./###(((/**,,,,**//(##/,.,.,*(&&%(((#%&&&&&&&&&&&@@@@@@@@
-  %%%%%%%%%#####%%/,(@&&&(,,((//***,,,,,,,,*//,.(&%%%*.(&#((((%&&&&&&&&&@@@@@@@@@@
-  %%%%%%%%%##(//(#%#((#(((/*********,,,,**,,,***/#%#/**((/**/(%&&&&&&&&@@@@@@@@@@@
-  &&&&&&&%%#(//***//((((/*****////**,,,,****,,,*/(####(*,,,*/(%&&&&&&&&@@@@@@@@@@@
-  &&&&&&&%%#((/*************/////***,,,,,***,,,,,,,,,,,,,,,*/#&&&&&&&&&@@@@@@@@@@@
-  &&&&&&&%%%#((/****,,,*****/////**,,,,,,****,,,,,,,,,,,,,*/(#%&&&&&&&@@@@@@@@@@@@
-  &&&&&&&%%%%##(//*********///****,,,....,,,*,,,,,,,,,,,*//((#%&&&&&&&&&&@@@@@@@@@
-  &&&&&&&&%%%%##((///*****/(#(((//***,,,,,*///*,,,,,,,**//(###%&&&&&&&&&&&&&@@@@@@
-  &&&&&&&&&&%%%%##((//**/*(##%&&&%##(((/(%&@%#/,,*,,**//(###%%&&&&&&&&&&&&&&&&&@@@
-  &&&&&&&&&&&&&&%%#(((///**/(/*/(#%%%##(((*,***,,,,**//(##%%%&&&&&&&&&&&&&&&&&&@@@
-  %%%%%%%%%%&&&&&%%##((///*****,,***,,,,,,,,,,,,,***/(##%%%%%#(//(((((#####%&&&&@@
-  /(#####((##%&&&&%%%##((////****,,,,,,,,,,,,,,**//(##%%%%(/(#/*/(/*/(//*/(/*/%&@@
-  (((##((#(###%%&&&&&%%%#((((((/**,,,,,,********/(##%%%%#(((#(/((////////((/*,,,*#
-  ##(###(###(##%&&&&&%%%%%%%##/**,,,,,,,,,**((((##%%%%#((((##(#(/((///////********
-  (##(##((######&&&&&&&%&&&%#((//**,,,,,,***/(#%%%%%#####((#((#//((/*///(/*//*****
-  (#%###########&&&&&&&&&&&&&&&&&&&%%%%&&&&&&%%%%%%%##(#%%#(/((//((////((**//,****
-  (#%%#########%%&&&&&&&&&&&&&&&&&&&&&&&@@&&&&&%%%###((#%%#/*(((((/*//((///(/****/
-  #(#%#((#######%%&&&&&&&&&&&&&&%%%%%&&&&&&&&&%%%%###(#%%#(////(((/**/((///((/*//(
-  ###%##((#######%%&&%%&&&%#(#%&%%###%&&%####%%%%##(((#%%(////((((//(#(////((///(#
-  ###%%##(((##%%#%%%%%&%&&%#////(#(###(//(((#%%%##(((#%#(//////(#(//(#(////(((///(
-  ((##%%(((((##&&%%%%%%%%&%#//**,,,,,,,*///(#%%#####%%#((((//((#(//(((/////(((//((
-  (######(((###%&%%#%%%%&&&%(///*******/((/(####(##%%%(/((////(((((/////(((##(//(#
-  '''
   @app.route('/login/organization', methods=["GET", "POST"])
   # function 7
   def logorg():
