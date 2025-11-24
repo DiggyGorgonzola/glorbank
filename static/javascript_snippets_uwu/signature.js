@@ -1,23 +1,23 @@
 // signature.js
 
-// for the new signature system
-async function fetchSignature(signature) {
+async function Signature(signature, model="User") {
     try {
-        const response = await fetch('/getacc', {method: "POST", headers: {'Content-Type': 'application/json'}, body:JSON.stringify(signature)});
+        const response = await fetch('/getacc', {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"signature":signature, "model":model})
+        });
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        let data = await response.json();
+
+        const data = await response.json();
         console.log(data);
-        return data; // The data is returned here
+
+        return data.response;
     } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
+        console.log('There was a problem with the fetch operation:', error);
+        return null;
     }
-};
-function Signature(signature) {
-    fetchSignature(signature).then(result => {
-        if (result) {
-            return Array.from(result.response);
-        };
-    });
 };
