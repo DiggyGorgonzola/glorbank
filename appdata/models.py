@@ -89,7 +89,7 @@ class Signature(Base):
   __tablename__ = "Signature"
   id = db.Column(db.Integer, primary_key=True)
   signature = db.Column(db.String, nullable=False)
-  national_id = db.Column(db.Integer, nullable=False, unique=True)
+  national_id = db.Column(db.Integer, nullable=False, unique=False)
 
 class LongAwait(Base):
   __tablename__ = "LongAwait"
