@@ -1,14 +1,15 @@
 # app.py
+import wrapped_print
+
 from flask import Flask, render_template, request, redirect, url_for, jsonify, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from decimal import Decimal as decimal
 
-from appdata.database import Base, engine, DATABASE_URL, start_session, Print
-from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Frozen
+from appdata.database import Base, engine, DATABASE_URL, start_session
+from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Signatures, Frozen
 from appdata.models import Signature
 import appdata.signatures
 from CBI import cbidict, HOMEREDIRECT
@@ -413,7 +414,6 @@ class Routes:
           session.add(transaction_report)
           session.commit()
 
-          new_mail = Mail(acc_id_to=accountfrom.id, title="Transaction Information", message=f"    At {datetime.datetime.now().strftime("%I:%M %p, %A, %B %d, %Y")} you have sent {value} Woolong to another bank account.\n\n    If you believe this to be an error, please send a message to the gmail provided below.", contact="bendole3141592@gmail.com (main provider of the G.N.B. service).")
           ''' FOUR HUNDRED AND SEVENTEEN!!!!
           %%###%%%%#(#%@@@@&&&&&&&&&&&&&%%%%%&&%%%#######%%%&&@@@@&%%%%%%%%%%%%%%%%%%%%%%%
           %%%%%%%%%&&&@@&&&&@@&%%#((//******,,,,,,,*,*/#%&@%%%%&&@@&%%%%%%%%%%%%%%%%%%%%%%
@@ -448,7 +448,7 @@ class Routes:
           ((##%%(((((##&&%%%%%%%%&%#//**,,,,,,,*///(#%%#####%%#((((//((#(//(((/////(((//((
           (######(((###%&%%#%%%%&&&%(///*******/((/(####(##%%%(/((////(((((/////(((##(//(#
           '''
-          
+          new_mail = Mail(acc_id_to=accountfrom.id, title="Transaction Information", message=f"    At {datetime.datetime.now().strftime("%I:%M %p, %A, %B %d, %Y")} you have sent {value} Woolong to another bank account.\n\n    If you believe this to be an error, please send a message to the gmail provided below.", contact="bendole3141592@gmail.com (main provider of the G.N.B. service).")
           session.add(new_mail)
           session.commit()
         else:

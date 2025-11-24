@@ -1,11 +1,11 @@
 # models.py
-
+import wrapped_print
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, DateTime, text, Boolean, LargeBinary, JSON
 from .database import Base
 
 '''
-User, Bank, Mail, Reports, OngoingTransaction, RegisteringOrganizations, Organization, Frozen
+User, Bank, Mail, Reports, OngoingTransaction, RegisteringOrganizations, Organization, Signatures, Frozen
 '''
 db = SQLAlchemy()
 class User(Base):

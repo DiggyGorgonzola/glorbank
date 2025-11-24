@@ -1,4 +1,5 @@
 # database.py
+import wrapped_print
 from CBI import debug
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
@@ -14,7 +15,3 @@ def start_session():
     session = sessionmaker(bind=engine)()
     session.begin()
     return session
-
-def Print(*args, documentation=False):
-    if debug[0]:
-        print(" ".join(args))
