@@ -1,6 +1,6 @@
 #signatures.py
 
-from appdata.database import Base, engine, DATABASE_URL, start_session, Print
+from appdata.database import Base, engine, DATABASE_URL, start_session
 from appdata.models import Signature
 import random, datetime
 session = start_session()
