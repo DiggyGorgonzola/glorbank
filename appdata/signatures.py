@@ -1,21 +1,32 @@
-async function Signature(signature, model="User") {
-    try {
-        const response = await fetch('/getacc', {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({"signature":signature, "model":model})
-        });
+#signatures.py
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+from appdata.database import Base, engine, DATABASE_URL, start_session, Print
+from appdata.models import Signature
+import random, datetime
+session = start_session()
+SMAL = 1
+LARG = 10**50
+class LoginSignatures:
+    def createSignature(national_id, autocommit=True):
+        random.seed(str(datetime.datetime.now()) + str(national_id))
+        k = random.randrange(SMAL, LARG)
+        new_signature = Signature(signature=str(k), national_id=national_id)
+        if autocommit:
+            session.add(new_signature)
+            session.commit()
+        return new_signature
 
-        const data = await response.json();
-        console.log(data);
+    def deleteSignature(signature):
+        k = session.query(Signature).filter_by(signature=signature).first()
+        if k:
+            session.delete(k)
+            session.commit()
+            return None
+        else:
+            return "Signature doesn't exist!"
 
-        return data.response;
-    } catch (error) {
-        console.log('There was a problem with the fetch operation:', error);
-        return null;
-    }
-};
+    def deleteAllSignatures():
+        for i in session.query(Signature).all():
+            session.delete(i)
+            session.commit()
+        return None
