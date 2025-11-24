@@ -4,54 +4,42 @@ from flask import Blueprint, request, jsonify
 from appdata.database import Base, engine, DATABASE_URL, start_session
 from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Frozen, Signature
 from program.InfoGet import InfoGet
+from CBI import cbidict
 import appdata.signatures, json
 LS = appdata.signatures.LoginSignatures
 session = start_session()
 
 fetch = Blueprint('fetch', __name__)
 
-#if there is an error it is probably gonna be in line 2. Importing app might make it freak out.
 class Fetches:
-  #dubious function
-  #should be used instead of jsonify I think due to its shorthandedness...
-  def json_out(status, received, **kwargs):
-    v = {'status':status, 'received':received}
-    for key,value in kwargs.items():
-      v[key] = value
-    return jsonify(v)
+
+
+  @fetch.route("/GNB", methods=["GET", "POST"])
+  def GNB():
+    if request.method == 'POST':
+      received_data = request.json
+      if received_data in list(cbidict.keys()):
+        return jsonify({"success":"success", "received_data":received_data, "response":cbidict[received_data]})
+      return jsonify({"success":"failureT", "received_data":received_data, "response":"null"})
+    return jsonify({"success":"failure: request method is GET", "received_data":received_data, "response":"null"})
 
   
-  @fetch.route('/usermail', methods=["GET","POST"])
-  def handleMail():
-    if request.method == 'POST':
-      received_data = request.json
-      try:
-        return Fetches.json_out("success", received_data, response=InfoGet.getMail(received_data["useraccount"][0]))
-      except Exception as error:
-        return Fetches.json_out("failure", received_data, response=error.lower())
-    return None
-  
-  @fetch.route("/dropsigmas", methods=["GET","POST"]) #mainly for testing purposes
-  def dropSigmas():
-    if request.method == 'POST':
-      received_data = request.json
-      LS.deleteAllSignatures()
-      try:
-        return Fetches.json_out("success", received_data, response="Gilbert") # <- idk man
-      except Exception as error:
-        return Fetches.json_out("failure", received_data, response=error.lower())
-    return None
+
 
   @fetch.route("/getacc", methods=["GET","POST"])
   def getAcc():
     if request.method == 'POST':
-      received_data = request.json
-      print(received_data)
+      print(request.json)
+      received_data = request.json["signature"]
+      get_model = request.json["model"]
+      print(get_model)
       signature_instance = session.query(Signature).filter_by(signature=received_data).first()
-      print(InfoGet.List(signature_instance))
-      if signature_instance:
+      if signature_instance and get_model == "User":
         user = InfoGet.List(session.query(User).filter_by(national_id=signature_instance.national_id).first())
-        print(f"NATIONAL ID: {signature_instance.national_id}")
-        print(user)
-        return jsonify({"success":"success", "received_data":received_data, "response":user}) # <- idk man
-    return None
+        return jsonify({"success":"success", "received_data":received_data, "response":user})
+      elif signature_instance and get_model == "Bank":
+        bank = InfoGet.List(session.query(Bank).filter_by(national_id=signature_instance.national_id).first())
+        return jsonify({"success":"success", "received_data":received_data, "response":bank})
+      else:
+        return jsonify({"success":"failure", "received_data":received_data, "response":"null"})
+    return jsonify({"success":"failure: request method is GET", "received_data":received_data, "response":"null"})
