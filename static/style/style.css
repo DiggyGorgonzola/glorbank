@@ -1,11 +1,12 @@
 html, body {
-        --shade: #000;
-        --tint: #FFF;
-        --color3: #45d16a;
+        --shade: #000; /* #000 or black */
+        --default_gray: #c9c9c9; /* #c9c9c9 */
+        --tint: #FFF; /* #FFF or white */
+        --color3: #45d16a; /* #45d16a GNB green */
         --color1: color-mix(in srgb, var(--color3), var(--tint));
         --color2: color-mix(in srgb, var(--color3), var(--shade));
         background: linear-gradient(var(--color1), var(--color2));
-        background-color: color1;
+        background-color: var(--color1);
         font-family: 'Times New Roman', Times, serif;
         color: var(--shade);
         margin: 0;
@@ -16,27 +17,35 @@ html, body {
 
     input {
             border-radius: 5px;
+            background-color: var(--tint);
+            color: var(--shade);
+            border-color: var(--shade);
         }
     input:hover {
-            background-color: #c9c9c9;
+            background-color: var(--default_gray);
         }
     button {
             border-radius: 5px;
+            border-color: var(--shade);
+            background-color: var(--tint);
+            color: var(--shade);
         }
     button:hover {
-            background-color: #c9c9c9;
+            background-color: var(--default_gray);
         }
     select {
             border-radius: 5px;
+            border-color: var(--shade);
+            background-color: var(--tint);
         }
     select:hover {
-            background-color: #c9c9c9;
+            background-color: var(--default_gray)
         }
     
     select:open {
-        background-color: #fff;
+        background-color: var(--tint);
         border-radius: 5px;
-        border-color: #000;
+        border-color: var(--shade);
         
     }
 
@@ -88,6 +97,6 @@ html, body {
     margin: 5px;
     background-color: var(--color3);
     box-shadow: 3px 3px var(--color2);
-    border: 2px #000;
+    border: 2px var(--shade);
     border-radius: 15px;
 }
