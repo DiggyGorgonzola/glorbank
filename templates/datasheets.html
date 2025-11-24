@@ -153,6 +153,7 @@
             let guh = document.createElement("th");
             guh.innerText = keye;
             guh.style.fontSize = "20px";
+            guh.style.overflow = "auto";
             guh.style.border = "1px solid var(--color2)";
             document.getElementById("TableKeys").appendChild(guh);
         };
@@ -167,8 +168,8 @@
                 goon.textContent = guh;
                 goon.id = `ROW${indexy}-${keys[element.indexOf(guh)]}`;
                 goon.style.overflowX = "auto";
-                goon.style.fontSize = "20px";
-                goon.style.padding = "10px";
+                goon.style.textAlign = "center";
+                goon.style.fontSize = "15px";
                 goon.style.backgroundColor = "white";
                 goon.style.border = "1px solid black";
                 document.getElementById(`ROW${indexy}`).appendChild(goon)
