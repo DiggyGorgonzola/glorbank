@@ -1,6 +1,7 @@
 
 # InfoGet.py
 
+import wrapped_print
 from flask import Blueprint
 from appdata.database import Base, engine, DATABASE_URL, start_session
 from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Frozen
