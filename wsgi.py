@@ -1,3 +1,6 @@
+#wsgi.py
+
+import wrapped_print
 from program.app import app, Delete
 from CBI import cbidict as thing
 
