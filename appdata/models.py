@@ -19,6 +19,7 @@ class User(Base):
   accdate = db.Column(db.DateTime)
   national_id = db.Column(db.Integer, nullable=False, unique=True)
   employer_org_id = db.Column(db.Integer, nullable=True)
+  job_id = db.Column(db.Integer, nullable=True)
 
 class Bank(Base):
   __tablename__ = "Bank"
@@ -61,10 +62,18 @@ class Organization(Base):
   __tablename__ = "Organization"
   id = db.Column(db.Integer, primary_key=True)
   name = db.Column(db.String(80), unique=True, nullable=False)
-  email = db.Column(db.String(80), nullable=True)
-  accdate = db.Column(db.DateTime)
+  email = db.Column(db.String(80), nullable=False)
+  phone = db.Column(db.String, nullable=False)
+  accdate = db.Column(db.DateTime, nullable=False)
+  orgpass = db.Column(db.String, nullable=False)
+  foundid = db.Column(db.Integer, nullable=False, unique=True)
   orgid = db.Column(db.String, unique=True, nullable=False)
 
+class EmployeeType(Base):
+  __tablename__ = "EmployeeType"
+  id = db.Column(db.Integer, primary_key=True)
+  name = db.Column(db.String(80), unique=True, nullable=False)
+  orgid = db.Column(db.String, unique=False)
 
 # For frozen users
 class Frozen(Base):

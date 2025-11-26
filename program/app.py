@@ -9,7 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from decimal import Decimal as decimal
 
 from appdata.database import Base, engine, DATABASE_URL, start_session
-from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Signature, Frozen
+from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Signature, Frozen, EmployeeType
 from appdata.models import Signature
 import appdata.signatures
 from CBI import cbidict, HOMEREDIRECT
@@ -21,9 +21,9 @@ LS = appdata.signatures.LoginSignatures
 
 NONEARRAY = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
 USERDATABASE = [
-  ["Diggy Gorgonzola", "417", "bendole3141592@gmail.com", "127.0.0.1", datetime.datetime.now(), 1000, -1, "Diggy Inc."],
-  ["Dinky Gonky", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 2, 1, "Diggy Inc."],
-  ["Dinky Gonky Alt", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 2, "Diggy Inc."],
+  ["Diggy Gorgonzola", "417", "bendole3141592@gmail.com", "127.0.0.1", datetime.datetime.now(), 1000, -1, 1, 1],
+  ["Dinky Gonky", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 2, 1, 1, 1],
+  ["Dinky Gonky Alt", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 2, 1, 1],
 ]
 USERMAIL = [
   [1, 1, "TITLE", "MESSAGE", "CONTACT"],
@@ -34,6 +34,14 @@ BANKDATABASE = [
   [USERDATABASE[0][4], USERDATABASE[0][6], "999999", "99999", "999999"],
   [USERDATABASE[1][4], USERDATABASE[1][6], "0", "0", "0"],
   [USERDATABASE[2][4], USERDATABASE[2][6], "0", "0", "0"],
+]
+ORGANIZATIONDATABASE = [
+  ["G.N.B.", "bendole3141592@gmail.com", "3253497795", datetime.datetime.now(), "Glorbenia", -1, 1]
+]
+ETDATABASE = [
+  ["Teller", 1],
+  ["Teller2", 1],
+  ["Teller3", 1],
 ]
 STM = False
 STATIC_FOLDER = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')), "static")
@@ -55,7 +63,6 @@ app.register_blueprint(fetch)
 
 session = start_session()
 
-
 #print the database for testing purposes
 for user in session.query(User).all():
   print(str(InfoGet.List(user)))
@@ -69,6 +76,29 @@ def BuildDb():
   existing_bankacc = session.query(Bank).first()
   existing_usermail = session.query(Mail).first()
   existing_signature = session.query(Signature).all()
+  existing_organization = session.query(Organization).first()
+  existing_employee_type = session.query(EmployeeType).first()
+  if not existing_employee_type:
+    for et in ETDATABASE:
+      new_et = EmployeeType(
+        name=et[0],
+        orgid=et[1]
+      )
+      session.add(new_et)
+      session.commit()
+  if not existing_organization:
+    for org in ORGANIZATIONDATABASE:
+      new_org = Organization(
+        name=org[0],
+        email=org[1],
+        phone=org[2],
+        accdate=org[3],
+        orgpass=org[4],
+        foundid=org[5],
+        orgid=org[6]
+      )
+      session.add(new_org)
+      session.commit()
   if not existing_user:
     for user in USERDATABASE:
         new_user = User(
@@ -79,7 +109,8 @@ def BuildDb():
             accdate=user[4],
             admin=user[5],
             national_id=user[6],
-            employer_org_id=user[7]
+            employer_org_id=user[7],
+            job_id=user[8]
         )
         session.add(new_user)
         session.commit()
