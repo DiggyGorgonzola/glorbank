@@ -68,6 +68,17 @@
         background-color: var(--color2);
         height: 200px;
     }
+    .job-class {
+        background-color: var(--default_gray);
+    }
+    .job_dropdown {
+    cursor: pointer;
+    width: 976px;
+    margin: 10px;
+    table-layout: fixed;
+    display: table;
+    }
+
 
 </style>
 <body onload='database_render()'><script src="../static/javascript_snippets_uwu/clock.js"></script>
@@ -94,6 +105,10 @@
         </div>
         <div class="homer">
             <form action="/accountpage/datasheets" id="DATA_ONGOINGTRANSACTIONS" method="POST" style="width:100%;">
+            </form>
+        </div>
+        <div class="homer">
+            <form action="/accountpage/datasheets" id="DATA_ORGANIZATIONS" method="POST" style="width:100%;">
             </form>
         </div>
     </div>
@@ -129,6 +144,25 @@
   </div>
 </body>
 <script>
+    async function GetEmployees(guhr) {
+        try {
+        const response = await fetch("/EmployeeTypes", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(guhr)
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        };
+        const data = await response.json();
+        console.log(data);
+
+        return data.response;}
+        catch (error) {
+            console.log('There was a problem with the fetch operation:', error);
+            return null;
+        }
+    }
     var filter_ing = "";
     let indexy = 0;
     function database_render() {
@@ -147,8 +181,10 @@
         document.getElementById("DATA_BANK").innerHTML = document.getElementById("DATA_BANK").innerHTML+`<input type="hidden" name="datasheet" value="Bank"/>`+data+`<input type="submit" value="Datasheets (Bank)" style="width:fit-content;"/>`;
         document.getElementById("DATA_TRANSACTIONS").innerHTML = document.getElementById("DATA_TRANSACTIONS").innerHTML+`<input type="hidden" name="datasheet" value="Reports"/>`+data+`<input type="submit" value="Datasheets (Transactions)" style="width:fit-content;"/>`;
         document.getElementById("DATA_ONGOINGTRANSACTIONS").innerHTML = document.getElementById("DATA_ONGOINGTRANSACTIONS").innerHTML+`<input type="hidden" name="datasheet" value="OngoingTransactions"/>`+data+`<input type="submit" value="Datasheets (Ongoing Transactions)" style="width:fit-content;"/>`;
+        document.getElementById("DATA_ORGANIZATIONS").innerHTML = document.getElementById("DATA_ORGANIZATIONS").innerHTML+`<input type="hidden" name="datasheet" value="Organization"/>`+data+`<input type="submit" value="Datasheets (Organizations)" style="width:fit-content;"/>`;
 
         var filter_ing = keys[0];
+        // KEYS ROW
         for (const keye of keys) {
             let guh = document.createElement("th");
             guh.innerText = keye;
@@ -157,6 +193,8 @@
             guh.style.border = "1px solid var(--color2)";
             document.getElementById("TableKeys").appendChild(guh);
         };
+
+        // MAIN TABLE
         for (const element of database) {
             let row = document.createElement("tr");
             row.id = `ROW${indexy}`;
@@ -174,6 +212,41 @@
                 goon.style.border = "1px solid black";
                 document.getElementById(`ROW${indexy}`).appendChild(goon)
             };
+
+            // JOB SUBTABLE
+            if (type == "Organization") {
+
+            GetEmployees(indexy + 1).then(result => {
+                job_dropdown_table = document.createElement("tr");
+                job_dropdown_table.className = "job_dropdown";
+                job_dropdown_table.id = `ROW${indexy}-JOBSTABLE`;
+                document.getElementById('scrolly').appendChild(job_dropdown_table);
+                diggy = result["keys"];
+                console.log(diggy);
+                result = result["data"];
+                for (x=0;x<Object.keys(result).length;x++) {
+                    let gum = document.createElement("tr");
+                    gum.id = `ROW${indexy}-JOB${x}`;
+                    gum.className = "job-row-class";
+                    document.getElementById(`ROW${indexy}-JOBSTABLE`).appendChild(gum);
+                    console.log(result[x+1])
+                    for (y=0;y<result[x+1].length;y++) {
+                        guh = result[x+1][y];
+                        k = diggy[x+1][y];
+                        let goon = document.createElement("th")
+                        goon.textContent = `${k.toUpperCase()}  |  ${guh}`;
+                        goon.className = "job-class";
+                        goon.id = `ROW${indexy}-JOB${x}-${element.indexOf(guh)}`
+                        goon.style.overflowX = "auto";
+                        goon.style.textAlign = "left";
+                        goon.style.fontSize = "15px";
+                        goon.style.border = "1px solid black";
+                        document.getElementById(`ROW${indexy}-JOB${x}`).appendChild(goon)
+                    };
+                };
+            });
+            };
+            
 
             indexy += 1;
         };
