@@ -117,6 +117,29 @@
     <div id="employer_container" class="bank-info" style="display:inline-block;">
         <label for="employer" style="font-size:30px;font-family:Arial, Helvetica, sans-serif;text-decoration: underline;">Employer Info</label><br>
         <div class="bank-info" id="employer" style="display:inline-block;"><br>
+            <script>
+                async function getOrganization(orgid) {
+                    try {
+                    const response = await fetch("/getorg", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify(orgid)
+                    });
+                    if (!response.ok) {
+                        return response.status;
+                    };
+                    const data = response.json();
+                    return data.response;} catch (error) {
+                        return error;
+                    }
+                };
+                Signature(token, "User").then(result => {
+                    getOrganization(result[8]).then(res => {
+                        console.log(res);
+                    })
+                })
+
+            </script>
             <div style="display:flex;justify-content: center;align-items:center;">
                 <label for="employer-name" style="font-size:20px;font-family:Arial, Helvetica, sans-serif;">Company:</label>
                 <div id="employer-name" style="font-size:20px;font-family:Arial, Helvetica, sans-serif;margin:5px;"></div>
@@ -128,6 +151,7 @@
         </div>
     </div>
     <br><br>
+    <!-- somethin else -->
     <div class="bank-info">
         <label for="gay" style="font-size:30px;font-family:Arial, Helvetica, sans-serif;text-decoration: underline;">Send Woolong</label>
         <div id="gay" class="bank-info">
