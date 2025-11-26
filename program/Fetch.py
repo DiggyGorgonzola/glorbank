@@ -3,7 +3,7 @@
 import wrapped_print
 from flask import Blueprint, request, jsonify
 from appdata.database import Base, engine, DATABASE_URL, start_session
-from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Frozen, Signature
+from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Frozen, Signature, EmployeeType
 from program.InfoGet import InfoGet
 from CBI import cbidict
 import appdata.signatures, json
@@ -24,9 +24,6 @@ class Fetches:
       return jsonify({"success":"failureT", "received_data":received_data, "response":"null"})
     return jsonify({"success":"failure: request method is GET", "received_data":received_data, "response":"null"})
 
-  
-
-
   @fetch.route("/getacc", methods=["GET","POST"])
   def getAcc():
     if request.method == 'POST':
@@ -43,4 +40,24 @@ class Fetches:
         return jsonify({"success":"success", "received_data":received_data, "response":bank})
       else:
         return jsonify({"success":"failure", "received_data":received_data, "response":"null"})
+    return jsonify({"success":"failure: request method is GET", "received_data":received_data, "response":"null"})
+  
+  @fetch.route("/getorg", methods=["GET","POST"])
+  def getOrg():
+    if request.method == "POST":
+      print(request.json)
+      received_data = request.json
+      return jsonify({"success":"success", "received_data":received_data, "response":InfoGet.List(session.query(Organization).filter_by(orgid=received_data).first())})
+  
+  @fetch.route("/EmployeeTypes", methods=["GET", "POST"])
+  def employeeTypes():
+    if request.method == 'POST':
+      print(request.json)
+      received_data = request.json
+      print(received_data)
+      employee_types = session.query(EmployeeType).filter_by(orgid=received_data).all()
+      print(employee_types) 
+      response = {"data":{i.id:InfoGet.List(i) for i in employee_types}, "keys":{i.id:InfoGet.SQLattrs(i) for i in employee_types}}
+      print(response)
+      return jsonify({"success":"success", "received_data":received_data, "response":response})
     return jsonify({"success":"failure: request method is GET", "received_data":received_data, "response":"null"})
