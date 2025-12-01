@@ -55,7 +55,8 @@ class Fetches:
   @fetch.route("/create_deposit_or_withdrawal", methods=["GET", "POST"])
   def CDOW():
     if request.method == "POST":
-      pass
+      recieved_data = request.form["Valuee"]
+      print(recieved_data)
     pass
   
   @fetch.route("/EmployeeTypes", methods=["GET", "POST"])
