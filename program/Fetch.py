@@ -41,13 +41,22 @@ class Fetches:
       else:
         return jsonify({"success":"failure", "received_data":received_data, "response":"null"})
     return jsonify({"success":"failure: request method is GET", "received_data":received_data, "response":"null"})
-  
+
+  #fix
   @fetch.route("/getorg", methods=["GET","POST"])
   def getOrg():
     if request.method == "POST":
       print(request.json)
-      received_data = request.json
+      received_data = int(request.json)
+      print(InfoGet.List(session.query(Organization).filter_by(orgid=received_data).first()))
       return jsonify({"success":"success", "received_data":received_data, "response":InfoGet.List(session.query(Organization).filter_by(orgid=received_data).first())})
+    return jsonify({"success":"failure: request method is GET", "received_data":received_data, "response":"null"})
+  
+  @fetch.route("/create_deposit_or_withdrawal", methods=["GET", "POST"])
+  def CDOW():
+    if request.method == "POST":
+      pass
+    pass
   
   @fetch.route("/EmployeeTypes", methods=["GET", "POST"])
   def employeeTypes():
