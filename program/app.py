@@ -68,7 +68,9 @@ for user in session.query(User).all():
   print(str(InfoGet.List(user)))
 for signature in session.query(Signature).all():
   print(str(InfoGet.List(signature)))
-
+for org in session.query(Organization).all():
+  print(str(InfoGet.List(org)))
+print(InfoGet.List(session.query(Organization).filter_by(orgid=1).first()))
 '''BuildDb is mainly for testing purposes. It creates a pre-existing SQL database if it doesn't already exist'''
 def BuildDb():
   #Add a basic database for testing purposes
