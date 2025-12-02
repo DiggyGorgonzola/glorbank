@@ -17,6 +17,7 @@ class Fetches:
 
   @fetch.route("/GNB", methods=["GET", "POST"])
   def GNB():
+    received_data = None
     if request.method == 'POST':
       received_data = request.json
       if received_data in list(cbidict.keys()):
@@ -26,6 +27,7 @@ class Fetches:
 
   @fetch.route("/getacc", methods=["GET","POST"])
   def getAcc():
+    received_data = None
     if request.method == 'POST':
       print(request.json)
       received_data = request.json["signature"]
@@ -42,9 +44,9 @@ class Fetches:
         return jsonify({"success":"failure", "received_data":received_data, "response":"null"})
     return jsonify({"success":"failure: request method is GET", "received_data":received_data, "response":"null"})
 
-  #fix
   @fetch.route("/getorg", methods=["GET","POST"])
   def getOrg():
+    received_data = None
     if request.method == "POST":
       print(request.json)
       received_data = int(request.json)
@@ -52,15 +54,18 @@ class Fetches:
       return jsonify({"success":"success", "received_data":received_data, "response":InfoGet.List(session.query(Organization).filter_by(orgid=received_data).first())})
     return jsonify({"success":"failure: request method is GET", "received_data":received_data, "response":"null"})
   
-  @fetch.route("/create_deposit_or_withdrawal", methods=["GET", "POST"])
+  @fetch.route("/CDOW", methods=["GET", "POST"])
   def CDOW():
+    received_data = None
     if request.method == "POST":
-      recieved_data = request.form["Valuee"]
-      print(recieved_data)
-    pass
+      received_data = request.json
+      print(received_data)
+      return jsonify({"success":"success", "received_data":received_data, "response":received_data})
+    return jsonify({"success":"failure: request method is GET", "received_data":received_data, "response":received_data})
   
   @fetch.route("/EmployeeTypes", methods=["GET", "POST"])
   def employeeTypes():
+    received_data = None
     if request.method == 'POST':
       print(request.json)
       received_data = request.json
