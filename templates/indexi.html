@@ -15,6 +15,7 @@
                 <script src="../static/javascript_snippets_uwu/diggy.js"></script>
                 <script src="../static/javascript_snippets_uwu/GNB.js"></script>
                 <script src="../static/javascript_snippets_uwu/signature.js"></script>
+                <script src="../static/javascript_snippets_uwu/form.js"></script>
         </head>
 <style>
     .box {
@@ -217,50 +218,41 @@
     <!-- depositing and withdrawing -->
     <div class="bank-info">
         <label for="depowithdr" style="font-size:30px;font-family:Arial, Helvetica, sans-serif;text-decoration: underline;">Deposit/Withdraw Woolong</label>
-        <div id="depowithdr" class="bank-info">
+        <div id="depowithdr" class="bank-info" style="font-size:20px;">
+            <!-- YAYAYA FIX PLS! -->
             <script>
-                //FIX
-                function validateDepoWithdr() {
-                    if (document.getElementById("DepositOrWithdraw").value == "deposit") {
-                        document.getElementById("note").innerText = "deposit";
-                    } else {
-                        document.getElementById("note").innerText = "";
-                    };
+                async function gumber() {
+                    form("/CDOW", {
+                        "select1":document.getElementById("select1").value,
+                        "select2":document.getElementById("select1").value,
+                        "select3":document.getElementById("select1").value,
+                        "valuee":document.getElementById("valuee").value,
+                        "signature":token
+                    })
                 }
             </script>
-            <form action="/create_deposite_or_withdrawal" method="POST">
-                <!-- figure out the best way to do selects but for a form! ! ! !-->
-                <label for="DepositOrWithdraw" style="font-size:200%;margin:20px;">Withdrawing or depositing? ;3cccc???</label><br>
-                <select name="DOW" id="DepositOrWithdraw" style="font-size:200%;margin-left:20px;">
-                    <option value="deposit" onclick="validateDepoWithdr()">Deposit</option>
-                    <option value="withdraw" onclick="validateDepoWithdr()">Withdraw</option>
-                </select>
-
-
-                <br><br>
-                <label for="Server" style="font-size:200%;margin:20px;">Where are you transfering money to/from?</label><br>
-                <select name="Server" id="Server" style="font-size:200%;margin-left:20px;" onselect="validateDepoWithdr()">
-                    <option value="new_glorb">New Glorb</option>
-                    <option value="uwg_discord_server">U.W.G. Discord Server</option>
-                </select>
-
-
-                <br><br>
-                <label for="Valuee" style="font-size:200%;margin:20px;">What currency are you transfering</label><br>
-                <select name="Valuee" id="Valuee" style="font-size:200%;margin-left:20px;" onselect="validateDepoWithdr()">
-                    <option value="woolong">Woolong</option>
-                    <option value="parts">Parts</option>
-                    <option value="diamonds">Minecraft Diamonds</option>
-                    <option value="usd" disabled>USD</option>
-                </select>
-
-
-                <br><br>
-                <input type="text" id="num_woolong_depo" class="silly-boy"placeholder="How much are you transfering"/>
-                <br><br>
-                <h id="note"></h>
-                <input type="submit" value="SUBMIT!" disabled/>
-            </form>
+        
+            <label for="select1">Deposit or withdraw?</label><br>
+            <select name="select1" id="select1">
+                <option value="deposit">Deposit</option>
+                <option value="withdraw">Withdraw</option>
+            </select>
+            <br><br>
+            <label for="select2">Where are you depositing from/withdrawing to?</label><br>
+            <select name="select2" id="select2">
+                <option value="uwg_discord_server">U.W.G. Discord Server - Discord Server</option>
+                <option value="new_glorb_minecraft_server">New Glorb - Minecraft Server</option>
+            </select>
+            <br><br>
+            <label for="select3">What currency?</label><br>
+            <select name="select3" id="select3">
+                <option value="woolong">Woolong</option>
+                <option value="usd" disabled>USD</option>
+            </select>
+            <br><br>
+            <input type="text" name="valuee" id="valuee" placeholder="Enter the amount you would like to deposit/withdraw"/>
+            <br><br>
+            <button onclick="gumber()">Click :3</button>
         </div>
     </div>
     </div>
