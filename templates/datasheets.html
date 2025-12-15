@@ -111,6 +111,10 @@
             <form action="/accountpage/datasheets" id="DATA_ORGANIZATIONS" method="POST" style="width:100%;">
             </form>
         </div>
+        <div class="homer">
+            <form action="/accountpage/datasheets" id="DATA_ONGOING_DEPO_WITHDR" method="POST" style="width:100%;">
+            </form>
+        </div>
     </div>
 
 
@@ -182,6 +186,7 @@
         document.getElementById("DATA_TRANSACTIONS").innerHTML = document.getElementById("DATA_TRANSACTIONS").innerHTML+`<input type="hidden" name="datasheet" value="Reports"/>`+data+`<input type="submit" value="Datasheets (Transactions)" style="width:fit-content;"/>`;
         document.getElementById("DATA_ONGOINGTRANSACTIONS").innerHTML = document.getElementById("DATA_ONGOINGTRANSACTIONS").innerHTML+`<input type="hidden" name="datasheet" value="OngoingTransactions"/>`+data+`<input type="submit" value="Datasheets (Ongoing Transactions)" style="width:fit-content;"/>`;
         document.getElementById("DATA_ORGANIZATIONS").innerHTML = document.getElementById("DATA_ORGANIZATIONS").innerHTML+`<input type="hidden" name="datasheet" value="Organization"/>`+data+`<input type="submit" value="Datasheets (Organizations)" style="width:fit-content;"/>`;
+        document.getElementById("DATA_ONGOING_DEPO_WITHDR").innerHTML = document.getElementById("DATA_ONGOING_DEPO_WITHDR").innerHTML+`<input type="hidden" name="datasheet" value="OngoingDepoWithdr"/>`+data+`<input type="submit" value="Datasheets (Ongoing Deposits/Withdrawals)" style="width:fit-content;"/>`;
 
         var filter_ing = keys[0];
         // KEYS ROW
