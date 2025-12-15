@@ -47,6 +47,16 @@ class OngoingTransactions(Base):
   natid_from = db.Column(db.Integer, nullable=False, unique=True)
   natid_to = db.Column(db.Integer, nullable=False, unique=True)
 
+class OngoingDepoWithdr(Base):
+  __tablename__ = "OngoingDepoWithdr"
+  id = db.Column(db.Integer, primary_key=True)
+  withdraw_bool = db.Column(db.Boolean, nullable=False) # True = withdraw, False = deposit
+  currency = db.Column(db.String, nullable=False)
+  value = db.Column(db.Integer, nullable=False)
+  natid = db.Column(db.Integer, nullable=False, unique=True)
+  date = db.Column(db.DateTime, nullable=False)
+  information = db.Column(db.String, nullable=True)
+
 # Organizations must go through a verification process before they are added to the actual database.
 class RegisteringOrganizations(Base):
   __tablename__ = "RegisteringOrganizations"
