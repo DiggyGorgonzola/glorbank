@@ -3,7 +3,7 @@
 import wrapped_print
 from flask import Blueprint, request, jsonify
 from appdata.database import Base, engine, DATABASE_URL, start_session
-from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Frozen, Signature, EmployeeType
+from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Frozen, Signature, EmployeeType, OngoingDepoWithdr
 from program.InfoGet import InfoGet
 from CBI import cbidict
 import appdata.signatures, json
@@ -59,7 +59,10 @@ class Fetches:
     received_data = None
     if request.method == "POST":
       received_data = request.json
-      print(received_data)
+      if received_data["select1"] == "deposit":
+        print("DEPOSITING")
+      elif received_data["select1"] == "withdraw":
+        print("WITHDRAWING")
       return jsonify({"success":"success", "received_data":received_data, "response":received_data})
     return jsonify({"success":"failure: request method is GET", "received_data":received_data, "response":received_data})
   
