@@ -215,6 +215,8 @@
         </div>
     </div>
     <br>
+
+
     <!-- depositing and withdrawing -->
     <div class="bank-info">
         <label for="depowithdr" style="font-size:30px;font-family:Arial, Helvetica, sans-serif;text-decoration: underline;">Deposit/Withdraw Woolong</label>
@@ -224,12 +226,25 @@
                 async function gumber() {
                     form("/CDOW", {
                         "select1":document.getElementById("select1").value,
-                        "select2":document.getElementById("select1").value,
-                        "select3":document.getElementById("select1").value,
+                        "select2":document.getElementById("select2").value,
+                        "select3":document.getElementById("select3").value,
                         "valuee":document.getElementById("valuee").value,
                         "signature":token
                     })
                 }
+                function validateNatId() {
+                    g = document.getElementById("nationalid_for_depo").value;
+                    Signature(token, "User")
+                    .then(result => {
+                    document.getElementById("HELP").innerText = typeof result[7];
+                    if (g == result[7]) {
+                        document.getElementById("gumberbutton").disabled = false;
+                    } else {
+                        document.getElementById("gumberbutton").disabled = true;
+                    }
+                }
+                    );
+                };
             </script>
         
             <label for="select1">Deposit or withdraw?</label><br>
@@ -250,9 +265,12 @@
                 <option value="usd" disabled>USD</option>
             </select>
             <br><br>
-            <input type="text" name="valuee" id="valuee" placeholder="Enter the amount you would like to deposit/withdraw"/>
+            <input type="text" class="silly-boy" name="valuee" id="valuee" placeholder="Enter the amount you would like to deposit/withdraw"/>
             <br><br>
-            <button onclick="gumber()">Click :3</button>
+            <h id="HELP"></h>
+            <input type="number" class="silly-boy" id="nationalid_for_depo" name="nationalid_for_depo" onkeyup="validateNatId()" placeholder="Enter your national id"/>
+            <br><br>
+            <button id="gumberbutton" onclick="gumber()" disabled="true">Click :3</button>
         </div>
     </div>
     </div>
@@ -311,6 +329,7 @@
         setInterval(updateClock, 1000);
         Signature(token, "User")
         .then(result => {
+
             document.getElementById("welcome").textContent = `Welcome, ${result[1]} :3`;
             getOrganization(result[8]).then(res => {
                 document.getElementById("employer-name").textContent = res[1];
