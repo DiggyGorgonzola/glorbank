@@ -9,7 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from decimal import Decimal as decimal
 
 from appdata.database import Base, engine, DATABASE_URL, start_session
-from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Signature, Frozen, EmployeeType
+from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Signature, Frozen, EmployeeType, OngoingDepoWithdr
 from appdata.models import Signature
 import appdata.signatures
 from CBI import cbidict, HOMEREDIRECT
