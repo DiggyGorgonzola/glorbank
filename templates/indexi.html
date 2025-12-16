@@ -232,19 +232,20 @@
                         "signature":token
                     })
                 }
+                let user7d;
+
                 function validateNatId() {
                     g = document.getElementById("nationalid_for_depo").value;
-                    Signature(token, "User")
-                    .then(result => {
-                    document.getElementById("HELP").innerText = typeof result[7];
-                    if (g == result[7]) {
+                    Signature(token, "User").then(result => {
+                    user7d = result[7];});
+
+                    if ((g == user7d)&(document.getElementById("valuee").value>0)) {
                         document.getElementById("gumberbutton").disabled = false;
                     } else {
                         document.getElementById("gumberbutton").disabled = true;
                     }
-                }
-                    );
                 };
+                    
             </script>
         
             <label for="select1">Deposit or withdraw?</label><br>
@@ -265,12 +266,12 @@
                 <option value="usd" disabled>USD</option>
             </select>
             <br><br>
-            <input type="text" class="silly-boy" name="valuee" id="valuee" placeholder="Enter the amount you would like to deposit/withdraw"/>
+            <input type="number" class="silly-boy" name="valuee" id="valuee" onkeyup="validateNatId()" placeholder="Enter the amount you would like to deposit/withdraw"/>
             <br><br>
             <h id="HELP"></h>
             <input type="number" class="silly-boy" id="nationalid_for_depo" name="nationalid_for_depo" onkeyup="validateNatId()" placeholder="Enter your national id"/>
             <br><br>
-            <button id="gumberbutton" onclick="gumber()" disabled="true">Click :3</button>
+            <button id="gumberbutton" onclick="gumber()" disabled>Click :3</button>
         </div>
     </div>
     </div>
