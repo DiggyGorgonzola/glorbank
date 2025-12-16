@@ -1,3 +1,5 @@
+/* style.css */
+
 html, body {
         --shade: #000; /* #000 or black */
         --default_gray: #c9c9c9; /* #c9c9c9 */
@@ -32,6 +34,9 @@ html, body {
         }
     button:hover {
             background-color: var(--default_gray);
+        }
+    button:disabled {
+        color: var(--default_gray);
         }
     select {
             border-radius: 5px;
