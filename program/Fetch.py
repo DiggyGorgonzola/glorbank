@@ -6,7 +6,7 @@ from appdata.database import Base, engine, DATABASE_URL, start_session
 from appdata.models import User, Bank, Mail, Reports, OngoingTransactions, RegisteringOrganizations, Organization, Frozen, Signature, EmployeeType, OngoingDepoWithdr
 from program.InfoGet import InfoGet
 from CBI import cbidict
-import appdata.signatures, json
+import appdata.signatures, json, datetime
 LS = appdata.signatures.LoginSignatures
 session = start_session()
 
@@ -61,8 +61,28 @@ class Fetches:
       received_data = request.json
       if received_data["select1"] == "deposit":
         print("DEPOSITING")
+        k = OngoingDepoWithdr(
+          withdraw_bool=False,
+          currency=received_data["select3"],
+          value=received_data["valuee"],
+          natid=received_data["natid"],
+          date=datetime.datetime.now(),
+          location=received_data["select2"]
+        )
+        session.add(k)
+        session.commit()
       elif received_data["select1"] == "withdraw":
         print("WITHDRAWING")
+        k = OngoingDepoWithdr(
+          withdraw_bool=True,
+          currency=received_data["select3"],
+          value=received_data["valuee"],
+          natid=received_data["natid"],
+          date=datetime.datetime.now(),
+          location=received_data["select2"]
+        )
+        session.add(k)
+        session.commit()
       return jsonify({"success":"success", "received_data":received_data, "response":received_data})
     return jsonify({"success":"failure: request method is GET", "received_data":received_data, "response":received_data})
   
