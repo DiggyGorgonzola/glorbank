@@ -55,6 +55,7 @@ class OngoingDepoWithdr(Base):
   value = db.Column(db.Integer, nullable=False)
   natid = db.Column(db.Integer, nullable=False, unique=True)
   date = db.Column(db.DateTime, nullable=False)
+  location = db.Column(db.String, nullable=False)
   information = db.Column(db.String, nullable=True)
 
 # Organizations must go through a verification process before they are added to the actual database.
