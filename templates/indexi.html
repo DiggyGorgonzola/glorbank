@@ -19,7 +19,7 @@
         </head>
 <style>
     .box {
-        width:900px;
+        width: 900px;
         left: calc(50% - 450px);
     }
         .bank-info {
@@ -276,54 +276,24 @@
     </div>
     </div>
 </body>
-<!--
 <script id="for mail :3">
-    let ind = 0;
     function delMes(msgid) {
-        byId(msgid).style.display = "none";
+        byId(msgid).style.display = "none";}
+    
+    function add_mail_box(msgid, mail) {
+        const NEWMAIL
     }
-    function add_mail_box(stufftitle, stuffinfo, stuffre) {
-        // finish dis
-        let mail_box = document.createElement("div");
-        mail_box.className = "mail_box";
-        mail_box.id = `MAILBOX${ind}`;
-        
-        let message_title = document.createElement("b");
-        message_title.innerText = stufftitle;
-        message_title.style = "font-size:20px;text-decoration:underline;"
-        mail_box.appendChild(message_title);
 
-
-        let message_info = document.createElement("p");
-        message_info.innerText = stuffinfo;
-        mail_box.appendChild(message_info);
-
-
-        let message_contact = document.createElement("p");
-        message_contact.style = "font-size:10px;text-align:right;"
-        message_contact.innerText = stuffre;
-        mail_box.appendChild(message_contact);
-        
-        /*
-        byId("mail_list").appendChild(mail_box);
-
-        let message_delete_botton = document.createElement("button");
-        message_delete_button.textContent = "Delete";
-        message_delete_button.onclick = `delMes(MAILBOX${ind})`;
-        mail_box.appendChild(message_delete_button);
-        
-        fix this please
-        */
-        ind += 1;
-    }
-    let guh = 0;
-    for (const stuff of mail_unread) {
-        if (guh < 100) {
-            add_mail_box(stuff[0], stuff[1], stuff[2]);
+    function draw_all_mails(mail_unread) {
+        for (const stuff of mail_unread) {
+            if (guh < 100) {
+                add_mail_box(stuff[0], stuff[1], stuff[2]);
+            }
         }
     }
+    draw_all_mails()
+
 </script>
--->
 <script>
     function Adming() {
         console.log(STL);
