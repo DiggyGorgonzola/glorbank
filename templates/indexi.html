@@ -277,13 +277,28 @@
     </div>
 </body>
 <script id="for mail :3">
-    function delMes(msgid) {
-        byId(msgid).style.display = "none";}
-    
-    function add_mail_box(msgid, mail) {
-        const NEWMAIL
+    function add_mail_box(title, message, contact) {
+        const NEWMAIL = document.createElement("div")
+        NEWMAIL.addEventListener('click', () => {NEWMAIL.style.display = "none";});
+        NEWMAIL.addEventListener('mouseenter', () => {NEWMAIL.style.backgroundColor = "#AAA";});
+        NEWMAIL.addEventListener('mouseleave', () => {NEWMAIL.style.backgroundColor = "#FFF";});
+        NEWMAIL.title = "click to remove";
+        NEWMAIL.style.width = "object-fit";
+        NEWMAIL.style.padding = "5px";
+        NEWMAIL.style.margin = "5px";
+        NEWMAIL.style.height = "fit-content";
+        NEWMAIL.style.border = "1px #000";
+        NEWMAIL.style.borderRadius = "5px";
+        NEWMAIL.style.backgroundColor = "#FFF";
+        NEWMAIL.innerHTML = `
+            <h1 style="text-align:left;font-size:150%;text-decoration:underline;overflow-wrap:break-word;">${title}<h1>
+            <h1 style="text-indent:20px;font-size:100%;text-align:left;overflow-wrap:break-word;">${message}<h1>
+            <h1 style="text-align:right;font-size:75%;overflow-wrap:break-word;">- ${contact}<h1>
+            
+        `;
+        document.getElementById("mail_list").appendChild(NEWMAIL);
     }
-
+    guh = 10;
     function draw_all_mails(mail_unread) {
         for (const stuff of mail_unread) {
             if (guh < 100) {
@@ -291,7 +306,17 @@
             }
         }
     }
-    draw_all_mails()
+    Signature(token, "Mail")
+    .then(result => {
+        k = []
+        for (i = 0; i < result.length; i++) {
+            k.concat([result[i][2],result[i][3],result[i][4]])
+        }
+        draw_all_mails(k)
+    }
+
+    );
+    draw_all_mails([["Hi there", "HelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHello", "How are you"],["Hi there", "HelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHello", "How are you"]])
 
 </script>
 <script>
