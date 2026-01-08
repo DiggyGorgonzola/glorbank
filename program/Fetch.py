@@ -40,6 +40,11 @@ class Fetches:
       elif signature_instance and get_model == "Bank":
         bank = InfoGet.List(session.query(Bank).filter_by(national_id=signature_instance.national_id).first())
         return jsonify({"success":"success", "received_data":received_data, "response":bank})
+      elif signature_instance and get_model == "Mail":
+        print(InfoGet.SQLattrs(Mail))
+
+        mail = InfoGet.List(session.query(Mail).filter_by(acc_id_to=signature_instance.id))
+        return jsonify({"success":"success", "received_data":received_data, "response":mail})
       else:
         return jsonify({"success":"failure", "received_data":received_data, "response":"null"})
     return jsonify({"success":"failure: request method is GET", "received_data":received_data, "response":"null"})
