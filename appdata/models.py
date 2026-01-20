@@ -1,7 +1,7 @@
 # models.py
 import wrapped_print
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, DateTime, text, Boolean, LargeBinary, JSON
+from sqlalchemy import Column, Integer, String, DateTime, text, Boolean, LargeBinary, JSON, Float
 from .database import Base
 
 '''
@@ -29,6 +29,7 @@ class Bank(Base):
   credit = db.Column(db.String, nullable=False)
   accdate = db.Column(db.DateTime)
   national_id = db.Column(db.Integer, nullable=False, unique=True)
+  tax_rate = db.Column(db.Integer, nullable=False)
 
 class Mail(Base):
   __tablename__ = "Mail"
