@@ -15,7 +15,7 @@ import appdata.signatures
 from CBI import cbidict, HOMEREDIRECT
 from program.InfoGet import InfoGet
 from program.Fetch import fetch
-import os, datetime, json
+import os, datetime, json, requests
 
 LS = appdata.signatures.LoginSignatures
 
@@ -31,9 +31,9 @@ USERMAIL = [
   [3, 1, "TITLE", "MESSAGE", "CONTACT"],
 ]
 BANKDATABASE = [
-  [USERDATABASE[0][4], USERDATABASE[0][6], "999999", "99999", "999999"],
-  [USERDATABASE[1][4], USERDATABASE[1][6], "0", "0", "0"],
-  [USERDATABASE[2][4], USERDATABASE[2][6], "0", "0", "0"],
+  [USERDATABASE[0][4], USERDATABASE[0][6], "999999", "99999", "999999", 1],
+  [USERDATABASE[1][4], USERDATABASE[1][6], "0", "0", "0", 1],
+  [USERDATABASE[2][4], USERDATABASE[2][6], "0", "0", "0", 1],
 ]
 ORGANIZATIONDATABASE = [
   ["G.N.B.", "bendole3141592@gmail.com", "3253497795", datetime.datetime.now(), "Glorbenia", -1, 1]
@@ -123,7 +123,8 @@ def BuildDb():
         national_id=bankacc[1],
         woolong=bankacc[2],
         parts=bankacc[3],
-        credit=bankacc[4]
+        credit=bankacc[4],
+        tax_rate=bankacc[5]
       )
       session.add(new_bankacc)
       session.commit()   
@@ -184,6 +185,9 @@ def Index(national_id=None, signature=None):
     model_signature = session.query(Signature).filter_by(signature=signature).first()
   model_signature = InfoGet.List(model_signature)[1]
   return render_template('indexi.html', signature=model_signature)
+
+def Tax(national_id=None):
+  requests.get()
 
 '''
 
