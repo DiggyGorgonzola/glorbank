@@ -18,6 +18,6 @@ async function Signature(signature, model="User") {
         return data.response;
     } catch (error) {
         console.log('There was a problem with the fetch operation:', error);
-        return null;
+        return error;
     }
 };
