@@ -31,6 +31,7 @@ class Fetches:
     if request.method == 'POST':
       print(request.json)
       received_data = request.json["signature"]
+
       get_model = request.json["model"]
       print(get_model)
       signature_instance = session.query(Signature).filter_by(signature=received_data).first()
@@ -42,8 +43,9 @@ class Fetches:
         return jsonify({"success":"success", "received_data":received_data, "response":bank})
       elif signature_instance and get_model == "Mail":
         print(InfoGet.SQLattrs(Mail))
-
         mail = InfoGet.List(session.query(Mail).filter_by(acc_id_to=signature_instance.id))
+        print(signature_instance.__dict__)
+        print(mail, "MAILMAILMAILMAIL")
         return jsonify({"success":"success", "received_data":received_data, "response":mail})
       else:
         return jsonify({"success":"failure", "received_data":received_data, "response":"null"})
