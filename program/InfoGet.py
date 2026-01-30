@@ -12,11 +12,12 @@ class InfoGet:
 
   '''SQLattrs lists all the attributes of the SQL class given'''
   def SQLattrs(obj):
-    return [attr for attr in type(obj).__dict__ if not attr.startswith('_') and not callable(getattr(obj, attr)) and attr not in ['metadata', 'registry']]
+    return [attr for attr in type(obj).__dict__ if not attr.startswith('_') and not callable(getattr(obj, attr)) and attr not in ['metadata', 'registry', 'load_options', 'statement', 'selectable', 'is_single_entity', 'get_label_style', 'whereclause', 'lazy_loaded_from', 'column_descriptions', 'logger', 'dispatch']]
 
   '''List returns each corresponding value for SQLattrs'''
   def List(obj):
-    return [obj.__dict__[i] for i in type(obj).__dict__ if i in InfoGet.SQLattrs(obj)]
+    print(InfoGet.SQLattrs(obj))
+    return [obj.__dict__[i] for i in InfoGet.SQLattrs(obj)]
   
   def ListCensor(obj, admin=0):
     k = []
