@@ -83,7 +83,7 @@
 
     <!-- MAIL -->
     <div class="mail">
-        <h1 style="font-size:20px;border:3px solid var(--color2);margin:10px;border-radius:5px;">Youwr mail, my pwince...&#129402</h1>
+        <h1 style="font-size:20px;border:3px solid var(--color2);margin:10px;border-radius:5px;" id="mail-box-title">Youwr mail, my pwince...&#129402</h1>
         <div class="mail" id="mail_list" style="background-color:var(--color2);top:calc(20% - 20px);left:5px;width:280px;height:485px;overflow-x:hidden;overflow-y:scroll;">
 
         </div>
@@ -160,11 +160,11 @@
                     let total_money;
                     let user0;
                     let user7;
-                    function validateTransaction(total_money) {
+                    function validateTransaction() {
 
 
                         Signature(token, "Bank").then(result => {
-                        total_money = result[1];
+                        total_money = parseFloat(result[1]);
                         console.log(total_money);});
 
 
@@ -197,7 +197,7 @@
                             if (value >= STL) {
                                 byId("uhohhh").innerText = "You are transfering a large amount of Woolong. Due to this, a banker will have to manually confirm the transaction.";
                             } else {
-                                byId("uhohhh").innerText = "Good job UwU Nya~! Have fun transfering thos woolong :3";
+                                byId("uhohhh").innerText = `GOOD JOB HAVE FUN TRANSFERING DOS WOOLONG`;
                             };
                             byId("guh").disabled = false;}
 
@@ -209,12 +209,15 @@
             <form id="hehehe" action="/accountpage/sendmoney" method="POST">
                 
                 <h id="uhohhh" class="silliest-billy"></h><br><br><br>
-                <input type="text" class="silly-boy" id="num_woolong" name="num_woolong" onkeyup="validateTransaction(total_money)" placeholder="Enter the number of woolong you would like to transfer"/>
-                <br><br><input type="text" class="silly-boy" id="guhhhh" name="account_to_transfer" onkeyup="validateTransaction(total_money)" placeholder="Enter the account ID you would likee to transfer to"/>
-                <br><br><input type="text" class="silly-boy" id="nationalid" name="nationalid" onkeyup="validateTransaction(total_money)" placeholder="Enter your national id"/>
+                <input type="text" class="silly-boy" id="num_woolong" name="num_woolong" onkeyup="validateTransaction()" placeholder="Enter the number of woolong you would like to transfer"/>
+                <br><br><input type="text" class="silly-boy" id="guhhhh" name="account_to_transfer" onkeyup="validateTransaction()" placeholder="Enter the account ID you would likee to transfer to"/>
+                <br><br><input type="text" class="silly-boy" id="nationalid" name="nationalid" onkeyup="validateTransaction()" placeholder="Enter your national id"/>
                 <br><br><input type="hidden" id="user" name="user"/>
-                <br><br><button onclick="subtractMoney()" type="submit" style="font-size:20px;font-family:Arial, Helvetica, sans-serif;" id="guh" disabled>Send Woolong</button>
+                <br><br><button onclick="subtractMoney(total_money)" type="submit" style="font-size:20px;font-family:Arial, Helvetica, sans-serif;" id="guh">Send Woolong</button>
             </form>
+                <script>
+                    byId("guh").disabled = true;
+                </script>
         </div>
     </div>
     <br>
@@ -311,6 +314,7 @@
     }
     Signature(token, "Mail")
     .then(result => {
+        byId("mail-box-title").textContent = `${result}`;
         k = []
         for (i = 0; i < result.length; i++) {
             k.concat([result[i][2],result[i][3],result[i][4]])
