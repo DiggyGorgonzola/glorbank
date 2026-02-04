@@ -228,6 +228,50 @@
         <label for="depowithdr" style="font-size:30px;font-family:Arial, Helvetica, sans-serif;text-decoration: underline;">Deposit/Withdraw Woolong</label>
         <div id="depowithdr" class="bank-info" style="font-size:20px;">
             <!-- YAYAYA FIX PLS! -->
+                    <script id="for mail :3">
+            function add_mail_box(title, message, contact) {
+                const NEWMAIL = document.createElement("div")
+                NEWMAIL.addEventListener('click', () => {NEWMAIL.style.display = "none";});
+                NEWMAIL.addEventListener('mouseenter', () => {NEWMAIL.style.backgroundColor = "#AAA";});
+                NEWMAIL.addEventListener('mouseleave', () => {NEWMAIL.style.backgroundColor = "#FFF";});
+                NEWMAIL.title = "click to remove";
+                NEWMAIL.style.width = "object-fit";
+                NEWMAIL.style.padding = "5px";
+                NEWMAIL.style.margin = "5px";
+                NEWMAIL.style.height = "fit-content";
+                NEWMAIL.style.border = "1px #000";
+                NEWMAIL.style.borderRadius = "5px";
+                NEWMAIL.style.backgroundColor = "#FFF";
+                NEWMAIL.innerHTML = `
+                    <h1 style="text-align:left;font-size:150%;text-decoration:underline;overflow-wrap:break-word;">${title}<h1>
+                    <h1 style="text-indent:20px;font-size:100%;text-align:left;overflow-wrap:break-word;">${message}<h1>
+                    <h1 style="text-align:right;font-size:75%;overflow-wrap:break-word;">- ${contact}<h1>
+                    
+                `;
+                document.getElementById("mail_list").appendChild(NEWMAIL);
+            }
+            guh = 10;
+            function draw_all_mails(mail_unread) {
+                for (const stuff of mail_unread) {
+                    if (guh < 100) {
+                        add_mail_box(stuff[0], stuff[1], stuff[2]);
+                    }
+                }
+            }
+            Signature(token, "Mail")
+            .then(result => {
+                byId("mail-box-title").textContent = `${result}`;
+                k = []
+                for (i = 0; i < result.length; i++) {
+                    k.concat([result[i][2],result[i][3],result[i][4]])
+                }
+                draw_all_mails(k)
+            }
+
+            );
+            draw_all_mails([["Hi there", "HelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHello", "How are you"],["Hi there", "HelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHello", "How are you"]])
+
+        </script>
             <script>
                 async function gumber() {
                     form("/CDOW", {
@@ -237,6 +281,8 @@
                         "valuee":byId("valuee").value,
                         "natid":byId("nationalid_for_depo").value
                     })
+                    add_mail_box("Deposit/Withdrawal", "A request has been made to deposit or withdraw. A bank teller will have to verify the request before you are able to.", "contact bendole3141592@gmail.com for help")
+
                 }
                 let user7d;
 
@@ -250,8 +296,7 @@
                     } else {
                         byId("gumberbutton").disabled = true;
                     }
-                };
-                    
+                };                    
             </script>
         
             <label for="select1">Deposit or withdraw?</label><br>
@@ -282,50 +327,6 @@
     </div>
     </div>
 </body>
-<script id="for mail :3">
-    function add_mail_box(title, message, contact) {
-        const NEWMAIL = document.createElement("div")
-        NEWMAIL.addEventListener('click', () => {NEWMAIL.style.display = "none";});
-        NEWMAIL.addEventListener('mouseenter', () => {NEWMAIL.style.backgroundColor = "#AAA";});
-        NEWMAIL.addEventListener('mouseleave', () => {NEWMAIL.style.backgroundColor = "#FFF";});
-        NEWMAIL.title = "click to remove";
-        NEWMAIL.style.width = "object-fit";
-        NEWMAIL.style.padding = "5px";
-        NEWMAIL.style.margin = "5px";
-        NEWMAIL.style.height = "fit-content";
-        NEWMAIL.style.border = "1px #000";
-        NEWMAIL.style.borderRadius = "5px";
-        NEWMAIL.style.backgroundColor = "#FFF";
-        NEWMAIL.innerHTML = `
-            <h1 style="text-align:left;font-size:150%;text-decoration:underline;overflow-wrap:break-word;">${title}<h1>
-            <h1 style="text-indent:20px;font-size:100%;text-align:left;overflow-wrap:break-word;">${message}<h1>
-            <h1 style="text-align:right;font-size:75%;overflow-wrap:break-word;">- ${contact}<h1>
-            
-        `;
-        document.getElementById("mail_list").appendChild(NEWMAIL);
-    }
-    guh = 10;
-    function draw_all_mails(mail_unread) {
-        for (const stuff of mail_unread) {
-            if (guh < 100) {
-                add_mail_box(stuff[0], stuff[1], stuff[2]);
-            }
-        }
-    }
-    Signature(token, "Mail")
-    .then(result => {
-        byId("mail-box-title").textContent = `${result}`;
-        k = []
-        for (i = 0; i < result.length; i++) {
-            k.concat([result[i][2],result[i][3],result[i][4]])
-        }
-        draw_all_mails(k)
-    }
-
-    );
-    draw_all_mails([["Hi there", "HelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHello", "How are you"],["Hi there", "HelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHello", "How are you"]])
-
-</script>
 <script>
     function Adming() {
         console.log(STL);
