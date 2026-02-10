@@ -61,6 +61,19 @@
                 font-family: Arial, Helvetica, sans-serif;
                 text-decoration:#000;
             }
+    .buttonbar {
+        position: relative;
+        top: calc(50% - 70px);
+        left: calc(50% - 300px);
+        width: 200px;
+        padding: 5px;
+        margin: 5px;
+        margin-top: 30px;
+        background-color: var(--color3);
+        box-shadow: 3px 3px var(--color2);
+        border: 2px #000;
+        border-radius: 15px;
+    }
     .scrolly {
         width: 976px;
         margin: 10px;
@@ -124,12 +137,19 @@
             <input type="text" id="search" onkeyup="search()" style="margin-bottom:10px;" placeholder="Search . . . "/>
             <input type="checkbox" onclick="search()"style="transform:scale(1.5);margin-bottom:15px;" title="Check this box if you want the search results to filter by EXACTLY what you input." id="includer"/></div>
         <br>
-
-
         <select name="filter" id="filter_select">
         </select>
 
     </div>
+    <div class="buttonbar" style="position:absolute;z-index: 999;left:calc(50% - 750px);">
+        <form id="hehe" action="/accountpage/datasheets/givemoney">
+            <input type="text" name="id" placeholder="Enter an ID . . ."/>
+            <input type="text" name="value" placeholder="Enter a value of woolong"/>
+            <button type="submit" id="guh">Send Woolong</button>
+        </form>
+    </div>
+
+
     <h1>GLORBENIAN NATIONAL BANK</h1>
 
     <p id="labeler">Datasheets</p>
