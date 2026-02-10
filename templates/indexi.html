@@ -250,27 +250,24 @@
                 `;
                 document.getElementById("mail_list").appendChild(NEWMAIL);
             }
-            guh = 10;
             function draw_all_mails(mail_unread) {
-                for (const stuff of mail_unread) {
-                    if (guh < 100) {
-                        add_mail_box(stuff[0], stuff[1], stuff[2]);
+                for (const stuff in mail_unread) {
+                    if (stuff < 100) {
+                        add_mail_box(mail_unread[stuff][0], mail_unread[stuff][1], mail_unread[stuff][2]);
                     }
                 }
             }
             Signature(token, "Mail")
             .then(result => {
-                byId("mail-box-title").textContent = `${result}`;
                 k = []
                 for (i = 0; i < result.length; i++) {
-                    k.concat([result[i][2],result[i][3],result[i][4]])
+                    k.push([result[i][2],result[i][3],result[i][4]])
                 }
                 draw_all_mails(k)
             }
 
             );
-            draw_all_mails([["Hi there", "HelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHello", "How are you"],["Hi there", "HelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHello", "How are you"]])
-
+        
         </script>
             <script>
                 async function gumber() {
