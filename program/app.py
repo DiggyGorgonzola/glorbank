@@ -26,9 +26,9 @@ USERDATABASE = [
   ["Dinky Gonky Alt", "brd52009", None, "127.0.0.1", datetime.datetime.now(), 0, 2, 1, 1],
 ]
 USERMAIL = [
-  [1, 1, "TITLE", "MESSAGE", "CONTACT"],
-  [2, 1, "TITLE", "MESSAGE", "CONTACT"],
-  [3, 1, "TITLE", "MESSAGE", "CONTACT"],
+  [1, -1, "TITLE", "MESSAGE", "CONTACT"],
+  [2, -1, "TITLE", "MESSAGE", "CONTACT"],
+  [3, -1, "TITLE", "MESSAGE", "CONTACT"],
 ]
 BANKDATABASE = [
   [USERDATABASE[0][4], USERDATABASE[0][6], "999999", "99999", "999999", 1],
@@ -502,6 +502,20 @@ class Routes:
       print("USER:", InfoGet.List(signature))
       return render_template("indexi.html", signature=InfoGet.List(signature2)[1])
     return error("Page not found", redirect="register.html")
+  
+  '''FIXXXXXXX'''
+  @app.route('/accountpage/datasheets/givemoney', methods=["GET", "POST"])
+  #haha
+  def givemoney():
+    if request.method == "POST":
+      value = request.form["value"]
+      id = request.form["id"]
+      print(id)
+      return render_template("datasheets.html")
+    return error("Page not found", redirect="register.html")
+  '''FIXXXXXXX'''
+
+  
   @app.route('/login/organization', methods=["GET", "POST"])
   # function 7
   def logorg():
