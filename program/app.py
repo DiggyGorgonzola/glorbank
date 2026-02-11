@@ -503,17 +503,30 @@ class Routes:
       return render_template("indexi.html", signature=InfoGet.List(signature2)[1])
     return error("Page not found", redirect="register.html")
   
-  '''FIXXXXXXX'''
   @app.route('/accountpage/datasheets/givemoney', methods=["GET", "POST"])
   #haha
   def givemoney():
     if request.method == "POST":
-      value = request.form["value"]
-      id = request.form["id"]
-      print(id)
-      return render_template("datasheets.html")
-    return error("Page not found", redirect="register.html")
-  '''FIXXXXXXX'''
+      datasheet = request.form['datasheet']
+      print("ADMINGY", request.form["admin_user"])
+      stuff = request.form["admin_user"].split(",")
+      username = stuff[1]
+      admin_capabilities = stuff[4]
+      user = session.query(User).filter_by(username=username).first()
+      database_list,database_keys = [],[]
+      if user.admin == int(admin_capabilities):
+        database_list = [InfoGet.ListCensor(i) for i in session.query(globals()[datasheet]).all()]
+        database_keys = InfoGet.SQLattrs(session.query(globals()[datasheet]).first())
+      print(database_keys)
+
+      value = request.form['value']
+      id = request.form['id']
+      a = session.query(Bank).filter_by(id=id).first()
+      a.woolong = str(decimal(a.woolong) + decimal(value))
+      print("BANKY", InfoGet.List(a))
+
+      return render_template("datasheets.html", database=database_list, keys=database_keys, admin_user=InfoGet.List(user), type=datasheet)
+    return render_template("home.html")
 
   
   @app.route('/login/organization', methods=["GET", "POST"])
