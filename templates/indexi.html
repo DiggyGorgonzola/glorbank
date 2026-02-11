@@ -248,7 +248,7 @@
                     <h1 style="text-align:right;font-size:75%;overflow-wrap:break-word;">- ${contact}<h1>
                     
                 `;
-                document.getElementById("mail_list").appendChild(NEWMAIL);
+                document.getElementById("mail_list").prepend(NEWMAIL);
             }
             function draw_all_mails(mail_unread) {
                 for (const stuff in mail_unread) {
