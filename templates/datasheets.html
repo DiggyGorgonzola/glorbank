@@ -7,6 +7,11 @@
                 <meta charset="UTF-8">
                 <link rel="stylesheet" type="text/css" href="../static/style/style.css">
                 <link rel="icon" type="image/png" href="../static/assets/gnbfav.png">
+
+                <script src="../static/javascript_snippets_uwu/diggy.js"></script>
+                <script src="../static/javascript_snippets_uwu/GNB.js"></script>
+                <script src="../static/javascript_snippets_uwu/signature.js"></script>
+                <script src="../static/javascript_snippets_uwu/form.js"></script>
         </head>
 <style>
 
@@ -141,11 +146,12 @@
         </select>
 
     </div>
-    <div class="buttonbar" style="position:absolute;z-index: 999;left:calc(50% - 750px);">
-        <form id="hehe" action="/accountpage/datasheets/givemoney">
+    <div class="buttonbar" id="buttonbar" style="position:absolute;z-index: 999;left:calc(50% - 750px);">
+        <form id="gurr" action="/accountpage/datasheets/givemoney" method="POST">
+            <input type="hidden" name="datasheet" value="User"/>
             <input type="text" name="id" placeholder="Enter an ID . . ."/>
             <input type="text" name="value" placeholder="Enter a value of woolong"/>
-            <button type="submit" id="guh">Send Woolong</button>
+            <input type="submit" value="Datasheets"/>
         </form>
     </div>
 
@@ -197,6 +203,7 @@
         console.log(database);
         console.log("Hello world");
         const data = `<input type="hidden" name="admin_user" value="${[admin_user]}"/>`;
+        document.getElementById("gurr").innerHTML += data;
         document.getElementById("type").innerText = type;
         document.getElementById("username").value = admin_user[1];
         document.getElementById("password").value = admin_user[2];
